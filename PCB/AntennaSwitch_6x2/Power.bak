@@ -476,4 +476,6 @@ F 3 "" H 4250 2400 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4250 2350 4250 2400
+Text GLabel 5850 4450 0    50   Input ~ 0
+chasis
 $EndSCHEMATC

@@ -476,4 +476,21 @@ F 3 "" H 4250 2400 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4250 2350 4250 2400
+Text GLabel 7350 4450 0    50   Input ~ 0
+chasis
+$Comp
+L power:GND #PWR?
+U 1 1 5CC884D9
+P 7800 4550
+F 0 "#PWR?" H 7800 4300 50  0001 C CNN
+F 1 "GND" H 7805 4377 50  0000 C CNN
+F 2 "" H 7800 4550 50  0001 C CNN
+F 3 "" H 7800 4550 50  0001 C CNN
+	1    7800 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7350 4450 7800 4450
+Wire Wire Line
+	7800 4450 7800 4550
 $EndSCHEMATC
