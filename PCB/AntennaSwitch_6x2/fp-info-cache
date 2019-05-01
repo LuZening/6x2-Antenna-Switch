@@ -1,4 +1,4 @@
-716915084568560
+718611837699832
 Battery_Holders
 Bulgin_BX0036_1xC
 
@@ -33194,6 +33194,13 @@ inductor Wuerth smd
 2
 2
 MyPCBLib
+M3_Screwhole
+
+
+0
+7
+7
+MyPCBLib
 OMRON G2R-1-E
 
 
@@ -33205,8 +33212,8 @@ SL16_Screw_PCB
 
 
 0
-0
-0
+8
+3
 MyPCBLib
 SRBV170501
 
