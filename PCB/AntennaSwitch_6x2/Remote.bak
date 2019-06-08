@@ -294,7 +294,7 @@ U 1 1 5F032C9E
 P 4200 6650
 F 0 "U17" H 4000 7250 50  0000 C CNN
 F 1 "MAX485E" H 4000 7150 50  0000 C CNN
-F 2 "Housings_SOIC:SOIC-8_3.9x4.9mm_Pitch1.27mm" H 4200 5950 50  0001 C CNN
+F 2 "digikey-footprints:SOIC-8_W3.9mm" H 4200 5950 50  0001 C CNN
 F 3 "https://datasheets.maximintegrated.com/en/ds/MAX1487E-MAX491E.pdf" H 4200 6700 50  0001 C CNN
 	1    4200 6650
 	1    0    0    -1  

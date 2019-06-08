@@ -1,4 +1,4 @@
-update=2019/4/25 14:36:16
+update=2019/5/7 22:02:43
 version=1
 last_client=kicad
 [general]
@@ -68,7 +68,7 @@ OthersTextSizeThickness=0.15
 OthersTextItalic=0
 OthersTextUpright=1
 SolderMaskClearance=0.051
-SolderMaskMinWidth=0.25
+SolderMaskMinWidth=0.07619999999999999
 SolderPasteClearance=0
 SolderPasteRatio=-0
 [pcbnew/Netclasses]

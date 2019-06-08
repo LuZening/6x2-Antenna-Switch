@@ -1,4 +1,4 @@
-718611837699832
+720471074039971
 Battery_Holders
 Bulgin_BX0036_1xC
 
@@ -33199,7 +33199,7 @@ M3_Screwhole
 
 0
 7
-7
+1
 MyPCBLib
 OMRON G2R-1-E
 
@@ -33213,7 +33213,14 @@ SL16_Screw_PCB
 
 0
 8
-3
+2
+MyPCBLib
+SOIC-20_W7.5mm
+
+
+0
+20
+20
 MyPCBLib
 SRBV170501
 
