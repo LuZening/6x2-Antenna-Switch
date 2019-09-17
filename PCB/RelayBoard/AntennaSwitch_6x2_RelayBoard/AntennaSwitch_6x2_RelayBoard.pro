@@ -1,4 +1,4 @@
-update=2019/5/1 13:26:24
+update=2019/8/28 11:40:25
 version=1
 last_client=kicad
 [general]
@@ -38,6 +38,8 @@ TrackWidth7=2.032
 TrackWidth8=2.54
 TrackWidth9=3.15
 TrackWidth10=4
+TrackWidth11=6
+TrackWidth12=8
 ViaDiameter1=0.8
 ViaDrill1=0.4
 ViaDiameter2=1
@@ -87,7 +89,7 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/2]
 Name=RF
-Clearance=2
+Clearance=1.5
 TrackWidth=2.032
 ViaDiameter=2
 ViaDrill=1

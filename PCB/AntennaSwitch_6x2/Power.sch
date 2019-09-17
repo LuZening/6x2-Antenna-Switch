@@ -303,7 +303,6 @@ Wire Wire Line
 	4800 2050 4500 2050
 Wire Wire Line
 	4800 1750 4800 1700
-Connection ~ 4800 1700
 Wire Wire Line
 	4800 1700 5250 1700
 Wire Wire Line
@@ -493,4 +492,5 @@ Wire Wire Line
 	7350 4450 7800 4450
 Wire Wire Line
 	7800 4450 7800 4550
+Connection ~ 4800 1700
 $EndSCHEMATC

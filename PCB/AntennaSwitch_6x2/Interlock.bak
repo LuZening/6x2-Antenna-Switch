@@ -253,29 +253,29 @@ F 3 "" H 4450 6300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Label 1600 5500 1    50   ~ 0
-REMOTE1_0
+REMOTE1_
 Text Label 1700 5500 1    50   ~ 0
-REMOTE1_1
-Text Label 1800 5500 1    50   ~ 0
 REMOTE1_2
-Text Label 1900 5500 1    50   ~ 0
+Text Label 1800 5500 1    50   ~ 0
 REMOTE1_3
-Text Label 2000 5500 1    50   ~ 0
+Text Label 1900 5500 1    50   ~ 0
 REMOTE1_4
-Text Label 2100 5500 1    50   ~ 0
+Text Label 2000 5500 1    50   ~ 0
 REMOTE1_5
+Text Label 2100 5500 1    50   ~ 0
+REMOTE1_6
 Text Label 3450 5500 1    50   ~ 0
-REMOTE2_0
-Text Label 3550 5500 1    50   ~ 0
 REMOTE2_1
-Text Label 3650 5500 1    50   ~ 0
+Text Label 3550 5500 1    50   ~ 0
 REMOTE2_2
-Text Label 3750 5500 1    50   ~ 0
+Text Label 3650 5500 1    50   ~ 0
 REMOTE2_3
-Text Label 3850 5500 1    50   ~ 0
+Text Label 3750 5500 1    50   ~ 0
 REMOTE2_4
-Text Label 3950 5500 1    50   ~ 0
+Text Label 3850 5500 1    50   ~ 0
 REMOTE2_5
+Text Label 3950 5500 1    50   ~ 0
+REMOTE2_6
 Text Notes 1300 5850 1    50   ~ 0
 HIGH effective\n
 Wire Wire Line
@@ -586,17 +586,17 @@ Wire Wire Line
 Wire Wire Line
 	3450 4050 3450 3950
 Text Label 4150 2350 3    50   ~ 0
-REMOTE1_0
-Text Label 4050 2350 3    50   ~ 0
 REMOTE1_1
-Text Label 3950 2350 3    50   ~ 0
+Text Label 4050 2350 3    50   ~ 0
 REMOTE1_2
-Text Label 3850 2350 3    50   ~ 0
+Text Label 3950 2350 3    50   ~ 0
 REMOTE1_3
-Text Label 3750 2350 3    50   ~ 0
+Text Label 3850 2350 3    50   ~ 0
 REMOTE1_4
-Text Label 3650 2350 3    50   ~ 0
+Text Label 3750 2350 3    50   ~ 0
 REMOTE1_5
+Text Label 3650 2350 3    50   ~ 0
+REMOTE1_6
 $Comp
 L power:GND #PWR018
 U 1 1 5D004897
@@ -642,17 +642,17 @@ F 3 "" H 2950 2850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Label 4150 4450 3    50   ~ 0
-REMOTE2_0
-Text Label 4050 4450 3    50   ~ 0
 REMOTE2_1
-Text Label 3950 4450 3    50   ~ 0
+Text Label 4050 4450 3    50   ~ 0
 REMOTE2_2
-Text Label 3850 4450 3    50   ~ 0
+Text Label 3950 4450 3    50   ~ 0
 REMOTE2_3
-Text Label 3750 4450 3    50   ~ 0
+Text Label 3850 4450 3    50   ~ 0
 REMOTE2_4
-Text Label 3650 4450 3    50   ~ 0
+Text Label 3750 4450 3    50   ~ 0
 REMOTE2_5
+Text Label 3650 4450 3    50   ~ 0
+REMOTE2_6
 Wire Wire Line
 	3450 3850 3550 3850
 Wire Wire Line
@@ -2925,8 +2925,8 @@ L Transistor_FET:2N7002 Q1
 U 1 1 5E0DD780
 P 6650 5150
 F 0 "Q1" H 6450 5400 50  0000 L CNN
-F 1 "2N7002K" H 6350 5300 50  0000 L CNN
-F 2 "TO_SOT_Packages_SMD:SOT-23" H 6850 5075 50  0001 L CIN
+F 1 "2N7002" H 6350 5300 50  0000 L CNN
+F 2 "lc_lib:SOT-23(SOT-23-3)" H 6850 5075 50  0001 L CIN
 F 3 "https://www.fairchildsemi.com/datasheets/2N/2N7002.pdf" H 6650 5150 50  0001 L CNN
 	1    6650 5150
 	1    0    0    -1  

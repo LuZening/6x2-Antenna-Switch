@@ -20,7 +20,7 @@ U 1 1 5EEFDA22
 P 3800 3050
 F 0 "U16" H 3400 2200 50  0000 C CNN
 F 1 "STM32F030F4Px" H 3400 2300 50  0000 C CNN
-F 2 "digikey-footprints:TSSOP-20_W4.4mm" H 3400 2350 50  0001 R CNN
+F 2 "lc_lib:TSSOP-20" H 3400 2350 50  0001 R CNN
 F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00088500.pdf" H 3800 3050 50  0001 C CNN
 	1    3800 3050
 	1    0    0    -1  
@@ -1612,4 +1612,6 @@ F 3 "~" H 2850 2100 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2850 2300 2850 2550
+Text Notes 8500 4100 0    50   ~ 0
+BCD Monitoring Port
 $EndSCHEMATC
