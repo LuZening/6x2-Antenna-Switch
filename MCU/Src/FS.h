@@ -7,6 +7,7 @@
 
 #ifndef FS_H_
 #define FS_H_
+#include <stddef.h>
 
 typedef unsigned char UINT8;
 typedef unsigned int UINT32;
@@ -21,15 +22,15 @@ typedef unsigned int UINT32;
 typedef struct {
 	char* path;
 	UINT8 *p_content;
-	unsigned int size;
+	UINT32 size;
 }FSfile_typedef;
 
 typedef struct {
-	unsigned char* addr_base;
-	unsigned int n_files;
+	UINT32* addr_base;
+	UINT32 n_files;
 }FS_typedef;
 
-BOOL FS_begin(FS_typedef* pFS, unsigned char* addr_base);
+BOOL FS_begin(FS_typedef* pFS, UINT32* addr_base);
 FSfile_typedef FS_open(FS_typedef* pFS, const char* path);
 int FS_size(FS_typedef* pFS, const char* path);
 BOOL FS_exists(FS_typedef* pFS, const char* path);

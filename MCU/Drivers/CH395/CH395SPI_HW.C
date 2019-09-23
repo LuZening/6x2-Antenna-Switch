@@ -9,38 +9,8 @@
 #include "CH395SPI_HW.H"
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_spi1_tx;
-struct CH395_TypeDef ch395;
+struct CH395_TypeDef ch395 = {socket_connected = 0, RX_received = 0, TX_available = 0xff};
 struct CH395_TypeDef *pch395 = &ch395;
-/*******************************************************************************
-* Function Name  : mDelayuS
-* Description    : 延时指定微秒时间,根据单片机主频调整,不精确
-* Input          : us---延时时间值
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void mDelayuS( UINT8 us )
-{
-	us <<= 3;
-    while( us -- );                                                  /* STM32@24Mhz */
-}
-
-/*******************************************************************************
-* Function Name  : mDelaymS
-* Description    : 延时指定毫秒时间,根据单片机主频调整,不精确
-* Input          : ms---延时时间值
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void mDelaymS( UINT8 ms )
-{
-    while( ms -- ) 
-    {
-        mDelayuS( 250 );
-        mDelayuS( 250 );
-        mDelayuS( 250 );
-        mDelayuS( 250 );
-    }
-}
 
 /******************************************************************************
 * Function Name  : CH395_PORT_INIT
@@ -71,7 +41,7 @@ UINT8 SPI395Exchange( UINT8 d )
     /* 为了提高速度,可以将该子程序做成宏以减少子程序调用层次 */
 	xEndCH395Cmd();
     HAL_SPI_Transmit(hspi, &d, 1, HAL_MAX_DELAY);
-    mDelayuS(2);
+    Delay_us(2);
     HAL_SPI_Receive(hspi, SPI395_buffer, 1, HAL_MAX_DELAY);
 	return(SPI395_buffer[0]);                                              /* 先查询SPI状态寄存器以等待SPI字节传输完成,然后从SPI数据寄存器读出数据 */
 }
@@ -88,7 +58,7 @@ void xWriteCH395Cmd(UINT8 cmd)
     xEndCH395Cmd();                                                  /* 防止CS原来为低，先将CD置高 */
     xCH395CmdStart( );                                               /* 命令开始，CS拉低 */
     SPI395Exchange(cmd);                                             /* SPI发送命令码 */
-    mDelayuS(2);                                                     /* 必要延时,延时1.5uS确保读写周期不小于1.5uS */
+    Delay_us(2);
 }
 
 /******************************************************************************

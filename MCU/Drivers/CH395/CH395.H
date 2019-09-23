@@ -67,14 +67,14 @@ typedef unsigned char volatile                    *PUINT8V;
 #define CH395_SIZE_BUFFER 1024
 typedef struct
 {
-	UINT8 TX_busy; // bit0...bit7 sock0...sock7
-	UINT8 socket_connected; // bit0...bit7 sock0...sock7
-	UINT8 RX_received; // bit0...bit7 buffer0...buffer7
+	volatile UINT8 socket_connected; // bit0...bit7 sock0...sock7
+	volatile UINT8 RX_received; // bit0...bit7 buffer0...buffer7
+	volatile UINT8 TX_available; // bit0...bit7
 	UINT8 buffer[CH395_SIZE_BUFFER];
 } CH395_TypeDef;
 extern CH395_TypeDef ch395;
-
-BOOL CH395TCPServerStart(CH395_TypeDef *pch395, IPv4 ip, Port port); // start TCP/IP server on CH395 on socket 0, allow multiple connections
+// initialize CH395
+BOOL CH395TCPServerStart(CH395_TypeDef *pch395, UINT32 ip, UINT16 port); // start TCP/IP server on CH395 on socket 0, allow multiple connections
 /* ********************************************************************************************************************* */
 /* 命令代码 */
 /* 一个命令操作顺序包含:

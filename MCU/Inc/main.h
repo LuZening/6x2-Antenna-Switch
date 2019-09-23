@@ -37,7 +37,13 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef struct
+{
+	PIN_typedef PIN_BCD0;
+	PIN_typedef PIN_BCD1;
+	PIN_typedef PIN_BCD2;
+	UINT8 sel; // the number of selected antenna 0...7
+} AntennaSelector_typedef;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -47,7 +53,12 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#ifdef __DEBUG_
+#include <stdio.h>
+#define DEBUG_LOG(...) printf(__VA_ARGS__)
+#else
+#define DEBUG_LOG(...) while(0)
+#endif
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -58,11 +69,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define __CH395_
+#define __ON_BOARD_
 #define CH395_INT_Pin GPIO_PIN_1
 #define CH395_INT_GPIO_Port GPIOB
 #define CH395_INT_EXTI_IRQn EXTI0_1_IRQn
+#define NUM_ANTENNA 6
+#define NUM_TRANCEIVERS 2
+#define N_SELECTORS NUM_TRANCEIVERS
+#define BCD2INT(D0,D1,D2) (D2<<2 | D1<<1 | D0);
 /* USER CODE BEGIN Private defines */
-
+// CH395 interrupt handler
+void interrupt_CH395();
+void swich_Antenna(uint8_t A, uint8_t B);
+uint8_t get_Antenna(uint8_t i);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

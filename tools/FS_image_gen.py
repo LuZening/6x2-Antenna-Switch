@@ -17,12 +17,11 @@ def str2bytes(s:str):
 N_BYTES = 4
 if __name__ == "__main__":
     little_endian = True # Choose between: little-endian or big-endian
-    if len(sys.argv) < 4:
-        print("Please Speciy input director, output filename and base address (hex)")
+    if len(sys.argv) < 3:
+        print("Please Speciy input director and output filename")
         exit()    
     path_folder = sys.argv[1]
     path_image = sys.argv[2]
-    base_addr = int(sys.argv[3], base = 16)
     image = bytearray()
     filenodes = []
     print(f"Entering folder {path_folder}...")
@@ -41,10 +40,10 @@ if __name__ == "__main__":
         with open(fname, 'rb') as f:
             content_f = f.read()
             size_f = len(content_f)
-            name_f = fname
+            name_f = '/'+fname
             filenodes.append({'size': size_f, 'content': content_f, 'name': name_f})
     print('Done. Start generating image file')
-    node_addr = base_addr + N_BYTES * (n_files + 1)
+    node_addr = N_BYTES * (n_files + 1)
     image_node = bytearray()
     for node in filenodes:
         image.extend(int2bytes(node_addr, N_BYTES))
@@ -65,4 +64,4 @@ if __name__ == "__main__":
         f.write(image)
     print('All Done')
     print('Space occupancy:', len(image))
-    print(f'Memory: {hex(base_addr)} - {hex(base_addr + len(image))}')
+    print(f'Memory Span: {hex(len(image))}')

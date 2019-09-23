@@ -23,8 +23,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "CH395.h"
 #include "CH395CMD.h"
-#include "FS.h"1
+#include "FS.h"
+#include "HTTPServer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,7 +36,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -50,6 +51,10 @@ DMA_HandleTypeDef hdma_spi1_rx;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+AntennaSelector_typedef Selector[N_SELECTORS];
+UINT8 IP[4] = {192, 168, 4, 1};
+UINT16 port = 80;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,7 +80,15 @@ static void MX_NVIC_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	// init selectors
+	Selector[0].PIN_BCD0 = BCD1_0;
+	Selector[0].PIN_BCD1 = BCD1_1;
+	Selector[0].PIN_BCD2 = BCD1_2;
+	Selector[0].sel = 0;
+	Selector[1].PIN_BCD0 = BCD2_0;
+	Selector[1].PIN_BCD1 = BCD2_1;
+	Selector[1].PIN_BCD2 = BCD2_2;
+	Selector[1].sel = 0;
   /* USER CODE END 1 */
   
 
@@ -90,9 +103,7 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
-
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -104,6 +115,8 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+  // initialize TCP server
+  while(!CH395TCPServerStart(&ch395, IP, port));
 
   /* USER CODE END 2 */
 
@@ -118,6 +131,93 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+
+void interrupt_CH395()
+{
+	// read global int status
+	uint8_t glob_int_status = CH395CMDGetGlobIntStatus();
+	if(glob_int_status & GINT_STAT_UNREACH)
+	{
+		DEBUG_LOG("INT: IP Unreachable\n");
+	}
+	if(glob_int_status & GINT_STAT_IP_CONFLI)
+	{
+		DEBUG_LOG("INT: IP Conflict\n");
+	}
+	if(glob_int_status & GINT_STAT_PHY_CHANGE)
+	{
+		DEBUG_LOG("INT: PHY Changed\n");
+	}
+	glob_int_status >>= 4; // get socket interrupt status
+	if(!glob_int_status) return;
+	// handle SOCKET interrupts
+	uint8_t i, sock_int_status;
+	for(i=0; i<4; ++i)
+	{
+		if(glob_int_status & 1) // the LSB of glob_int_status indicates SOCK#i interrupt status
+		{
+			sock_int_status = CH395GetSocketInt(i);
+			if(sock_int_status & SINT_STAT_SENBUF_FREE) // Send buffer free
+			{
+				ch395.TX_available |= (1 << i);
+			}
+			if(sock_int_status & SINT_STAT_SEND_OK)
+			{
+				DEBUG_LOG("SOCK %d: send OK\n", i);
+			}
+			if(sock_int_status & SINT_STAT_RECV)
+			{
+				ch395.RX_received |= (1 << i);
+			}
+			if(sock_int_status & SINT_STAT_CONNECT)
+			{
+				DEBUG_LOG("SOCK %d: Connected\n", i);
+				ch395.socket_connected |= (1 << i);
+			}
+			if(sock_int_status & SINT_STAT_DISCONNECT)
+			{
+				DEBUG_LOG("SOCK %d: Disconnected\n", i);
+				ch395.socket_connected &= ~(1<<i);
+				ch395.RX_received &= ~(1<<i);
+			}
+			if(sock_int_status & SINT_STAT_TIM_OUT)
+			{
+				DEBUG_LOG("SOCK %d: Time out", %i);
+			}
+		}
+		glob_int_status >>= 1;
+	}
+}
+
+void swich_Antenna(uint8_t A, uint8_t B)
+{
+	uint8_t i;
+	Selector[0].sel = A;
+	Selector[1].sel = B;
+	if(A==B && A>0) return;
+	for(i=0; i<N_SELECTORS; ++i)
+	{
+		PIN_typedef pin0 = Selector[i].PIN_BCD0;
+		PIN_typedef pin1 = Selector[i].PIN_BCD1;
+		PIN_typedef pin2 = Selector[i].PIN_BCD2;
+		uint8_t val = Selector[i].sel;
+		HAL_GPIO_WritePin(pin0.group, pin0.pin, val & 1);
+		HAL_GPIO_WritePin(pin1.group, pin1.pin, (val >> 1) & 1);
+		HAL_GPIO_WritePin(pin2.group, pin2.pin, (val >> 2) & 2);
+	}
+}
+
+uint8_t get_Antenna(uint8_t i)
+{
+	PIN_typedef pin0 = Selector[i].PIN_BCD0;
+	PIN_typedef pin1 = Selector[i].PIN_BCD1;
+	PIN_typedef pin2 = Selector[i].PIN_BCD2;
+	uint8_t sel_new = BCD2INT(HAL_GPIO_ReadPin(pin0.group, pin0.pin),
+			HAL_GPIO_ReadPin(pin1.group, pin1.pin),
+			HAL_GPIO_ReadPin(pin2.group, pin2.pin));
+	Selector[i].sel = sel_new;
+	return sel_new;
+}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -164,6 +264,9 @@ void SystemClock_Config(void)
   */
 static void MX_NVIC_Init(void)
 {
+  /* EXTI0_1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI0_1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
   /* DMA1_Channel2_3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
@@ -296,10 +399,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(CH395_INT_GPIO_Port, &GPIO_InitStruct);
-
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI0_1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 
 }
 
