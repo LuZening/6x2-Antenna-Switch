@@ -1,0 +1,5 @@
+HTTPResponders.c:16:6:onHome	8	static
+HTTPResponders.c:26:6:onSwitch	16	static
+HTTPResponders.c:72:6:onStatus	8	static
+HTTPResponders.c:77:6:onReset	8	static
+HTTPResponders.c:49:6:onGetAlloc	16	static

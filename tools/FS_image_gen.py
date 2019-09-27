@@ -53,15 +53,27 @@ if __name__ == "__main__":
         image_node.extend(int2bytes(content_addr, N_BYTES))  # node: content_addr
         image_node.extend(name_bytes) # node: filename\0
         image_node.extend(node['content'])
+        ### !!!! 4-byte alignment
+        len_stuffing = (-len(image_node)) % N_BYTES
+        image_node.extend([0] * len_stuffing) # byte stuffing for alignment
         print('____________________')
         print('size:', image_node[:4].hex())
         print('content_addr', int2bytes(content_addr, N_BYTES).hex())
         print('name:', str2bytes(node['name']).hex())
-        node_addr = content_addr + node['size']
+        node_addr = content_addr + node['size'] + len_stuffing
     image.extend(image_node)
     os.chdir('..')
     with open(path_image, 'wb') as f:
         f.write(image)
+    with open(path_image + '.txt', 'w') as f:
+        i = 0
+        for b in image:
+            i+=1
+            f.write(hex(b))
+            f.write(', ')
+            if(i == 16):
+                i = 0
+                f.write('\n')
     print('All Done')
     print('Space occupancy:', len(image))
     print(f'Memory Span: {hex(len(image))}')

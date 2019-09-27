@@ -18,4 +18,4 @@ void Delay_us(unsigned int n) {
 	} while ((temp & 0x01) && (!(temp & (1 << 16)))); //等待时间到达
 	SysTick->CTRL = 0x00; //关闭计数器
 	SysTick->VAL = 0X00; //清空计数器
-}n
+}

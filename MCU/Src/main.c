@@ -23,10 +23,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "CH395.h"
-#include "CH395CMD.h"
-#include "FS.h"
-#include "HTTPServer.h"
+#include <string.h>
+#include <CH395.h>
+#include "Delay.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,26 +44,41 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
-DMA_HandleTypeDef hdma_spi1_tx;
-DMA_HandleTypeDef hdma_spi1_rx;
 
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+// PINS
+const PIN_typedef BCD1_0 = {GPIOF, GPIO_PIN_0};
+const PIN_typedef BCD1_1 = {GPIOA, GPIO_PIN_10};
+const PIN_typedef BCD1_2 = {GPIOA, GPIO_PIN_9};
+const PIN_typedef BCD2_0 = {GPIOA, GPIO_PIN_1};
+const PIN_typedef BCD2_1 = {GPIOA, GPIO_PIN_0};
+const PIN_typedef BCD2_2 = {GPIOF, GPIO_PIN_1};
 AntennaSelector_typedef Selector[N_SELECTORS];
-UINT8 IP[4] = {192, 168, 4, 1};
-UINT16 port = 80;
-
+// TODO: antenna labels non-volatile on FLASH
+uint8_t IP[4] = {192, 168, 4, 1};
+uint16_t port = 80;
+// flags
+volatile BOOL flag_PHY_change;
+volatile BOOL flag_IP_conflict;
+volatile BOOL flag_CH395_ready = FALSE;
+const char HTTP_STR_HELLO[] = "Hello\r\n";
+//extern const uint8_t FS_test_buffer[];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_SPI1_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_NVIC_Init(void);
 
 /* USER CODE END PFP */
 
@@ -80,7 +94,6 @@ static void MX_NVIC_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	// init selectors
 	Selector[0].PIN_BCD0 = BCD1_0;
 	Selector[0].PIN_BCD1 = BCD1_1;
 	Selector[0].PIN_BCD2 = BCD1_2;
@@ -88,7 +101,8 @@ int main(void)
 	Selector[1].PIN_BCD0 = BCD2_0;
 	Selector[1].PIN_BCD1 = BCD2_1;
 	Selector[1].PIN_BCD2 = BCD2_2;
-	Selector[1].sel = 0;
+	Selector[0].sel = 0;
+
   /* USER CODE END 1 */
   
 
@@ -103,121 +117,51 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+
   /* USER CODE BEGIN SysInit */
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+  DEBUG_LOG("Self checking...\n");
+//   Check FS
+  FS_begin(&FS, (uint32_t*)FS_BASE_ADDR);
+  FSfile_typedef file = FS_open(&FS, "/a.txt");
+//   Check ch395
+  uint8_t i;
+RESET_CH395:
+	Delay_ms(300); // wait for CH395 being ready from power on`	q1was
+	CH395CMDReset();
+	Delay_ms(200);
   // initialize TCP server
-  while(!CH395TCPServerStart(&ch395, IP, port));
-
+	flag_CH395_ready = FALSE;
+  flag_CH395_ready = CH395TCPServerStart(*(uint32_t*)IP, port);
+  flag_PHY_change = FALSE;
+  flag_IP_conflict = FALSE;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // handle CH395 interrupt flags
+	  if(flag_PHY_change || flag_IP_conflict) goto RESET_CH395;
+	  if(flag_CH395_ready && ch395.RX_received)
+	  {
+		  HTTPHandle(&ch395);
+	  }
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
 
-
-void interrupt_CH395()
-{
-	// read global int status
-	uint8_t glob_int_status = CH395CMDGetGlobIntStatus();
-	if(glob_int_status & GINT_STAT_UNREACH)
-	{
-		DEBUG_LOG("INT: IP Unreachable\n");
-	}
-	if(glob_int_status & GINT_STAT_IP_CONFLI)
-	{
-		DEBUG_LOG("INT: IP Conflict\n");
-	}
-	if(glob_int_status & GINT_STAT_PHY_CHANGE)
-	{
-		DEBUG_LOG("INT: PHY Changed\n");
-	}
-	glob_int_status >>= 4; // get socket interrupt status
-	if(!glob_int_status) return;
-	// handle SOCKET interrupts
-	uint8_t i, sock_int_status;
-	for(i=0; i<4; ++i)
-	{
-		if(glob_int_status & 1) // the LSB of glob_int_status indicates SOCK#i interrupt status
-		{
-			sock_int_status = CH395GetSocketInt(i);
-			if(sock_int_status & SINT_STAT_SENBUF_FREE) // Send buffer free
-			{
-				ch395.TX_available |= (1 << i);
-			}
-			if(sock_int_status & SINT_STAT_SEND_OK)
-			{
-				DEBUG_LOG("SOCK %d: send OK\n", i);
-			}
-			if(sock_int_status & SINT_STAT_RECV)
-			{
-				ch395.RX_received |= (1 << i);
-			}
-			if(sock_int_status & SINT_STAT_CONNECT)
-			{
-				DEBUG_LOG("SOCK %d: Connected\n", i);
-				ch395.socket_connected |= (1 << i);
-			}
-			if(sock_int_status & SINT_STAT_DISCONNECT)
-			{
-				DEBUG_LOG("SOCK %d: Disconnected\n", i);
-				ch395.socket_connected &= ~(1<<i);
-				ch395.RX_received &= ~(1<<i);
-			}
-			if(sock_int_status & SINT_STAT_TIM_OUT)
-			{
-				DEBUG_LOG("SOCK %d: Time out", %i);
-			}
-		}
-		glob_int_status >>= 1;
-	}
-}
-
-void swich_Antenna(uint8_t A, uint8_t B)
-{
-	uint8_t i;
-	Selector[0].sel = A;
-	Selector[1].sel = B;
-	if(A==B && A>0) return;
-	for(i=0; i<N_SELECTORS; ++i)
-	{
-		PIN_typedef pin0 = Selector[i].PIN_BCD0;
-		PIN_typedef pin1 = Selector[i].PIN_BCD1;
-		PIN_typedef pin2 = Selector[i].PIN_BCD2;
-		uint8_t val = Selector[i].sel;
-		HAL_GPIO_WritePin(pin0.group, pin0.pin, val & 1);
-		HAL_GPIO_WritePin(pin1.group, pin1.pin, (val >> 1) & 1);
-		HAL_GPIO_WritePin(pin2.group, pin2.pin, (val >> 2) & 2);
-	}
-}
-
-uint8_t get_Antenna(uint8_t i)
-{
-	PIN_typedef pin0 = Selector[i].PIN_BCD0;
-	PIN_typedef pin1 = Selector[i].PIN_BCD1;
-	PIN_typedef pin2 = Selector[i].PIN_BCD2;
-	uint8_t sel_new = BCD2INT(HAL_GPIO_ReadPin(pin0.group, pin0.pin),
-			HAL_GPIO_ReadPin(pin1.group, pin1.pin),
-			HAL_GPIO_ReadPin(pin2.group, pin2.pin));
-	Selector[i].sel = sel_new;
-	return sel_new;
-}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -267,9 +211,6 @@ static void MX_NVIC_Init(void)
   /* EXTI0_1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(EXTI0_1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
-  /* DMA1_Channel2_3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
 }
 
 /**
@@ -295,7 +236,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -347,16 +288,6 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-/** 
-  * Enable DMA controller clock
-  */
-static void MX_DMA_Init(void) 
-{
-  /* DMA controller clock enable */
-  __HAL_RCC_DMA1_CLK_ENABLE();
-
-}
-
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -375,24 +306,31 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_9 
-                          |GPIO_PIN_10, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_9|GPIO_PIN_10, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SCS_GPIO_Port, SCS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PF0 PF1 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA0 PA1 PA4 PA9 
-                           PA10 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_9 
-                          |GPIO_PIN_10;
+  /*Configure GPIO pins : PA0 PA1 PA9 PA10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_9|GPIO_PIN_10;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SCS_Pin */
+  GPIO_InitStruct.Pin = SCS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(SCS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : CH395_INT_Pin */
   GPIO_InitStruct.Pin = CH395_INT_Pin;
@@ -404,6 +342,134 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void interrupt_CH395()
+{
+	uint8_t glob_int_status, sock_int_status, i;
+	BEGIN_INT_CH395:
+	// read global int status
+	glob_int_status = CH395CMDGetGlobIntStatus();
+//	if(glob_int_status & GINT_STAT_UNREACH)
+//	{
+//	}
+//	if(glob_int_status & GINT_STAT_IP_CONFLI)
+//	{
+//		flag_IP_conflict = TRUE;
+//	}
+	if(glob_int_status & GINT_STAT_PHY_CHANGE)
+	{
+		flag_PHY_change = TRUE;
+	}
+	glob_int_status >>= 4; // get socket interrupt status
+	if(!glob_int_status) goto END_INT_CH395;
+	// handle SOCKET interrupts
+	for(i=1; i<=NUM_SOCKETS; ++i)
+	{
+		glob_int_status >>= 1;
+		if(glob_int_status & 1) // the LSB of glob_int_status indicates SOCK#i interrupt status
+		{
+			sock_int_status = CH395GetSocketInt(i);
+			if(sock_int_status & SINT_STAT_SENBUF_FREE) // Send buffer free
+			{
+				ch395.TX_available |= (1 << i);
+				HTTPRequestParseState* pS = parseStates +i -1;
+				if(pS->response_stage == RESPONSE_CONTENT_REMAIN)
+				{
+					uint16_t len = pS->len_response_content_remain;
+					CH395SendData(i, pS->response_content, ((len<MAX_SIZE_PACK)?(len):(len=MAX_SIZE_PACK)));
+					// sent
+					pS->len_response_content_remain -= len;
+					pS->response_content += len; // move the cursor
+					if(pS->len_response_content_remain == 0)
+						resetHTTPParseState(pS);
+					// TODO: multiple packages
+				}
+				else if(pS->response_stage == RESPONSE_PREPARED)
+				{
+					uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
+					uint16_t len_content_this_time = ((pS->len_response_content_remain < max_len_content)
+							? (pS->len_response_content_remain)
+									: (max_len_content));
+					CH395StartSendingData(i, pS->len_response_header + len_content_this_time);
+					CH395ContinueSendingData(pS->response_header, pS->len_response_header);
+					CH395ContinueSendingData(pS->response_content, len_content_this_time);
+					CH395Complete();
+					pS->len_response_content_remain -= len_content_this_time;
+					pS->response_content += len_content_this_time;
+					if(pS->len_response_content_remain == 0) // all content completely sent this time
+					{
+						pS->response_stage = RESPONSE_NOT_PREPARED;
+					}
+					else // content remained to be sent next time
+					{
+						pS->response_stage = RESPONSE_CONTENT_REMAIN;
+					}
+				}
+			}
+//			if(sock_int_status & SINT_STAT_SEND_OK)
+//			{
+//			}
+			if(sock_int_status & SINT_STAT_RECV)
+			{
+				HTTPRequestParseState* pS = parseStates + i - 1;
+				uint16_t len = CH395GetRecvLength(i);
+				CH395GetRecvData(i, (len < CH395_SIZE_BUFFER)?(len):(CH395_SIZE_BUFFER-1), ch395.buffer);
+				resetHTTPParseState(pS);
+				pS->sock_index = i;
+				if(parse_http(pS, ch395.buffer))
+				{
+					ch395.RX_received |= (1 << i);
+				}
+				CH395ClearRecvBuf(i);
+			}
+			if(sock_int_status & SINT_STAT_CONNECT)
+			{
+				ch395.socket_connected |= (1 << i);
+			}
+			if(sock_int_status & SINT_STAT_DISCONNECT)
+			{
+				ch395.socket_connected &= ~(1<<i);
+				ch395.RX_received &= ~(1<<i);
+			}
+//			if(sock_int_status & SINT_STAT_TIM_OUT)
+//			{
+//			}
+		}
+	}
+	END_INT_CH395:
+	return;
+//	if(HAL_GPIO_ReadPin(CH395_INT_GPIO_Port, CH395_INT_Pin) == GPIO_PIN_RESET) goto BEGIN_INT_CH395;
+}
+
+void switch_Antenna(uint8_t A, uint8_t B)
+{
+	uint8_t i;
+	Selector[0].sel = A;
+	Selector[1].sel = B;
+	if(A==B && A>0) return;
+	for(i=0; i<N_SELECTORS; ++i)
+	{
+		PIN_typedef pin0 = Selector[i].PIN_BCD0;
+		PIN_typedef pin1 = Selector[i].PIN_BCD1;
+		PIN_typedef pin2 = Selector[i].PIN_BCD2;
+		uint8_t val = Selector[i].sel;
+		HAL_GPIO_WritePin(pin0.group, pin0.pin, val & 1);
+		HAL_GPIO_WritePin(pin1.group, pin1.pin, (val >> 1) & 1);
+		HAL_GPIO_WritePin(pin2.group, pin2.pin, (val >> 2) & 2);
+	}
+}
+
+uint8_t get_Antenna() //0-3:SEL1 4-7:SEL2
+{
+	uint8_t d = CH395ReadGPIOAddr(GPIO_IN_REG); // read CH395 GPIO
+	uint8_t res = 0;
+	res |= (d >> BCDM1_0) & 1;// bit 0: BCDM1_0
+	res |= ((d >> BCDM1_1) & 1) << 1;// bit 1: BCDM1_1
+	res |= ((d >> BCDM1_2) & 1) << 2;// bit 2: BCDM1_2
+	res |= ((d >> BCDM2_0) & 1) << 4;// bit 0: BCDM2_0
+	res |= ((d >> BCDM2_1) & 1) << 5;// bit 1: BCDM1_1
+	res |= ((d >> BCDM2_2) & 1) << 6;// bit 1: BCDM1_1
+	return res;
+}
 /* USER CODE END 4 */
 
 /**

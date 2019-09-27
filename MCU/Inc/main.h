@@ -32,7 +32,11 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "PIN.h"
+#include "CH395.H"
+#include "CH395CMD.H"
+#include "FS.h"
+#include "HTTPServer.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -42,7 +46,7 @@ typedef struct
 	PIN_typedef PIN_BCD0;
 	PIN_typedef PIN_BCD1;
 	PIN_typedef PIN_BCD2;
-	UINT8 sel; // the number of selected antenna 0...7
+	uint8_t sel; // the number of selected antenna 0...7
 } AntennaSelector_typedef;
 /* USER CODE END ET */
 
@@ -53,9 +57,9 @@ typedef struct
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#ifdef __DEBUG_
-#include <stdio.h>
-#define DEBUG_LOG(...) printf(__VA_ARGS__)
+#ifdef DEBUG
+//#define DEBUG_LOG(...) printf(__VA_ARGS__)
+#define DEBUG_LOG(...) while(0)
 #else
 #define DEBUG_LOG(...) while(0)
 #endif
@@ -69,6 +73,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define SCS_Pin GPIO_PIN_4
+#define SCS_GPIO_Port GPIOA
+#define CH395_INT_Pin GPIO_PIN_1
+#define CH395_INT_GPIO_Port GPIOB
+#define CH395_INT_EXTI_IRQn EXTI0_1_IRQn
+/* USER CODE BEGIN Private defines */
 #define __CH395_
 #define __ON_BOARD_
 #define CH395_INT_Pin GPIO_PIN_1
@@ -78,11 +88,19 @@ void Error_Handler(void);
 #define NUM_TRANCEIVERS 2
 #define N_SELECTORS NUM_TRANCEIVERS
 #define BCD2INT(D0,D1,D2) (D2<<2 | D1<<1 | D0);
-/* USER CODE BEGIN Private defines */
+#define BCDM1_0 2
+#define BCDM1_1 1
+#define BCDM1_2 0
+#define BCDM2_0 4
+#define BCDM2_1 6
+#define BCDM2_2 5
+#define FS_BASE_ADDR 0x08004000 // starting after the first 16KB flash bank
+// CH395 available sockets
 // CH395 interrupt handler
 void interrupt_CH395();
-void swich_Antenna(uint8_t A, uint8_t B);
-uint8_t get_Antenna(uint8_t i);
+void switch_Antenna(uint8_t A, uint8_t B);
+uint8_t get_Antenna();
+extern AntennaSelector_typedef Selector[];
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -4,10 +4,12 @@
  *  Created on: 2019年9月22日
  *      Author: Zening
  */
-
+#include <string.h>
 #include "main.h"
 #include "HTTPServer.h"
 #include "FS.h"
+
+
 /* URI: /
  * METHOD: GET
  * Usage: Homepage*/
@@ -23,14 +25,16 @@ void onHome(HTTPRequestParseState *pS)
  * Usage: switch antenna */
 void onSwitch(HTTPRequestParseState* pS)
 {
-	char *A, *B;
-	if(A = getHTTPArg(pS, "A") && B = getHTTPArg(pS, "B"))
+	const char *A = getHTTPArg(pS, "A");
+	const char *B = getHTTPArg(pS, "B");
+	if(A && B)
 	{
-		uint8_t nA = atoi(A);
-		uint8_t nB = atoi(B);
-		if(nA >=0 && nB>=0 && nA <= NUM_ANTENNA && nB<=NUM_ANTENNA)
+		//  TODO: remove stdlib
+		uint8_t nA = atou8(A);
+		uint8_t nB = atou8(B);
+		if(nA <= NUM_ANTENNA && nB<=NUM_ANTENNA)
 		{
-			swith_Antenna(nA, nB);
+			switch_Antenna(nA, nB);
 			HTTPSendStr(pS, 200, "OK\r\n");
 			return;
 		}
@@ -44,8 +48,22 @@ void onSwitch(HTTPRequestParseState* pS)
  * Usage: get current antenna allocation*/
 void onGetAlloc(HTTPRequestParseState* pS)
 {
-	sprintf(ch395.buffer, "A=%d&B=%d\r\n", Selector[0].sel, Selector[1].sel);
-	HTTPSendStr(pS, 200, ch395.buffer);
+	static char s_tmp[10];
+	uint8_t d = get_Antenna();
+	char *p;
+	p = s_tmp;
+	strcpy(p, "A=");
+	p+=2;
+	*p = (uint8_t)(d & 0xf) + '0'; // "A=%d"
+	p++;
+	strcpy(p, "&B="); // "A=%d&B="
+	p+=3;
+	*p = (uint8_t)(d >> 4) + '0'; // "A=%d&B=%d"
+	p++;
+	strcpy(p, "\r\n");
+	p+=2;
+	*p = 0;
+	HTTPSendStr(pS, 200, s_tmp);
 }
 
 /* URI: /status
@@ -59,13 +77,22 @@ void onStatus(HTTPRequestParseState* pS)
 void onReset(HTTPRequestParseState* pS)
 {
 	HTTPSendStr(pS, 200, "Reset\r\n");
-	DEBUG_LOG("Restart\n");
+//	DEBUG_LOG("Restart\n");
 }
 
+void onSetLabel(HTTPRequestParseState* pS)
+{
+}
+
+void onGetLabel(HTTPRequestParseState* pS)
+{
+}
 HTTPResponder_typedef HTTPResponders[] ={
 		{.uri="/", .func=onHome},
 		{.uri = "/switch", .func=onSwitch},
-		{.uri = "/getAlloc", .func=onGetAlloc},
+		{.uri = "/getalloc", .func=onGetAlloc},
 		{.uri = "/status", .func=onStatus},
-		{.uri - "/reset", .func=onReset},
+		{.uri = "/reset", .func=onReset},
+		{.uri = "/setlabel", .func=onSetLabel},
+		{.uri = "/getlabel", .func=onGetLabel},
 };

@@ -56,8 +56,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern DMA_HandleTypeDef hdma_spi1_tx;
-extern DMA_HandleTypeDef hdma_spi1_rx;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -146,28 +145,15 @@ void SysTick_Handler(void)
 void EXTI0_1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_1_IRQn 0 */
-	DEBUG_LOG("EXTI\n");
-	interrupt_CH395();
+	while(HAL_GPIO_ReadPin(CH395_INT_GPIO_Port, CH395_INT_Pin) == GPIO_PIN_RESET)
+	{
+		interrupt_CH395();
+	}
   /* USER CODE END EXTI0_1_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
   /* USER CODE BEGIN EXTI0_1_IRQn 1 */
 
   /* USER CODE END EXTI0_1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel 2 and 3 interrupts.
-  */
-void DMA1_Channel2_3_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel2_3_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_spi1_rx);
-  HAL_DMA_IRQHandler(&hdma_spi1_tx);
-  /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel2_3_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

@@ -8,11 +8,12 @@
 //#define __DEBUG_
 
 #ifdef __ON_BOARD_
-#include "CH395.H"
+#include <CH395.h>
 #endif
 #include "main.h"
 #include "HTTPServer.h"
 #include "FS.h"
+#include "Delay.h"
 #include <string.h>
 
 
@@ -38,13 +39,13 @@ const char HTTP_CONTENT_TYPE_PNG[] = "image/png";
 const char HTTP_CONTENT_TYPE_JPEG[] = "image/jpeg";
 const char HTTP_CONTENT_TYPE_GIF[] = "image/gif";
 
-HTTPRequestParseState parseState = 
+HTTPRequestParseState parseStates[NUM_SOCKETS] =
 {
-	.state = 0,
+	{.state = 0,
 	.argc = 0,
 	.connection = CLOSED,
 	.method = HTTP_GET,
-	.ready = FALSE,
+	.ready = FALSE}
 };
 
 void resetHTTPParseState(HTTPRequestParseState *pS)
@@ -54,6 +55,8 @@ void resetHTTPParseState(HTTPRequestParseState *pS)
 	pS->connection = CLOSED;
 	pS->method = HTTP_GET;
 	pS->ready = FALSE;
+	pS->response_stage = RESPONSE_NOT_PREPARED;
+	pS->len_response_content_remain = 0;
 }
 
 const char* HTTPGetContentType(const char* filename)
@@ -84,8 +87,9 @@ const char* HTTPGetContentType(const char* filename)
 void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file)
 {
 	char s_tmp[32];
-	char* content_type;
-	char* buf = CH395.buffer;
+	const char* content_type;
+//	unsigned char* buf = ch395.buffer;
+	unsigned char* buf = pS->response_header;
 	BOOL is_gzip = FALSE;
 	/* preprocessing */
 	if(ENDSWITH(file.path, ".gz"))
@@ -101,13 +105,16 @@ void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file)
 	}
 	// construct header
 	*buf = 0; // clear buffer
-	strcat(buf, HTTP_STR_VERSION);
 	// Line 1
 	// HTTP/1.1
-	buf += strlen(HTTP_STR_VERSION);
+	strcat(buf, HTTP_STR_VERSION);
+	buf += strlen(HTTP_STR_VERSION); // HTTP/1.1
+	*buf = ' '; // HTTP/1.1_
+	buf++;
 	// CODE
-	sprintf(buf, " %3d OK\r\n", code);
-	buf += 8;
+	buf += u16toa(code, buf);
+	strcat(buf, " OK\r\n");
+	buf += 5;	// 200 OK\r\n
 	// Line 2: Connection
 	strcat(buf, "Connection: ");
 	buf += 12;
@@ -137,35 +144,50 @@ void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file)
 	// Line 5: Content-Length
 	strcat(buf, "Content-Length: ");
 	buf += 16;
-	sprintf(buf, "%d\r\n", file.size);
+	buf += u16toa((uint16_t)file.size, buf); // Content-Length: file.size
+//	sprintf(buf, "%d\r\n", file.size);
+	strcat(buf, HTTP_LINE_DELIM);
+	buf += 2;
 	// Line 6: end of header
-	strcat(buf, "\r\n");
-	int len_buffer = strlen(ch395.buffer);
-	while(ch395.TX_available & (1 << pS->sock_index))
-	{
-		DEBUG_LOG("Waiting for free TX buffer SOCK %d\n", pS->sock_index);
-		Delay_ms(10);
-	}
-	CH395StartSendingData(pS->sock_index, len_buffer + file.size);
-	// send header
-	CH395ContinueSendingData(ch395.buffer, len_buffer);
-	// send content
-	CH395ContinueSendingData(file.p_content, file.size);
-	CH395Complete();
+	strcat(buf, HTTP_LINE_DELIM); //\r\n\r\n
+	buf += 2;
+	pS->len_response_header = strlen(pS->response_header);
+	pS->len_response_content_remain = (uint16_t)file.size;
+	pS->response_content = file.p_content;
+	pS->response_stage = RESPONSE_PREPARED;
+	// sending request will be processed when TX_free Interrupt arrives
+	// TODO: attempt to send
+
+//	unsigned int len_buffer = strlen(ch395.buffer);
+//	while(ch395.TX_available & (1 << pS->sock_index))
+//	{
+//		DEBUG_LOG("Waiting for free TX buffer SOCK %d\n", pS->sock_index);
+//		Delay_ms(10);
+//	}
+//	CH395StartSendingData(pS->sock_index, len_buffer + file.size);
+//	// send header
+//	CH395ContinueSendingData(ch395.buffer, len_buffer);
+//	// send content
+//	CH395ContinueSendingData(file.p_content, file.size);
+//	CH395Complete();
 }
 
 void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 {
 	// construct header
-	char* buf = ch395.buffer;
+//	unsigned char* buf = ch395.buffer;
+	unsigned char* buf = pS->response_header;
 	*buf = 0; // clear buffer
 	strcat(buf, HTTP_STR_VERSION);
 	// Line 1
 	// HTTP/1.1
 	buf += strlen(HTTP_STR_VERSION);
+	*buf = ' '; // HTTP/1.1_
+	buf++;
 	// CODE
-	sprintf(buf, " %3d OK\r\n", code);
-	buf += 8;
+	buf += u16toa(code, buf);
+	strcat(buf, " OK\r\n");
+	buf += 5;	// 200 OK\r\n
 	// Line 2: Connection
 	strcat(buf, "Connection: ");
 	buf += 12;
@@ -180,6 +202,7 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 		buf += 8;
 	}
 	// Line 3: Content-Type
+	const char* content_type = HTTPGetContentType(pS->URI);
 	strcat(buf, "Content-Type: ");
 	buf += 14;
 	strcat(buf, content_type);
@@ -189,36 +212,32 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 	// Line 4: Content-Length
 	strcat(buf, "Content-Length: ");
 	buf += 16;
-	UINT16 len_content = strlen(content);
-	sprintf(buf, "%d\r\n", len_content);
-	buf += strlen(buf);
+	uint16_t len_content = strlen(content);
+	buf += u16toa(len_content, buf); // Content-Length: file.size
+//	sprintf(buf, "%d\r\n", file.size);
+	strcat(buf, HTTP_LINE_DELIM);
+	buf += 2;
 	// Line 5: End of header
-	strcat(buf, "\r\n");
+	strcat(buf, HTTP_LINE_DELIM);
 	buf += 2;
 	// Start Sending
-	UINT16 len_header = strlen(ch395.buffer);
-	do
-	{
-		DEBUG_LOG("Waiting for free TX buffer SOCK %d\n", pS->sock_index);
-		UINT8 sock_int = CH395GetSocketInt(pS->sock_index);
-	}while(!(sock_int & SINT_STAT_SENBUF_FREE));
-	CH395StartSendingData(pS->sock_index,
-			len_header + len_content);
-	CH395ContinueSendingData((UINT8*)ch395.buffer, len_header);
-	CH395ContinueSendingData((UINT8*)content, len_content);
-	CH395Complete();
+	pS->len_response_header = strlen(pS->response_header);
+	pS->len_response_content_remain = strlen(content);
+	pS->response_content = content;
+	pS->response_stage = RESPONSE_PREPARED;
 }
 
 void HTTPonNotFound(HTTPRequestParseState *pS)
 {
-	char s_tmp[MAX_LEN_URI + 3];
+	char s_tmp[MAX_LEN_URI + 4];
+	static char s_notfound[MAX_LEN_URI+16];
 	// look for file
 	if(FS_exists(&FS, pS->URI))
 	{
 		FSfile_typedef file = FS_open(&FS, pS->URI);
 		if(file.path)
 		{
-			HTTPSendFile(pS, 200, FS_open(&FS, path));
+			HTTPSendFile(pS, 200, FS_open(&FS, pS->URI));
 			return;
 		}
 	}
@@ -236,54 +255,57 @@ void HTTPonNotFound(HTTPRequestParseState *pS)
 			}
 		}
 	}
-	sprintf(ch395.buffer, "URI: %s\r\nNot found\r\n", pS->URI);
-	HTTPSendStr(pS, 404, ch395.buffer);
+	strcpy(s_notfound, "Not Found: ");
+	strncat(s_notfound, pS->URI, MAX_LEN_URI);
+	strcat(s_notfound, HTTP_LINE_DELIM);
+	HTTPSendStr(pS, 404, s_notfound);
 }
 
 void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 {
-	UINT8 i;
-	UINT8 len;
-	if(pch395->RX_received != 0)
+	uint8_t i;
+	for(i=1; i <= NUM_SOCKETS; ++i)
 	{
-		for(i=0; i < 4; ++i)
+		HTTPRequestParseState *pS= parseStates + i - 1;
+		if(((pch395->RX_received) & (1<<i)) && pS->ready) // socket recv buffer non-empty, bit_i is 1
 		{
-			if((pch395->RX_received >> i) & 0x01) // socket is connected, bit_i is 1
+			pch395->RX_received &= ~(1 << i); // clear availibility symbol
+			pS->ready = FALSE;
+			if(TRUE)
 			{
-				pch395->RX_received &= ~(1 << i); // clear availibility symbol
-				// if buffer is not empty
-				parseState.sock_index = i;
-				while(len = CH395GetRecvLength(i))
+				// TODO: respond HTTP
+				uint8_t j;
+				for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
 				{
-					if(len > 0)
+					if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
 					{
-						CH395GetRecvData(i, (len < CH395_SIZE_BUFFER)?(len):(CH395_SIZE_BUFFER-1), pch395->buffer);
-						pch395->buffer[(len < CH395_SIZE_BUFFER)?(len):(CH395_SIZE_BUFFER)]=0;
-						// parse received text
-						if(!parse_http(&parseState, pch395->buffer))
-						{
-							CH395ClearRecvBuf(i);
-						}
+						(HTTPResponders[j].func)(pS); // call HTTPResponder service function
+						break;
 					}
-					if(state.ready)
+				}
+				if(j == NUM_HTTP_RESPONDERS) // Resource not found
+				{
+					HTTPonNotFound(pS);
+				}
+				if(pS->response_stage == RESPONSE_PREPARED)
+				{
+					uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
+					uint16_t len_content_this_time = ((pS->len_response_content_remain < max_len_content)
+							? (pS->len_response_content_remain)
+									: (max_len_content));
+					CH395StartSendingData(i, pS->len_response_header + len_content_this_time);
+					CH395ContinueSendingData(pS->response_header, pS->len_response_header);
+					CH395ContinueSendingData(pS->response_content, len_content_this_time);
+					CH395Complete();
+					pS->len_response_content_remain -= len_content_this_time;
+					pS->response_content += len_content_this_time;
+					if(pS->len_response_content_remain == 0) // all content completely sent this time
 					{
-						// TODO: respond HTTP
-						UINT8 j;
-						for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
-						{
-							if(strncmp(parseState.URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
-							{
-								DEBUG_LOG("HTTP: Respond %s\n", HTTPResponders[j].uri);
-								(HTTPResponders[j].func)(&parseState); // call HTTPResponder service function
-								break;
-							}
-						}
-						if(j == NUM_HTTP_RESPONDERS) // Resource not found
-						{
-							HTTPonNotFound(&parseState);
-						}
-						CH395ClearRecvBuf(i);
-						ch395.RX_received &= ~(1 << i); // clear receive flag
+						pS->response_stage = RESPONSE_NOT_PREPARED;
+					}
+					else // content remained to be sent next time
+					{
+						pS->response_stage = RESPONSE_CONTENT_REMAIN;
 					}
 				}
 			}
@@ -314,7 +336,6 @@ char* strsepstr(char** stringp, const char* delim)
 
 BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 {
-	UINT8 error = 0;
 	char* line, *tok, *tok_arg, *line_tok_saveptr, *word_tok_saveptr, *arg_tok_saveptr;
 	switch(pS->state)
 	{
@@ -442,7 +463,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 
 
 
-char* getHTTPArg(HTTPRequestParseState *pS, const char* name)
+const char* getHTTPArg(HTTPRequestParseState *pS, const char* name)
 {
 	if(pS->argc == 0)
 		return NULL;
@@ -469,4 +490,34 @@ char* getHTTPArg(HTTPRequestParseState *pS, const char* name)
 		cur_name = name;
 	}
 	return NULL;
+}
+uint8_t atou8(const char* s)
+{
+	uint8_t i;
+	uint8_t sum = 0;
+	for(i=0; i<3 && *s; ++i) // at most 3 digits
+	{
+		sum *= 10;
+		sum += *s - '0';
+		s++;
+	}
+	return sum;
+}
+uint8_t u16toa(uint16_t d, char* buf) // return: digits
+{
+	uint8_t i = 0, j;
+	while(d)
+	{
+		buf[i++] = (d % 10) + '0';
+		d /= 10;
+	}
+	buf[i] = 0;
+	for(j = 0; j < i/2; ++j)
+	{
+		char tmp;
+		tmp = buf[j];
+		buf[j] = buf[i-j-1];
+		buf[i-j-1] = tmp; // swap
+	}
+	return i;
 }

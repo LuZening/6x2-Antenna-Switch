@@ -1,0 +1,90 @@
+Configuration	Antenna Switch 6x2
+STM32CubeMX 	5.2.0
+Date	09/27/2019
+MCU	STM32F030F4Px
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SYS	Serial_Wire	SYS_SWCLK	PA14
+SYS	Serial_Wire	SYS_SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+USART1	Asynchronous	USART1_RX	PA3
+USART1	Asynchronous	USART1_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PF0-OSC_IN	GPIO_Output	
+3	PF1-OSC_OUT	GPIO_Output	
+6	PA0	GPIO_Output	
+7	PA1	GPIO_Output	
+8	PA2	USART1_TX	
+9	PA3	USART1_RX	
+10	PA4	GPIO_Output	SCS
+11	PA5	SPI1_SCK	
+12	PA6	SPI1_MISO	
+13	PA7	SPI1_MOSI	
+14	PB1	GPIO_EXTI1	CH395_INT
+17	PA9	GPIO_Output	
+18	PA10	GPIO_Output	
+19	PA13	SYS_SWDIO	
+20	PA14	SYS_SWCLK	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SYS	Serial_Wire	SYS_SWCLK	PA14
+SYS	Serial_Wire	SYS_SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+USART1	Asynchronous	USART1_RX	PA3
+USART1	Asynchronous	USART1_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PF0-OSC_IN	GPIO_Output	
+3	PF1-OSC_OUT	GPIO_Output	
+6	PA0	GPIO_Output	
+7	PA1	GPIO_Output	
+8	PA2	USART1_TX	
+9	PA3	USART1_RX	
+10	PA4	GPIO_Output	SCS
+11	PA5	SPI1_SCK	
+12	PA6	SPI1_MISO	
+13	PA7	SPI1_MOSI	
+14	PB1	GPIO_EXTI1	CH395_INT
+17	PA9	GPIO_Output	
+18	PA10	GPIO_Output	
+19	PA13	SYS_SWDIO	
+20	PA14	SYS_SWCLK	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : Antenna Switch 6x2
+Project Folder : C:\Users\Zening\OneDrive\RADIO\Projects\6x2_Antenna_switch\MCU
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_F0 V1.10.0
+
+
+Code Generation Settings : 
+STM32Cube Firmware Library Package : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+

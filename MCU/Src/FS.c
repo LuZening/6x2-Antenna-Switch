@@ -8,11 +8,10 @@
 #include "FS.h"
 FS_typedef FS;
 
-BOOL FS_begin(FS_typedef* pFS, UINT32* addr_base)
+BOOL FS_begin(FS_typedef* pFS, uint32_t* addr_base)
 {
-	if((UINT32)addr_base >= 0)
+	if((uint32_t)addr_base < MAX_ADDR && ((pFS->n_files = *(uint32_t*)(addr_base)) != 0xffffffff))
 	{
-		pFS->n_files = *(UINT32*)(addr_base); // read number of files from base address
 		pFS->addr_base = addr_base;
 		return TRUE;
 	}
@@ -25,8 +24,8 @@ BOOL FS_begin(FS_typedef* pFS, UINT32* addr_base)
 FSfile_typedef FS_open(FS_typedef* pFS, const char* path)
 {
 	int i = pFS->n_files;
-	UINT32* addr = (UINT32*)pFS->addr_base;  // base_addr: number_of_files:4B, addr_file_nodes:4B[n_files]
-	UINT32 offset = (UINT32)pFS->addr_base;
+	uint32_t* addr = (uint32_t*)pFS->addr_base;  // base_addr: number_of_files:4B, addr_file_nodes:4B[n_files]
+	uint32_t offset = (uint32_t)pFS->addr_base;
 
 	FSfile_typedef file;
 	file.size = 0;
@@ -35,12 +34,14 @@ FSfile_typedef FS_open(FS_typedef* pFS, const char* path)
 	do{
 		addr ++;
 		i--;
-		char* _path = (char*)((UINT32*)(*addr+offset)+2);
+		char* _path = (char*)((uint32_t*)(*addr+offset)+2);
 		if(strcmp(path, _path) == 0) // path matched
 		{
 			file.path = _path;
-			file.p_content = (UINT8*)(*((UINT32*)(*addr + offset) + 1)+offset);
-			file.size = *(UINT32*)(*addr + offset);
+			// 4-Byte alignment!!!!!!!!!
+			file.p_content = (uint8_t*)(*((uint32_t*)(*addr + offset) + 1)+offset);
+			file.size = *(uint32_t*)(*addr + offset);
+			break;
 		}
 	}while(i > 0);
 	return file;
@@ -48,16 +49,16 @@ FSfile_typedef FS_open(FS_typedef* pFS, const char* path)
 
 int FS_size(FS_typedef* pFS, const char* path)
 {
-	UINT32 i;
-	UINT32* addr = (UINT32*)pFS->addr_base;
-	UINT32 offset = (UINT32)pFS->addr_base;
+	uint32_t i;
+	uint32_t* addr = (uint32_t*)pFS->addr_base;
+	uint32_t offset = (uint32_t)pFS->addr_base;
 	for(i=0; i<pFS->n_files; ++i)
 	{
 		addr++;
-		char* _path = (char*)((UINT32*)(*addr+offset)+2);
+		char* _path = (char*)((uint32_t*)(*addr+offset)+2);
 		if(strcmp(path, _path) == 0)
 		{
-			return *(UINT32*)(*addr + offset);
+			return *(uint32_t*)(*addr + offset);
 		}
 	}
 	return -1;
@@ -65,13 +66,13 @@ int FS_size(FS_typedef* pFS, const char* path)
 
 BOOL FS_exists(FS_typedef* pFS, const char* path)
 {
-	UINT32 i;
-	UINT32* addr = (UINT32*)pFS->addr_base;
-	UINT32 offset = (UINT32)pFS->addr_base;
+	uint32_t i;
+	uint32_t* addr = (uint32_t*)pFS->addr_base;
+	uint32_t offset = (uint32_t)pFS->addr_base;
 	for(i=0; i<pFS->n_files; ++i)
 	{
 		addr++;
-		char* _path = (char*)((UINT32*)(*addr+offset)+2);
+		char* _path = (char*)((uint32_t*)(*addr+offset)+2);
 		if(strcmp(path, _path) == 0)
 		{
 			return TRUE;
