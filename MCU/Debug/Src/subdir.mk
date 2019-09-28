@@ -9,6 +9,7 @@ C_SRCS += \
 ../Src/CH395SPI_HW.c \
 ../Src/Delay.c \
 ../Src/FS.c \
+../Src/Flash_EEPROM.c \
 ../Src/HTTPResponders.c \
 ../Src/HTTPServer.c \
 ../Src/main.c \
@@ -24,6 +25,7 @@ OBJS += \
 ./Src/CH395SPI_HW.o \
 ./Src/Delay.o \
 ./Src/FS.o \
+./Src/Flash_EEPROM.o \
 ./Src/HTTPResponders.o \
 ./Src/HTTPServer.o \
 ./Src/main.o \
@@ -39,6 +41,7 @@ C_DEPS += \
 ./Src/CH395SPI_HW.d \
 ./Src/Delay.d \
 ./Src/FS.d \
+./Src/Flash_EEPROM.d \
 ./Src/HTTPResponders.d \
 ./Src/HTTPServer.d \
 ./Src/main.d \
@@ -60,6 +63,8 @@ Src/Delay.o: ../Src/Delay.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m0 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F030x6 -DDEBUG -c -I../Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -Og -ffunction-sections -fdata-sections -Wall -Wswitch-enum -fstack-usage -MMD -MP -MF"Src/Delay.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 Src/FS.o: ../Src/FS.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m0 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F030x6 -DDEBUG -c -I../Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -Og -ffunction-sections -fdata-sections -Wall -Wswitch-enum -fstack-usage -MMD -MP -MF"Src/FS.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
+Src/Flash_EEPROM.o: ../Src/Flash_EEPROM.c
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m0 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F030x6 -DDEBUG -c -I../Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -Og -ffunction-sections -fdata-sections -Wall -Wswitch-enum -fstack-usage -MMD -MP -MF"Src/Flash_EEPROM.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 Src/HTTPResponders.o: ../Src/HTTPResponders.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m0 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F030x6 -DDEBUG -c -I../Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -Og -ffunction-sections -fdata-sections -Wall -Wswitch-enum -fstack-usage -MMD -MP -MF"Src/HTTPResponders.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 Src/HTTPServer.o: ../Src/HTTPServer.c

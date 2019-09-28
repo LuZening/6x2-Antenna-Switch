@@ -38,6 +38,7 @@ typedef struct
 extern CH395_TypeDef ch395;
 // initialize CH395
 BOOL CH395TCPServerStart(uint32_t ip, uint16_t port); // start TCP/IP server on CH395 on socket 0, allow multiple connections
+// TODO: CH395 GPIO
 /* ********************************************************************************************************************* */
 /* 命令代码 */
 /* 一个命令操作顺序包含:

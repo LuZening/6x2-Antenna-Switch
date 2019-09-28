@@ -3,3 +3,5 @@ HTTPResponders.c:26:6:onSwitch	24	static
 HTTPResponders.c:72:6:onStatus	8	static
 HTTPResponders.c:77:6:onReset	8	static
 HTTPResponders.c:49:6:onGetAlloc	16	static
+HTTPResponders.c:87:6:onSetLabel	24	static
+HTTPResponders.c:109:6:onGetLabel	16	static

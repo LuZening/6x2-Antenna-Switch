@@ -92,5 +92,7 @@ void resetHTTPParseState(HTTPRequestParseState *pS);
 //void HTTPRegisterResponder(const char* uri, HTTPResponder_FuncType func);
 uint8_t atou8(const char* s);
 uint8_t u16toa(uint16_t, char*);
+char* strcpy_f(char* dest, const char* src); // fast strcpy
+char* strncpy_f(char* dest, const char* src, uint16_t len);
 
 #endif /* HTTPSERVER_H_ */

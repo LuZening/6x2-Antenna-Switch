@@ -31,7 +31,7 @@ BOOL CH395TCPServerStart(uint32_t ip, uint16_t port)
 		CH395CMDSetIPAddr((uint8_t*)(&ip)); // set IP address;
 		CH395CMDSetGWIPAddr((uint8_t*)(&ip)); // set gateway IP
 	}
-	// TODO: enable multi connections
+	//enable multi connections
 	CH395SetStartPara(FUN_PARA_FLAG_TCP_SERVER);
 	// set sockets
 	for(i=0; i<CH395_SOCKS_AVAIL; ++i)

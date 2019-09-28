@@ -8,7 +8,7 @@
 #include "main.h"
 #include "HTTPServer.h"
 #include "FS.h"
-
+#include "Flash_EEPROM.h"
 
 /* URI: /
  * METHOD: GET
@@ -20,7 +20,7 @@ void onHome(HTTPRequestParseState *pS)
 }
 
 /* URI: /switch
- * METHOD: GET
+ * METHOD: POST
  * Args: A=[0-6]&B=[0-6]
  * Usage: switch antenna */
 void onSwitch(HTTPRequestParseState* pS)
@@ -79,14 +79,55 @@ void onReset(HTTPRequestParseState* pS)
 	HTTPSendStr(pS, 200, "Reset\r\n");
 //	DEBUG_LOG("Restart\n");
 }
-
+// TODO: set get label
+/* URI: /getAlloc
+ * METHOD: POST
+ * Args: ant1=name&ant2=name&ant3=name&ant4=name&ant5=name&ant6=name
+ * Usage: set antenna label*/
 void onSetLabel(HTTPRequestParseState* pS)
 {
+	uint8_t i;
+	char s_tmp[5] = "ant";
+	if(pS->argc == 0)
+	{
+		HTTPSendStr(pS, 300, "Bad args");
+		return;
+	}
+	for(i=1; i<=NUM_ANTENNA; ++i)
+	{
+		u16toa(i, s_tmp+3); //s_tmp = ant[i]
+		char* s_label;
+		if((s_label = getHTTPArg(pS, s_tmp)) != NULL)
+		{
+			strncpy(SavedData.ant_labels[i-1], s_label, MAX_LEN_ANT_LABEL);
+		}
+	}
+	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
+	HTTPSendStr(pS, 200, "OK");
 }
 
 void onGetLabel(HTTPRequestParseState* pS)
 {
+	static char s_tmp[(MAX_LEN_ANT_LABEL+5) * NUM_ANTENNA];
+	uint8_t i;
+	char* s = s_tmp;
+	for(i=0; i<NUM_ANTENNA; ++i)
+	{
+		s = strcpy_f(s, "ant");
+		*s = i + '1';
+		s++;
+		*s = '=';
+		s++;
+		s = strncpy_f(s, SavedData.ant_labels[i], MAX_LEN_ANT_LABEL);
+		if(i != NUM_ANTENNA-1)
+		{
+			*s = '&';
+			s++;
+		}
+	}
+	HTTPSendStr(pS, 200, s_tmp);
 }
+
 HTTPResponder_typedef HTTPResponders[] ={
 		{.uri="/", .func=onHome},
 		{.uri = "/switch", .func=onSwitch},

@@ -41,6 +41,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+
 typedef struct
 {
 	PIN_typedef PIN_BCD0;
@@ -86,6 +87,9 @@ void Error_Handler(void);
 #define CH395_INT_EXTI_IRQn EXTI0_1_IRQn
 #define NUM_ANTENNA 6
 #define NUM_TRANCEIVERS 2
+#define MAX_LEN_ANT_LABEL 15
+#define MAX_LEN_ANT_LABELS ((MAX_LEN_ANT_LABEL + 1) * NUM_ANTENNA)
+#define EEPROM_VALID_BYTE 0xAA
 #define N_SELECTORS NUM_TRANCEIVERS
 #define BCD2INT(D0,D1,D2) (D2<<2 | D1<<1 | D0);
 #define BCDM1_0 2
@@ -94,7 +98,15 @@ void Error_Handler(void);
 #define BCDM2_0 4
 #define BCDM2_1 6
 #define BCDM2_2 5
-#define FS_BASE_ADDR 0x08004000 // starting after the first 16KB flash bank
+#define FS_BASE_ADDR 0x08004400 // starting after the first 16KB flash bank
+// Saved data on EEPROM
+typedef struct
+{
+	uint8_t EEPROM_valid_ID;
+	char ant_labels[NUM_ANTENNA][MAX_LEN_ANT_LABEL];
+} SavedData_typedef;
+extern SavedData_typedef SavedData;
+
 // CH395 available sockets
 // CH395 interrupt handler
 void interrupt_CH395();

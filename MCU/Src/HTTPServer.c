@@ -155,21 +155,7 @@ void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file)
 	pS->len_response_content_remain = (uint16_t)file.size;
 	pS->response_content = file.p_content;
 	pS->response_stage = RESPONSE_PREPARED;
-	// sending request will be processed when TX_free Interrupt arrives
-	// TODO: attempt to send
 
-//	unsigned int len_buffer = strlen(ch395.buffer);
-//	while(ch395.TX_available & (1 << pS->sock_index))
-//	{
-//		DEBUG_LOG("Waiting for free TX buffer SOCK %d\n", pS->sock_index);
-//		Delay_ms(10);
-//	}
-//	CH395StartSendingData(pS->sock_index, len_buffer + file.size);
-//	// send header
-//	CH395ContinueSendingData(ch395.buffer, len_buffer);
-//	// send content
-//	CH395ContinueSendingData(file.p_content, file.size);
-//	CH395Complete();
 }
 
 void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
@@ -273,7 +259,6 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 			pS->ready = FALSE;
 			if(TRUE)
 			{
-				// TODO: respond HTTP
 				uint8_t j;
 				for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
 				{
@@ -374,7 +359,6 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 			}
 			else
 				goto HTTP_PARSE_ERROR;
-			// TODO: 2.1 parse args
 			char* s_args = strchr(pS->URI, '?');
 			if(pS->method == HTTP_GET && s_args != NULL)
 			{
@@ -520,4 +504,31 @@ uint8_t u16toa(uint16_t d, char* buf) // return: digits
 		buf[i-j-1] = tmp; // swap
 	}
 	return i;
+}
+
+// Fast strcpy
+// Return: pointer to the end of dest + src
+char* strcpy_f(char* dest, const char* src)
+{
+	while(*src)
+	{
+		*dest = *src;
+		src++;
+		dest++;
+	}
+	*dest = 0;
+	return dest;
+}
+
+char* strncpy_f(char* dest, const char* src, uint16_t len)
+{
+	while(*src && len)
+	{
+		*dest = *src;
+		src++;
+		dest++;
+		len--;
+	}
+	*dest = 0;
+	return dest;
 }

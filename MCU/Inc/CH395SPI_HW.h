@@ -17,7 +17,6 @@ extern PIN_typedef CH395_SCS; // Chip selected pin
 #define hspi hspi1
 
 
-// TODO: precise delay
 void CH395_PORT_INIT(void);
 uint8_t SPI395Exchange( uint8_t d );
 void xWriteCH395Cmd(uint8_t cmd);

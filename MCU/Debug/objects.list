@@ -21,6 +21,7 @@
 "Src/CH395SPI_HW.o"
 "Src/Delay.o"
 "Src/FS.o"
+"Src/Flash_EEPROM.o"
 "Src/HTTPResponders.o"
 "Src/HTTPServer.o"
 "Src/main.o"

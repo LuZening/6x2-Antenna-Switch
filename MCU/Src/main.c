@@ -26,11 +26,11 @@
 #include <string.h>
 #include <CH395.h>
 #include "Delay.h"
+#include "Flash_EEPROM.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -56,6 +56,8 @@ const PIN_typedef BCD2_0 = {GPIOA, GPIO_PIN_1};
 const PIN_typedef BCD2_1 = {GPIOA, GPIO_PIN_0};
 const PIN_typedef BCD2_2 = {GPIOF, GPIO_PIN_1};
 AntennaSelector_typedef Selector[N_SELECTORS];
+// Saved data on EEPROM
+SavedData_typedef SavedData;
 // TODO: antenna labels non-volatile on FLASH
 uint8_t IP[4] = {192, 168, 4, 1};
 uint16_t port = 80;
@@ -64,6 +66,8 @@ volatile BOOL flag_PHY_change;
 volatile BOOL flag_IP_conflict;
 volatile BOOL flag_CH395_ready = FALSE;
 const char HTTP_STR_HELLO[] = "Hello\r\n";
+// web config
+char ant_labels[MAX_LEN_ANT_LABELS] = {0}; // antenna labels
 //extern const uint8_t FS_test_buffer[];
 /* USER CODE END PV */
 
@@ -129,7 +133,18 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+// Load EEPROM data
+  EEPROM_ReadBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
+  if(SavedData.EEPROM_valid_ID != EEPROM_VALID_BYTE)
+  {
+	  // create a new EEPROM image
+	  memset(SavedData.ant_labels, 0, sizeof(SavedData.ant_labels));
+	  SavedData.EEPROM_valid_ID = EEPROM_VALID_BYTE;
+	  EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
+	  EEPROM_ReadBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
+  }
   DEBUG_LOG("Self checking...\n");
+
 //   Check FS
   FS_begin(&FS, (uint32_t*)FS_BASE_ADDR);
   FSfile_typedef file = FS_open(&FS, "/a.txt");
