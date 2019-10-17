@@ -99,6 +99,8 @@ void Error_Handler(void);
 #define BCDM2_1 6
 #define BCDM2_2 5
 #define FS_BASE_ADDR 0x08004400 // starting after the first 16KB flash bank
+#define SCHED_INTERVAL 2000 // 2us
+#define RW485_ON_CH395 7// 485 RW pin on CH395 extended GPIOs
 // Saved data on EEPROM
 typedef struct
 {

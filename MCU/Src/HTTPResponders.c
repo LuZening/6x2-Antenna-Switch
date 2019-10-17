@@ -29,7 +29,6 @@ void onSwitch(HTTPRequestParseState* pS)
 	const char *B = getHTTPArg(pS, "B");
 	if(A && B)
 	{
-		//  TODO: remove stdlib
 		uint8_t nA = atou8(A);
 		uint8_t nB = atou8(B);
 		if(nA <= NUM_ANTENNA && nB<=NUM_ANTENNA)
@@ -79,7 +78,6 @@ void onReset(HTTPRequestParseState* pS)
 	HTTPSendStr(pS, 200, "Reset\r\n");
 //	DEBUG_LOG("Restart\n");
 }
-// TODO: set get label
 /* URI: /getAlloc
  * METHOD: POST
  * Args: ant1=name&ant2=name&ant3=name&ant4=name&ant5=name&ant6=name

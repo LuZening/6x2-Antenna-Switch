@@ -55,6 +55,7 @@ const PIN_typedef BCD1_2 = {GPIOA, GPIO_PIN_9};
 const PIN_typedef BCD2_0 = {GPIOA, GPIO_PIN_1};
 const PIN_typedef BCD2_1 = {GPIOA, GPIO_PIN_0};
 const PIN_typedef BCD2_2 = {GPIOF, GPIO_PIN_1};
+const PIN_typedef RW485 = {GPIOF, GPIO_PIN_15}; // Placeholder, actually on extended CH395 GPIO7
 AntennaSelector_typedef Selector[N_SELECTORS];
 // Saved data on EEPROM
 SavedData_typedef SavedData;
@@ -148,14 +149,21 @@ int main(void)
 //   Check FS
   FS_begin(&FS, (uint32_t*)FS_BASE_ADDR);
   FSfile_typedef file = FS_open(&FS, "/a.txt");
+  // USART
+  begin_serial485(p485, huart1, RW_485, SCHED_INTERVAL / 1000);
+  HAL_UART_Receive_IT(huart1, p485->rx_buffer, 1);
+  // don't forget to override the callback function of USART1
 //   Check ch395
   uint8_t i;
 RESET_CH395:
 	Delay_ms(300); // wait for CH395 being ready from power on`	q1was
 	CH395CMDReset();
 	Delay_ms(200);
+	// initialize CH395 GPIO settings to INPUT/PULL DOWN
+	CH395WriteGPIOAddr(GPIO_DIR_REG, 0);
+	CH395WriteGPIOAddr(GPIO_PU_REG, 0);
+	CH395WriteGPIOAddr(GPIO_PD_REG, 0xff);
   // initialize TCP server
-	flag_CH395_ready = FALSE;
   flag_CH395_ready = CH395TCPServerStart(*(uint32_t*)IP, port);
   flag_PHY_change = FALSE;
   flag_IP_conflict = FALSE;
@@ -171,7 +179,19 @@ RESET_CH395:
 	  {
 		  HTTPHandle(&ch395);
 	  }
+	  // execute 485 command
+	  if(p485->is_command_ready)
+	  {
+		  if(execute_command(p485))
+		  {
+			  send_serial485(p485, "\r");
+		  }
+		  else
+			  send_serial485(p485, "?>\r");
+
+	  }
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -356,6 +376,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	onReceived_serial485(p485);
+}
 
 void interrupt_CH395()
 {
@@ -427,7 +451,8 @@ void interrupt_CH395()
 			{
 				HTTPRequestParseState* pS = parseStates + i - 1;
 				uint16_t len = CH395GetRecvLength(i);
-				CH395GetRecvData(i, (len < CH395_SIZE_BUFFER)?(len):(CH395_SIZE_BUFFER-1), ch395.buffer);
+				CH395GetRecvData(i, (len < CH395_SIZE_BUFFER)?(len):(len = CH395_SIZE_BUFFER-1), ch395.buffer);
+				ch395.buffer[len] = 0; // terminate the recved text stream
 				resetHTTPParseState(pS);
 				pS->sock_index = i;
 				if(parse_http(pS, ch395.buffer))
