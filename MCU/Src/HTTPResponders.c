@@ -21,12 +21,12 @@ void onHome(HTTPRequestParseState *pS)
 
 /* URI: /switch
  * METHOD: POST
- * Args: A=[0-6]&B=[0-6]
+ * Args: sel1=[0-6]&sel2=[0-6]
  * Usage: switch antenna */
 void onSwitch(HTTPRequestParseState* pS)
 {
-	const char *A = getHTTPArg(pS, "A");
-	const char *B = getHTTPArg(pS, "B");
+	const char *A = getHTTPArg(pS, "sel1");
+	const char *B = getHTTPArg(pS, "sel2");
 	if(A && B)
 	{
 		uint8_t nA = atou8(A);
@@ -51,13 +51,13 @@ void onGetAlloc(HTTPRequestParseState* pS)
 	uint8_t d = get_Antenna();
 	char *p;
 	p = s_tmp;
-	strcpy(p, "A=");
+	strcpy(p, "sel1=");
 	p+=2;
-	*p = (uint8_t)(d & 0xf) + '0'; // "A=%d"
+	*p = (uint8_t)(d & 0xf) + '0'; // "sel1=%d"
 	p++;
-	strcpy(p, "&B="); // "A=%d&B="
+	strcpy(p, "&sel2="); // "sel1=%d&sel2="
 	p+=3;
-	*p = (uint8_t)(d >> 4) + '0'; // "A=%d&B=%d"
+	*p = (uint8_t)(d >> 4) + '0'; // "sel1=%d&sel2=%d"
 	p++;
 	strcpy(p, "\r\n");
 	p+=2;

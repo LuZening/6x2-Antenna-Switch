@@ -1,6 +1,6 @@
-main.c:167:6:SystemClock_Config	96	static
-main.c:93:5:main	56	static
-main.c:343:6:interrupt_CH395	48	static
-main.c:441:6:switch_Antenna	40	static
-main.c:459:9:get_Antenna	8	static
-main.c:477:6:Error_Handler	0	static
+main.c:205:6:SystemClock_Config	96	static
+main.c:101:5:main	56	static
+main.c:385:6:interrupt_CH395	48	static
+main.c:492:6:switch_Antenna	40	static
+main.c:510:9:get_Antenna	8	static
+main.c:528:6:Error_Handler	0	static

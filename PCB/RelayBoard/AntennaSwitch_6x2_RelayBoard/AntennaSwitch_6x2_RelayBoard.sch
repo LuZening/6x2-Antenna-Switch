@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:AntennaSwitch_6x2_RelayBoard-cache
 EELAYER 28 0
 EELAYER END
 $Descr A4 11693 8268
@@ -13,215 +14,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L MySchLib:FINDER-40.61 K7
-U 1 1 5CC76494
-P 2350 2600
-F 0 "K7" V 2917 2600 50  0000 C CNN
-F 1 "FINDER-40.61" V 2826 2600 50  0000 C CNN
-F 2 "MyPCBLib:Finder_40.61" H 3490 2560 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 2350 2600 50  0001 C CNN
-	1    2350 2600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K8
-U 1 1 5CC78AB9
-P 3800 2600
-F 0 "K8" V 4367 2600 50  0000 C CNN
-F 1 "FINDER-40.61" V 4276 2600 50  0000 C CNN
-F 2 "MyPCBLib:Finder_40.61" H 4940 2560 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 3800 2600 50  0001 C CNN
-	1    3800 2600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K9
-U 1 1 5CC79E96
-P 5200 2600
-F 0 "K9" V 5767 2600 50  0000 C CNN
-F 1 "FINDER-40.61" V 5676 2600 50  0000 C CNN
-F 2 "MyPCBLib:Finder_40.61" H 6340 2560 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 5200 2600 50  0001 C CNN
-	1    5200 2600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K10
-U 1 1 5CC7AD99
-P 6650 2600
-F 0 "K10" V 7217 2600 50  0000 C CNN
-F 1 "FINDER-40.61" V 7126 2600 50  0000 C CNN
-F 2 "MyPCBLib:Finder_40.61" H 7790 2560 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 6650 2600 50  0001 C CNN
-	1    6650 2600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K11
-U 1 1 5CC7BBE2
-P 7850 2600
-F 0 "K11" V 8417 2600 50  0000 C CNN
-F 1 "FINDER-40.61" V 8326 2600 50  0000 C CNN
-F 2 "MyPCBLib:Finder_40.61" H 8990 2560 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 7850 2600 50  0001 C CNN
-	1    7850 2600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K12
-U 1 1 5CC7D38B
-P 9500 2650
-F 0 "K12" V 10067 2650 50  0000 C CNN
-F 1 "FINDER-40.61" V 9976 2650 50  0000 C CNN
-F 2 "MyPCBLib:Finder_40.61" H 10640 2610 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 9500 2650 50  0001 C CNN
-	1    9500 2650
-	0    -1   -1   0   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K13
-U 1 1 5CC86E6B
-P 2100 3800
-F 0 "K13" H 1670 3754 50  0000 R CNN
-F 1 "FINDER-40.61" H 1670 3845 50  0000 R CNN
-F 2 "MyPCBLib:Finder_40.61" H 3240 3760 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 2100 3800 50  0001 C CNN
-	1    2100 3800
-	1    0    0    1   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K14
-U 1 1 5CC8BB4F
-P 3750 3800
-F 0 "K14" H 3320 3754 50  0000 R CNN
-F 1 "FINDER-40.61" H 3320 3845 50  0000 R CNN
-F 2 "MyPCBLib:Finder_40.61" H 4890 3760 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 3750 3800 50  0001 C CNN
-	1    3750 3800
-	1    0    0    1   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K15
-U 1 1 5CC8E4A4
-P 5200 3800
-F 0 "K15" H 4770 3754 50  0000 R CNN
-F 1 "FINDER-40.61" H 4770 3845 50  0000 R CNN
-F 2 "MyPCBLib:Finder_40.61" H 6340 3760 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 5200 3800 50  0001 C CNN
-	1    5200 3800
-	1    0    0    1   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K16
-U 1 1 5CC904FF
-P 6700 3800
-F 0 "K16" H 6270 3754 50  0000 R CNN
-F 1 "FINDER-40.61" H 6270 3845 50  0000 R CNN
-F 2 "MyPCBLib:Finder_40.61" H 7840 3760 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 6700 3800 50  0001 C CNN
-	1    6700 3800
-	1    0    0    1   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K17
-U 1 1 5CC934D2
-P 8150 3800
-F 0 "K17" H 7720 3754 50  0000 R CNN
-F 1 "FINDER-40.61" H 7720 3845 50  0000 R CNN
-F 2 "MyPCBLib:Finder_40.61" H 9290 3760 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 8150 3800 50  0001 C CNN
-	1    8150 3800
-	1    0    0    1   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K18
-U 1 1 5CC99F25
-P 9650 3800
-F 0 "K18" H 9220 3754 50  0000 R CNN
-F 1 "FINDER-40.61" H 9220 3845 50  0000 R CNN
-F 2 "MyPCBLib:Finder_40.61" H 10790 3760 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 9650 3800 50  0001 C CNN
-	1    9650 3800
-	1    0    0    1   
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K1
-U 1 1 5CCA79D0
-P 2100 1250
-F 0 "K1" H 2530 1296 50  0000 L CNN
-F 1 "FINDER-40.61" H 2530 1205 50  0000 L CNN
-F 2 "MyPCBLib:Finder_40.61" H 3240 1210 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 2100 1250 50  0001 C CNN
-	1    2100 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K2
-U 1 1 5CCB0253
-P 3750 1250
-F 0 "K2" H 4180 1296 50  0000 L CNN
-F 1 "FINDER-40.61" H 4180 1205 50  0000 L CNN
-F 2 "MyPCBLib:Finder_40.61" H 4890 1210 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 3750 1250 50  0001 C CNN
-	1    3750 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K3
-U 1 1 5CCB5A88
-P 5200 1250
-F 0 "K3" H 5630 1296 50  0000 L CNN
-F 1 "FINDER-40.61" H 5630 1205 50  0000 L CNN
-F 2 "MyPCBLib:Finder_40.61" H 6340 1210 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 5200 1250 50  0001 C CNN
-	1    5200 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K4
-U 1 1 5CCBAE43
-P 6700 1250
-F 0 "K4" H 7130 1296 50  0000 L CNN
-F 1 "FINDER-40.61" H 7130 1205 50  0000 L CNN
-F 2 "MyPCBLib:Finder_40.61" H 7840 1210 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 6700 1250 50  0001 C CNN
-	1    6700 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K5
-U 1 1 5CCBE920
-P 8150 1250
-F 0 "K5" H 8580 1296 50  0000 L CNN
-F 1 "FINDER-40.61" H 8580 1205 50  0000 L CNN
-F 2 "MyPCBLib:Finder_40.61" H 9290 1210 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 8150 1250 50  0001 C CNN
-	1    8150 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L MySchLib:FINDER-40.61 K6
-U 1 1 5CCC2397
-P 9650 1250
-F 0 "K6" H 10080 1296 50  0000 L CNN
-F 1 "FINDER-40.61" H 10080 1205 50  0000 L CNN
-F 2 "MyPCBLib:Finder_40.61" H 10790 1210 50  0001 C CNN
-F 3 "http://gfinder.findernet.com/assets/Series/353/S40EN.pdf" H 9650 1250 50  0001 C CNN
-	1    9650 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L Transistor_Array:ULN2003 U1
-U 1 1 5CD0BD56
-P 3300 5150
-F 0 "U1" V 3346 5680 50  0000 L CNN
-F 1 "ULN2003" V 3255 5680 50  0000 L CNN
-F 2 "digikey-footprints:SOIC-16_W3.90mm" H 3350 4600 50  0001 L CNN
-F 3 "http://www.ti.com/lit/ds/symlink/uln2003a.pdf" H 3400 4950 50  0001 C CNN
-	1    3300 5150
-	0    1    -1   0   
-$EndComp
 $Comp
 L Connector_Generic:Conn_01x08 J9
 U 1 1 5CD277B9
@@ -243,17 +35,6 @@ F 2 "Connectors_Molex:Molex_KK-6410-08_08x2.54mm_Straight" H 3950 7650 50  0001 
 F 3 "~" H 3950 7650 50  0001 C CNN
 	1    3950 7650
 	0    -1   1    0   
-$EndComp
-$Comp
-L Transistor_Array:ULN2003 U2
-U 1 1 5CD48751
-P 5000 5150
-F 0 "U2" V 5046 5680 50  0000 L CNN
-F 1 "ULN2003" V 4955 5680 50  0000 L CNN
-F 2 "digikey-footprints:SOIC-16_W3.90mm" H 5050 4600 50  0001 L CNN
-F 3 "http://www.ti.com/lit/ds/symlink/uln2003a.pdf" H 5100 4950 50  0001 C CNN
-	1    5000 5150
-	0    1    -1   0   
 $EndComp
 Wire Wire Line
 	1950 7250 1950 7050
@@ -342,160 +123,6 @@ F 3 "" H 5000 7500 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1350 6950 1800 6950
-$Comp
-L 74xx:74HC04 U3
-U 1 1 5D2D1A0D
-P 2150 6250
-F 0 "U3" V 2196 6070 50  0000 R CNN
-F 1 "74HC04" V 2105 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 2150 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 2150 6250 50  0001 C CNN
-	1    2150 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U3
-U 2 1 5D2E322F
-P 2500 6250
-F 0 "U3" V 2546 6070 50  0000 R CNN
-F 1 "74HC04" V 2455 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 2500 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 2500 6250 50  0001 C CNN
-	2    2500 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U3
-U 3 1 5D2E66E1
-P 2850 6250
-F 0 "U3" V 2896 6070 50  0000 R CNN
-F 1 "74HC04" V 2805 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 2850 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 2850 6250 50  0001 C CNN
-	3    2850 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U3
-U 4 1 5D2E818A
-P 3200 6250
-F 0 "U3" V 3246 6070 50  0000 R CNN
-F 1 "74HC04" V 3155 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 3200 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 3200 6250 50  0001 C CNN
-	4    3200 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U3
-U 5 1 5D2EAB20
-P 3550 6250
-F 0 "U3" V 3596 6070 50  0000 R CNN
-F 1 "74HC04" V 3505 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 3550 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 3550 6250 50  0001 C CNN
-	5    3550 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U3
-U 6 1 5D2EF5E3
-P 3900 6250
-F 0 "U3" V 3946 6070 50  0000 R CNN
-F 1 "74HC04" V 3855 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 3900 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 3900 6250 50  0001 C CNN
-	6    3900 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U3
-U 7 1 5D2F87CD
-P 900 6150
-F 0 "U3" H 1130 6196 50  0000 L CNN
-F 1 "74HC04" H 1130 6105 50  0000 L CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 900 6150 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 900 6150 50  0001 C CNN
-	7    900  6150
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 1 1 5D31444F
-P 4300 6250
-F 0 "U4" V 4346 6070 50  0000 R CNN
-F 1 "74HC04" V 4255 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 4300 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 4300 6250 50  0001 C CNN
-	1    4300 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 2 1 5D314455
-P 4650 6250
-F 0 "U4" V 4696 6070 50  0000 R CNN
-F 1 "74HC04" V 4605 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 4650 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 4650 6250 50  0001 C CNN
-	2    4650 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 3 1 5D31445B
-P 5000 6250
-F 0 "U4" V 5046 6070 50  0000 R CNN
-F 1 "74HC04" V 4955 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 5000 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 5000 6250 50  0001 C CNN
-	3    5000 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 4 1 5D314461
-P 5350 6250
-F 0 "U4" V 5396 6070 50  0000 R CNN
-F 1 "74HC04" V 5305 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 5350 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 5350 6250 50  0001 C CNN
-	4    5350 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 5 1 5D314467
-P 5700 6250
-F 0 "U4" V 5746 6070 50  0000 R CNN
-F 1 "74HC04" V 5655 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 5700 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 5700 6250 50  0001 C CNN
-	5    5700 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 6 1 5D31446D
-P 6050 6250
-F 0 "U4" V 6096 6070 50  0000 R CNN
-F 1 "74HC04" V 6005 6070 50  0000 R CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 6050 6250 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 6050 6250 50  0001 C CNN
-	6    6050 6250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74xx:74HC04 U4
-U 7 1 5D314473
-P 1350 6150
-F 0 "U4" H 1580 6196 50  0000 L CNN
-F 1 "74HC04" H 1580 6105 50  0000 L CNN
-F 2 "digikey-footprints:SOIC-14_W3.9mm" H 1350 6150 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 1350 6150 50  0001 C CNN
-	7    1350 6150
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	2150 7250 2150 6550
 Wire Wire Line
@@ -503,31 +130,21 @@ Wire Wire Line
 Wire Wire Line
 	2250 6600 2500 6600
 Wire Wire Line
-	2500 6600 2500 6550
-Wire Wire Line
 	2350 7250 2350 6650
 Wire Wire Line
 	2350 6650 2850 6650
-Wire Wire Line
-	2850 6650 2850 6550
 Wire Wire Line
 	2450 7250 2450 6700
 Wire Wire Line
 	2450 6700 3200 6700
 Wire Wire Line
-	3200 6700 3200 6550
-Wire Wire Line
 	2550 7250 2550 6750
 Wire Wire Line
 	2550 6750 3550 6750
 Wire Wire Line
-	3550 6750 3550 6550
-Wire Wire Line
 	2650 7250 2650 6800
 Wire Wire Line
 	2650 6800 3900 6800
-Wire Wire Line
-	3900 6800 3900 6550
 Wire Wire Line
 	4300 7100 4300 6550
 Wire Wire Line
@@ -539,15 +156,9 @@ Wire Wire Line
 Wire Wire Line
 	3950 7250 5350 7250
 Wire Wire Line
-	5350 7250 5350 6550
-Wire Wire Line
 	4050 7300 5700 7300
 Wire Wire Line
 	5700 7300 5700 6550
-Wire Wire Line
-	4150 7350 6050 7350
-Wire Wire Line
-	6050 7350 6050 6550
 $Comp
 L power:GND #PWR049
 U 1 1 5D384030
@@ -590,141 +201,6 @@ Wire Wire Line
 	1800 7400 1800 7500
 Wire Wire Line
 	1800 7500 1550 7500
-Connection ~ 1550 7500
-Wire Wire Line
-	1550 7500 1550 7550
-$Comp
-L power:+3.3V #PWR042
-U 1 1 5D3AFCE3
-P 900 5450
-F 0 "#PWR042" H 900 5300 50  0001 C CNN
-F 1 "+3.3V" H 915 5623 50  0000 C CNN
-F 2 "" H 900 5450 50  0001 C CNN
-F 3 "" H 900 5450 50  0001 C CNN
-	1    900  5450
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	900  5450 900  5550
-Wire Wire Line
-	1350 5650 1350 5550
-Wire Wire Line
-	1350 5550 900  5550
-Connection ~ 900  5550
-Wire Wire Line
-	900  5550 900  5650
-Wire Wire Line
-	1350 6650 1350 6750
-Wire Wire Line
-	1350 6750 900  6750
-$Comp
-L power:GND #PWR046
-U 1 1 5D3CC095
-P 900 7050
-F 0 "#PWR046" H 900 6800 50  0001 C CNN
-F 1 "GND" H 905 6877 50  0000 C CNN
-F 2 "" H 900 7050 50  0001 C CNN
-F 3 "" H 900 7050 50  0001 C CNN
-	1    900  7050
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	900  6750 900  7050
-Wire Wire Line
-	900  6650 900  6750
-Connection ~ 900  6750
-Wire Wire Line
-	2150 5950 2150 5600
-Wire Wire Line
-	2150 5600 3000 5600
-Wire Wire Line
-	3000 5600 3000 5550
-Wire Wire Line
-	3100 5550 3100 5650
-Wire Wire Line
-	3100 5650 2500 5650
-Wire Wire Line
-	2500 5650 2500 5950
-Wire Wire Line
-	3200 5550 3200 5700
-Wire Wire Line
-	3200 5700 2850 5700
-Wire Wire Line
-	2850 5700 2850 5950
-Wire Wire Line
-	3300 5550 3300 5750
-Wire Wire Line
-	3300 5750 3200 5750
-Wire Wire Line
-	3200 5750 3200 5950
-Wire Wire Line
-	3400 5550 3400 5750
-Wire Wire Line
-	3400 5750 3550 5750
-Wire Wire Line
-	3550 5750 3550 5950
-Wire Wire Line
-	3500 5550 3500 5700
-Wire Wire Line
-	3500 5700 3900 5700
-Wire Wire Line
-	3900 5700 3900 5950
-Wire Wire Line
-	4300 5950 4300 5700
-Wire Wire Line
-	4300 5700 4700 5700
-Wire Wire Line
-	4700 5700 4700 5550
-Wire Wire Line
-	4650 5950 4650 5750
-Wire Wire Line
-	4650 5750 4800 5750
-Wire Wire Line
-	4800 5750 4800 5550
-Wire Wire Line
-	5000 5950 5000 5750
-Wire Wire Line
-	5000 5750 4900 5750
-Wire Wire Line
-	4900 5750 4900 5550
-Wire Wire Line
-	5000 5550 5000 5700
-Wire Wire Line
-	5000 5700 5350 5700
-Wire Wire Line
-	5350 5700 5350 5950
-Wire Wire Line
-	5100 5550 5100 5650
-Wire Wire Line
-	5100 5650 5700 5650
-Wire Wire Line
-	5700 5650 5700 5950
-Wire Wire Line
-	5200 5550 5200 5600
-Wire Wire Line
-	6050 5600 6050 5950
-$Comp
-L power:GND #PWR044
-U 1 1 5D466BB5
-P 2500 5350
-F 0 "#PWR044" H 2500 5100 50  0001 C CNN
-F 1 "GND" H 2505 5177 50  0000 C CNN
-F 2 "" H 2500 5350 50  0001 C CNN
-F 3 "" H 2500 5350 50  0001 C CNN
-	1    2500 5350
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR043
-U 1 1 5D473D8D
-P 4300 5250
-F 0 "#PWR043" H 4300 5000 50  0001 C CNN
-F 1 "GND" H 4305 5077 50  0000 C CNN
-F 2 "" H 4300 5250 50  0001 C CNN
-F 3 "" H 4300 5250 50  0001 C CNN
-	1    4300 5250
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	1900 950  1900 850 
 Wire Wire Line
@@ -781,38 +257,6 @@ Wire Wire Line
 Connection ~ 9050 2850
 Wire Wire Line
 	9050 2850 9050 800 
-Wire Wire Line
-	2650 3100 2650 2800
-Wire Wire Line
-	4250 3100 4250 2800
-Wire Wire Line
-	4250 2800 4100 2800
-Wire Wire Line
-	5800 3100 5800 2800
-Wire Wire Line
-	5800 2800 5500 2800
-Wire Wire Line
-	7150 3100 7150 2800
-Wire Wire Line
-	7150 2800 6950 2800
-Wire Wire Line
-	8450 3100 8450 2800
-Wire Wire Line
-	8450 2800 8150 2800
-Wire Wire Line
-	10050 3100 10050 2850
-Wire Wire Line
-	10050 2850 9800 2850
-Wire Wire Line
-	9450 1550 9450 1750
-Wire Wire Line
-	7950 1550 7950 1750
-Wire Wire Line
-	6500 1550 6500 1750
-Wire Wire Line
-	5000 1550 5000 1750
-Wire Wire Line
-	3550 1550 3550 1700
 Wire Wire Line
 	9750 950  9750 800 
 Wire Wire Line
@@ -1029,20 +473,6 @@ Wire Wire Line
 	9450 4100 9450 4700
 Text GLabel 1500 4150 0    50   Output ~ 0
 B
-Wire Wire Line
-	9450 3500 9450 3400
-Wire Wire Line
-	7950 3500 7950 3400
-Wire Wire Line
-	5000 3500 5000 3400
-Wire Wire Line
-	3550 3500 3550 3400
-Wire Wire Line
-	3550 3400 3300 3400
-Wire Wire Line
-	1900 3500 1900 3450
-Wire Wire Line
-	1900 3450 1500 3450
 Wire Wire Line
 	2050 2500 2000 2500
 Wire Wire Line
@@ -1467,226 +897,6 @@ Wire Wire Line
 Wire Wire Line
 	10250 2650 10250 2700
 $Comp
-L power:GND #PWR040
-U 1 1 5E6C94C7
-P 2450 5100
-F 0 "#PWR040" H 2450 4850 50  0001 C CNN
-F 1 "GND" H 2455 4927 50  0000 C CNN
-F 2 "" H 2450 5100 50  0001 C CNN
-F 3 "" H 2450 5100 50  0001 C CNN
-	1    2450 5100
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR041
-U 1 1 5E6EC004
-P 4400 5500
-F 0 "#PWR041" H 4400 5250 50  0001 C CNN
-F 1 "GND" H 4405 5327 50  0000 C CNN
-F 2 "" H 4400 5500 50  0001 C CNN
-F 3 "" H 4400 5500 50  0001 C CNN
-	1    4400 5500
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+12V #PWR027
-U 1 1 5E773DA4
-P 1500 3450
-F 0 "#PWR027" H 1500 3300 50  0001 C CNN
-F 1 "+12V" H 1515 3623 50  0000 C CNN
-F 2 "" H 1500 3450 50  0001 C CNN
-F 3 "" H 1500 3450 50  0001 C CNN
-	1    1500 3450
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+12V #PWR026
-U 1 1 5E7846A4
-P 3300 3400
-F 0 "#PWR026" H 3300 3250 50  0001 C CNN
-F 1 "+12V" H 3315 3573 50  0000 C CNN
-F 2 "" H 3300 3400 50  0001 C CNN
-F 3 "" H 3300 3400 50  0001 C CNN
-	1    3300 3400
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+12V #PWR029
-U 1 1 5E79ACF9
-P 4800 3500
-F 0 "#PWR029" H 4800 3350 50  0001 C CNN
-F 1 "+12V" H 4815 3673 50  0000 C CNN
-F 2 "" H 4800 3500 50  0001 C CNN
-F 3 "" H 4800 3500 50  0001 C CNN
-	1    4800 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5000 3400 4850 3400
-Wire Wire Line
-	4850 3400 4850 3500
-Wire Wire Line
-	4850 3500 4800 3500
-$Comp
-L power:+12V #PWR028
-U 1 1 5E7C9A0D
-P 6300 3450
-F 0 "#PWR028" H 6300 3300 50  0001 C CNN
-F 1 "+12V" H 6315 3623 50  0000 C CNN
-F 2 "" H 6300 3450 50  0001 C CNN
-F 3 "" H 6300 3450 50  0001 C CNN
-	1    6300 3450
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6300 3450 6500 3450
-Wire Wire Line
-	6500 3450 6500 3500
-$Comp
-L power:+12V #PWR030
-U 1 1 5E808ABD
-P 7700 3500
-F 0 "#PWR030" H 7700 3350 50  0001 C CNN
-F 1 "+12V" H 7715 3673 50  0000 C CNN
-F 2 "" H 7700 3500 50  0001 C CNN
-F 3 "" H 7700 3500 50  0001 C CNN
-	1    7700 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7700 3500 7850 3500
-Wire Wire Line
-	7850 3500 7850 3400
-Wire Wire Line
-	7850 3400 7950 3400
-$Comp
-L power:+12V #PWR031
-U 1 1 5E82EFA6
-P 9300 3500
-F 0 "#PWR031" H 9300 3350 50  0001 C CNN
-F 1 "+12V" H 9315 3673 50  0000 C CNN
-F 2 "" H 9300 3500 50  0001 C CNN
-F 3 "" H 9300 3500 50  0001 C CNN
-	1    9300 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9450 3400 9400 3400
-Wire Wire Line
-	9400 3400 9400 3500
-Wire Wire Line
-	9400 3500 9300 3500
-$Comp
-L power:+12V #PWR013
-U 1 1 5E854B05
-P 1750 1750
-F 0 "#PWR013" H 1750 1600 50  0001 C CNN
-F 1 "+12V" H 1765 1923 50  0000 C CNN
-F 2 "" H 1750 1750 50  0001 C CNN
-F 3 "" H 1750 1750 50  0001 C CNN
-	1    1750 1750
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1900 1550 1900 1750
-Wire Wire Line
-	1900 1750 1750 1750
-$Comp
-L power:+12V #PWR08
-U 1 1 5E8D28A7
-P 3400 1700
-F 0 "#PWR08" H 3400 1550 50  0001 C CNN
-F 1 "+12V" H 3415 1873 50  0000 C CNN
-F 2 "" H 3400 1700 50  0001 C CNN
-F 3 "" H 3400 1700 50  0001 C CNN
-	1    3400 1700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3400 1700 3550 1700
-$Comp
-L power:+12V #PWR09
-U 1 1 5E8F654A
-P 4900 1700
-F 0 "#PWR09" H 4900 1550 50  0001 C CNN
-F 1 "+12V" H 4915 1873 50  0000 C CNN
-F 2 "" H 4900 1700 50  0001 C CNN
-F 3 "" H 4900 1700 50  0001 C CNN
-	1    4900 1700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	4900 1700 4900 1750
-Wire Wire Line
-	4900 1750 5000 1750
-$Comp
-L power:+12V #PWR010
-U 1 1 5E917DD9
-P 6400 1700
-F 0 "#PWR010" H 6400 1550 50  0001 C CNN
-F 1 "+12V" H 6415 1873 50  0000 C CNN
-F 2 "" H 6400 1700 50  0001 C CNN
-F 3 "" H 6400 1700 50  0001 C CNN
-	1    6400 1700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6400 1700 6400 1750
-Wire Wire Line
-	6400 1750 6500 1750
-$Comp
-L power:+12V #PWR011
-U 1 1 5E93C5BD
-P 7800 1700
-F 0 "#PWR011" H 7800 1550 50  0001 C CNN
-F 1 "+12V" H 7815 1873 50  0000 C CNN
-F 2 "" H 7800 1700 50  0001 C CNN
-F 3 "" H 7800 1700 50  0001 C CNN
-	1    7800 1700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7800 1700 7800 1750
-Wire Wire Line
-	7800 1750 7950 1750
-$Comp
-L power:+12V #PWR012
-U 1 1 5E9629B6
-P 9350 1700
-F 0 "#PWR012" H 9350 1550 50  0001 C CNN
-F 1 "+12V" H 9365 1873 50  0000 C CNN
-F 2 "" H 9350 1700 50  0001 C CNN
-F 3 "" H 9350 1700 50  0001 C CNN
-	1    9350 1700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9350 1700 9350 1750
-Wire Wire Line
-	9350 1750 9450 1750
-Wire Wire Line
-	2500 5350 2750 5350
-Wire Wire Line
-	2750 5350 2750 5550
-Wire Wire Line
-	2750 5550 2900 5550
-Wire Wire Line
-	2700 5150 2700 5100
-Wire Wire Line
-	2700 5100 2450 5100
-Wire Wire Line
-	5200 5600 6050 5600
-Wire Wire Line
-	4400 5150 4300 5150
-Wire Wire Line
-	4300 5150 4300 5250
-Wire Wire Line
-	4600 5550 4500 5550
-Wire Wire Line
-	4500 5550 4500 5500
-Wire Wire Line
-	4500 5500 4400 5500
-$Comp
 L power:+12V #PWR0101
 U 1 1 5EBA226D
 P 5800 4900
@@ -1708,58 +918,409 @@ Wire Wire Line
 Wire Wire Line
 	3700 4650 4050 4650
 $Comp
-L power:+12V #PWR?
-U 1 1 5EC0C959
-P 2800 3100
-F 0 "#PWR?" H 2800 2950 50  0001 C CNN
-F 1 "+12V" H 2815 3273 50  0000 C CNN
-F 2 "" H 2800 3100 50  0001 C CNN
-F 3 "" H 2800 3100 50  0001 C CNN
-	1    2800 3100
+L MySchLib:G2RL-1-E K?
+U 1 1 5DB9AAF2
+P 2100 1250
+F 0 "K?" H 2530 1296 50  0000 L CNN
+F 1 "G2RL-1-E" H 2530 1205 50  0000 L CNN
+F 2 "" H 2550 1200 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 2600 850 50  0001 L CNN
+	1    2100 1250
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+12V #PWR?
-U 1 1 5EC13CA2
-P 4400 3100
-F 0 "#PWR?" H 4400 2950 50  0001 C CNN
-F 1 "+12V" H 4415 3273 50  0000 C CNN
-F 2 "" H 4400 3100 50  0001 C CNN
-F 3 "" H 4400 3100 50  0001 C CNN
-	1    4400 3100
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBA957C
+P 3750 1250
+F 0 "K?" H 4180 1296 50  0000 L CNN
+F 1 "G2RL-1-E" H 4180 1205 50  0000 L CNN
+F 2 "" H 4200 1200 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 4250 850 50  0001 L CNN
+	1    3750 1250
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+12V #PWR?
-U 1 1 5EC19A68
-P 5950 3100
-F 0 "#PWR?" H 5950 2950 50  0001 C CNN
-F 1 "+12V" H 5965 3273 50  0000 C CNN
-F 2 "" H 5950 3100 50  0001 C CNN
-F 3 "" H 5950 3100 50  0001 C CNN
-	1    5950 3100
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBAF454
+P 5200 1250
+F 0 "K?" H 5630 1296 50  0000 L CNN
+F 1 "G2RL-1-E" H 5630 1205 50  0000 L CNN
+F 2 "" H 5650 1200 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 5700 850 50  0001 L CNN
+	1    5200 1250
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+12V #PWR?
-U 1 1 5EC2214D
-P 7250 3100
-F 0 "#PWR?" H 7250 2950 50  0001 C CNN
-F 1 "+12V" H 7265 3273 50  0000 C CNN
-F 2 "" H 7250 3100 50  0001 C CNN
-F 3 "" H 7250 3100 50  0001 C CNN
-	1    7250 3100
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBB36BF
+P 6700 1250
+F 0 "K?" H 7130 1296 50  0000 L CNN
+F 1 "G2RL-1-E" H 7130 1205 50  0000 L CNN
+F 2 "" H 7150 1200 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 7200 850 50  0001 L CNN
+	1    6700 1250
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+12V #PWR?
-U 1 1 5EC2DBAA
-P 8600 3050
-F 0 "#PWR?" H 8600 2900 50  0001 C CNN
-F 1 "+12V" H 8615 3223 50  0000 C CNN
-F 2 "" H 8600 3050 50  0001 C CNN
-F 3 "" H 8600 3050 50  0001 C CNN
-	1    8600 3050
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBB86AE
+P 8150 1250
+F 0 "K?" H 8580 1296 50  0000 L CNN
+F 1 "G2RL-1-E" H 8580 1205 50  0000 L CNN
+F 2 "" H 8600 1200 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 8650 850 50  0001 L CNN
+	1    8150 1250
+	1    0    0    -1  
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBBD78D
+P 9650 1250
+F 0 "K?" H 10080 1296 50  0000 L CNN
+F 1 "G2RL-1-E" H 10080 1205 50  0000 L CNN
+F 2 "" H 10100 1200 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 10150 850 50  0001 L CNN
+	1    9650 1250
+	1    0    0    -1  
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBC8249
+P 2350 2600
+F 0 "K?" V 2917 2600 50  0000 C CNN
+F 1 "G2RL-1-E" V 2826 2600 50  0000 C CNN
+F 2 "" H 2800 2550 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 2850 2200 50  0001 L CNN
+	1    2350 2600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBDE007
+P 3800 2600
+F 0 "K?" V 4367 2600 50  0000 C CNN
+F 1 "G2RL-1-E" V 4276 2600 50  0000 C CNN
+F 2 "" H 4250 2550 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 4300 2200 50  0001 L CNN
+	1    3800 2600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBE729E
+P 5200 2600
+F 0 "K?" V 5767 2600 50  0000 C CNN
+F 1 "G2RL-1-E" V 5676 2600 50  0000 C CNN
+F 2 "" H 5650 2550 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 5700 2200 50  0001 L CNN
+	1    5200 2600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBE9AFD
+P 6650 2600
+F 0 "K?" V 7217 2600 50  0000 C CNN
+F 1 "G2RL-1-E" V 7126 2600 50  0000 C CNN
+F 2 "" H 7100 2550 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 7150 2200 50  0001 L CNN
+	1    6650 2600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBF301C
+P 7850 2600
+F 0 "K?" V 8417 2600 50  0000 C CNN
+F 1 "G2RL-1-E" V 8326 2600 50  0000 C CNN
+F 2 "" H 8300 2550 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 8350 2200 50  0001 L CNN
+	1    7850 2600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DBF919F
+P 9500 2650
+F 0 "K?" V 10067 2650 50  0000 C CNN
+F 1 "G2RL-1-E" V 9976 2650 50  0000 C CNN
+F 2 "" H 9950 2600 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 10000 2250 50  0001 L CNN
+	1    9500 2650
+	0    -1   -1   0   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DC38964
+P 2100 3800
+F 0 "K?" H 1671 3754 50  0000 R CNN
+F 1 "G2RL-1-E" H 1671 3845 50  0000 R CNN
+F 2 "" H 2550 3750 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 2600 3400 50  0001 L CNN
+	1    2100 3800
+	1    0    0    1   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DC6F68C
+P 3750 3800
+F 0 "K?" H 3321 3754 50  0000 R CNN
+F 1 "G2RL-1-E" H 3321 3845 50  0000 R CNN
+F 2 "" H 4200 3750 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 4250 3400 50  0001 L CNN
+	1    3750 3800
+	1    0    0    1   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DC76CE5
+P 5200 3800
+F 0 "K?" H 4771 3754 50  0000 R CNN
+F 1 "G2RL-1-E" H 4771 3845 50  0000 R CNN
+F 2 "" H 5650 3750 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 5700 3400 50  0001 L CNN
+	1    5200 3800
+	1    0    0    1   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DC85D9B
+P 6700 3800
+F 0 "K?" H 6271 3754 50  0000 R CNN
+F 1 "G2RL-1-E" H 6271 3845 50  0000 R CNN
+F 2 "" H 7150 3750 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 7200 3400 50  0001 L CNN
+	1    6700 3800
+	1    0    0    1   
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DC8D798
+P 8150 3800
+F 0 "K?" H 7721 3754 50  0000 R CNN
+F 1 "G2RL-1-E" H 7721 3845 50  0000 R CNN
+F 2 "" H 8600 3750 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 8650 3400 50  0001 L CNN
+	1    8150 3800
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	4150 7350 6050 7350
+Wire Wire Line
+	6050 7350 6050 6550
+Wire Wire Line
+	5350 7250 5350 6550
+Wire Wire Line
+	3200 6700 3200 6550
+Wire Wire Line
+	2850 6650 2850 6550
+Wire Wire Line
+	2500 6600 2500 6550
+Wire Wire Line
+	3550 6750 3550 6550
+Wire Wire Line
+	3900 6800 3900 6550
+Connection ~ 1550 7500
+Wire Wire Line
+	1550 7500 1550 7550
+Wire Wire Line
+	9450 1550 9450 1750
+Wire Wire Line
+	9350 1750 9450 1750
+Wire Wire Line
+	9350 1700 9350 1750
+$Comp
+L power:+12V #PWR012
+U 1 1 5E9629B6
+P 9350 1700
+F 0 "#PWR012" H 9350 1550 50  0001 C CNN
+F 1 "+12V" H 9365 1873 50  0000 C CNN
+F 2 "" H 9350 1700 50  0001 C CNN
+F 3 "" H 9350 1700 50  0001 C CNN
+	1    9350 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7950 1550 7950 1750
+Wire Wire Line
+	7800 1700 7800 1750
+Wire Wire Line
+	7800 1750 7950 1750
+$Comp
+L power:+12V #PWR011
+U 1 1 5E93C5BD
+P 7800 1700
+F 0 "#PWR011" H 7800 1550 50  0001 C CNN
+F 1 "+12V" H 7815 1873 50  0000 C CNN
+F 2 "" H 7800 1700 50  0001 C CNN
+F 3 "" H 7800 1700 50  0001 C CNN
+	1    7800 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6500 1550 6500 1750
+Wire Wire Line
+	6400 1700 6400 1750
+Wire Wire Line
+	6400 1750 6500 1750
+$Comp
+L power:+12V #PWR010
+U 1 1 5E917DD9
+P 6400 1700
+F 0 "#PWR010" H 6400 1550 50  0001 C CNN
+F 1 "+12V" H 6415 1873 50  0000 C CNN
+F 2 "" H 6400 1700 50  0001 C CNN
+F 3 "" H 6400 1700 50  0001 C CNN
+	1    6400 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 1550 5000 1750
+Wire Wire Line
+	4900 1700 4900 1750
+Wire Wire Line
+	4900 1750 5000 1750
+$Comp
+L power:+12V #PWR09
+U 1 1 5E8F654A
+P 4900 1700
+F 0 "#PWR09" H 4900 1550 50  0001 C CNN
+F 1 "+12V" H 4915 1873 50  0000 C CNN
+F 2 "" H 4900 1700 50  0001 C CNN
+F 3 "" H 4900 1700 50  0001 C CNN
+	1    4900 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3550 1550 3550 1700
+Wire Wire Line
+	3400 1700 3550 1700
+$Comp
+L power:+12V #PWR08
+U 1 1 5E8D28A7
+P 3400 1700
+F 0 "#PWR08" H 3400 1550 50  0001 C CNN
+F 1 "+12V" H 3415 1873 50  0000 C CNN
+F 2 "" H 3400 1700 50  0001 C CNN
+F 3 "" H 3400 1700 50  0001 C CNN
+	1    3400 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 1550 1900 1750
+$Comp
+L power:+12V #PWR013
+U 1 1 5E854B05
+P 1750 1750
+F 0 "#PWR013" H 1750 1600 50  0001 C CNN
+F 1 "+12V" H 1765 1923 50  0000 C CNN
+F 2 "" H 1750 1750 50  0001 C CNN
+F 3 "" H 1750 1750 50  0001 C CNN
+	1    1750 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 1750 1750 1750
+$Comp
+L power:+12V #PWR031
+U 1 1 5E82EFA6
+P 9300 3500
+F 0 "#PWR031" H 9300 3350 50  0001 C CNN
+F 1 "+12V" H 9315 3673 50  0000 C CNN
+F 2 "" H 9300 3500 50  0001 C CNN
+F 3 "" H 9300 3500 50  0001 C CNN
+	1    9300 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9400 3400 9400 3500
+Wire Wire Line
+	9450 3500 9450 3400
+Wire Wire Line
+	9450 3400 9400 3400
+Wire Wire Line
+	9400 3500 9300 3500
+Wire Wire Line
+	7950 3500 7950 3400
+Wire Wire Line
+	7850 3500 7850 3400
+Wire Wire Line
+	7850 3400 7950 3400
+Wire Wire Line
+	7700 3500 7850 3500
+$Comp
+L power:+12V #PWR030
+U 1 1 5E808ABD
+P 7700 3500
+F 0 "#PWR030" H 7700 3350 50  0001 C CNN
+F 1 "+12V" H 7715 3673 50  0000 C CNN
+F 2 "" H 7700 3500 50  0001 C CNN
+F 3 "" H 7700 3500 50  0001 C CNN
+	1    7700 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6500 3450 6500 3500
+$Comp
+L power:+12V #PWR028
+U 1 1 5E7C9A0D
+P 6300 3450
+F 0 "#PWR028" H 6300 3300 50  0001 C CNN
+F 1 "+12V" H 6315 3623 50  0000 C CNN
+F 2 "" H 6300 3450 50  0001 C CNN
+F 3 "" H 6300 3450 50  0001 C CNN
+	1    6300 3450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6300 3450 6500 3450
+Wire Wire Line
+	5000 3500 5000 3400
+Wire Wire Line
+	5000 3400 4850 3400
+Wire Wire Line
+	4850 3500 4800 3500
+$Comp
+L power:+12V #PWR029
+U 1 1 5E79ACF9
+P 4800 3500
+F 0 "#PWR029" H 4800 3350 50  0001 C CNN
+F 1 "+12V" H 4815 3673 50  0000 C CNN
+F 2 "" H 4800 3500 50  0001 C CNN
+F 3 "" H 4800 3500 50  0001 C CNN
+	1    4800 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4850 3400 4850 3500
+Wire Wire Line
+	3550 3500 3550 3400
+$Comp
+L power:+12V #PWR026
+U 1 1 5E7846A4
+P 3300 3400
+F 0 "#PWR026" H 3300 3250 50  0001 C CNN
+F 1 "+12V" H 3315 3573 50  0000 C CNN
+F 2 "" H 3300 3400 50  0001 C CNN
+F 3 "" H 3300 3400 50  0001 C CNN
+	1    3300 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3550 3400 3300 3400
+Wire Wire Line
+	1900 3500 1900 3450
+Wire Wire Line
+	1900 3450 1500 3450
+$Comp
+L power:+12V #PWR027
+U 1 1 5E773DA4
+P 1500 3450
+F 0 "#PWR027" H 1500 3300 50  0001 C CNN
+F 1 "+12V" H 1515 3623 50  0000 C CNN
+F 2 "" H 1500 3450 50  0001 C CNN
+F 3 "" H 1500 3450 50  0001 C CNN
+	1    1500 3450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1776,15 +1337,455 @@ $EndComp
 Wire Wire Line
 	10200 3100 10050 3100
 Wire Wire Line
+	10050 3100 10050 2850
+Wire Wire Line
+	10050 2850 9800 2850
+Wire Wire Line
+	8450 2800 8150 2800
+Wire Wire Line
+	8450 3100 8450 2800
+Wire Wire Line
 	8600 3050 8600 3100
 Wire Wire Line
 	8600 3100 8450 3100
+$Comp
+L power:+12V #PWR?
+U 1 1 5EC2DBAA
+P 8600 3050
+F 0 "#PWR?" H 8600 2900 50  0001 C CNN
+F 1 "+12V" H 8615 3223 50  0000 C CNN
+F 2 "" H 8600 3050 50  0001 C CNN
+F 3 "" H 8600 3050 50  0001 C CNN
+	1    8600 3050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7150 2800 6950 2800
 Wire Wire Line
 	7250 3100 7150 3100
 Wire Wire Line
+	7150 3100 7150 2800
+$Comp
+L power:+12V #PWR?
+U 1 1 5EC2214D
+P 7250 3100
+F 0 "#PWR?" H 7250 2950 50  0001 C CNN
+F 1 "+12V" H 7265 3273 50  0000 C CNN
+F 2 "" H 7250 3100 50  0001 C CNN
+F 3 "" H 7250 3100 50  0001 C CNN
+	1    7250 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 2800 5500 2800
+Wire Wire Line
+	5800 3100 5800 2800
+Wire Wire Line
 	5950 3100 5800 3100
+$Comp
+L power:+12V #PWR?
+U 1 1 5EC19A68
+P 5950 3100
+F 0 "#PWR?" H 5950 2950 50  0001 C CNN
+F 1 "+12V" H 5965 3273 50  0000 C CNN
+F 2 "" H 5950 3100 50  0001 C CNN
+F 3 "" H 5950 3100 50  0001 C CNN
+	1    5950 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 2800 4100 2800
+Wire Wire Line
+	4250 3100 4250 2800
+$Comp
+L power:+12V #PWR?
+U 1 1 5EC13CA2
+P 4400 3100
+F 0 "#PWR?" H 4400 2950 50  0001 C CNN
+F 1 "+12V" H 4415 3273 50  0000 C CNN
+F 2 "" H 4400 3100 50  0001 C CNN
+F 3 "" H 4400 3100 50  0001 C CNN
+	1    4400 3100
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	4400 3100 4250 3100
+$Comp
+L power:+12V #PWR?
+U 1 1 5EC0C959
+P 2800 3100
+F 0 "#PWR?" H 2800 2950 50  0001 C CNN
+F 1 "+12V" H 2815 3273 50  0000 C CNN
+F 2 "" H 2800 3100 50  0001 C CNN
+F 3 "" H 2800 3100 50  0001 C CNN
+	1    2800 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2650 3100 2650 2800
 Wire Wire Line
 	2800 3100 2650 3100
+Wire Wire Line
+	4500 5500 4400 5500
+Wire Wire Line
+	4500 5550 4500 5500
+Wire Wire Line
+	4600 5550 4500 5550
+Wire Wire Line
+	4300 5150 4300 5250
+Wire Wire Line
+	4400 5150 4300 5150
+Wire Wire Line
+	5200 5600 6050 5600
+Wire Wire Line
+	2700 5100 2450 5100
+Wire Wire Line
+	2700 5150 2700 5100
+Wire Wire Line
+	2750 5550 2900 5550
+Wire Wire Line
+	2750 5350 2750 5550
+Wire Wire Line
+	2500 5350 2750 5350
+$Comp
+L power:GND #PWR041
+U 1 1 5E6EC004
+P 4400 5500
+F 0 "#PWR041" H 4400 5250 50  0001 C CNN
+F 1 "GND" H 4405 5327 50  0000 C CNN
+F 2 "" H 4400 5500 50  0001 C CNN
+F 3 "" H 4400 5500 50  0001 C CNN
+	1    4400 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR040
+U 1 1 5E6C94C7
+P 2450 5100
+F 0 "#PWR040" H 2450 4850 50  0001 C CNN
+F 1 "GND" H 2455 4927 50  0000 C CNN
+F 2 "" H 2450 5100 50  0001 C CNN
+F 3 "" H 2450 5100 50  0001 C CNN
+	1    2450 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR043
+U 1 1 5D473D8D
+P 4300 5250
+F 0 "#PWR043" H 4300 5000 50  0001 C CNN
+F 1 "GND" H 4305 5077 50  0000 C CNN
+F 2 "" H 4300 5250 50  0001 C CNN
+F 3 "" H 4300 5250 50  0001 C CNN
+	1    4300 5250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR044
+U 1 1 5D466BB5
+P 2500 5350
+F 0 "#PWR044" H 2500 5100 50  0001 C CNN
+F 1 "GND" H 2505 5177 50  0000 C CNN
+F 2 "" H 2500 5350 50  0001 C CNN
+F 3 "" H 2500 5350 50  0001 C CNN
+	1    2500 5350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 5600 6050 5950
+Wire Wire Line
+	5200 5550 5200 5600
+Wire Wire Line
+	5700 5650 5700 5950
+Wire Wire Line
+	5100 5650 5700 5650
+Wire Wire Line
+	5100 5550 5100 5650
+Wire Wire Line
+	5350 5700 5350 5950
+Wire Wire Line
+	5000 5700 5350 5700
+Wire Wire Line
+	5000 5550 5000 5700
+Wire Wire Line
+	4900 5750 4900 5550
+Wire Wire Line
+	5000 5750 4900 5750
+Wire Wire Line
+	5000 5950 5000 5750
+Wire Wire Line
+	4800 5750 4800 5550
+Wire Wire Line
+	4650 5750 4800 5750
+Wire Wire Line
+	4650 5950 4650 5750
+Wire Wire Line
+	4700 5700 4700 5550
+Wire Wire Line
+	4300 5700 4700 5700
+Wire Wire Line
+	4300 5950 4300 5700
+Wire Wire Line
+	3900 5700 3900 5950
+Wire Wire Line
+	3500 5700 3900 5700
+Wire Wire Line
+	3500 5550 3500 5700
+Wire Wire Line
+	3550 5750 3550 5950
+Wire Wire Line
+	3400 5750 3550 5750
+Wire Wire Line
+	3400 5550 3400 5750
+Wire Wire Line
+	3200 5750 3200 5950
+Wire Wire Line
+	3300 5750 3200 5750
+Wire Wire Line
+	3300 5550 3300 5750
+Wire Wire Line
+	2850 5700 2850 5950
+Wire Wire Line
+	3200 5700 2850 5700
+Wire Wire Line
+	3200 5550 3200 5700
+Wire Wire Line
+	2500 5650 2500 5950
+Wire Wire Line
+	3100 5650 2500 5650
+Wire Wire Line
+	3100 5550 3100 5650
+Wire Wire Line
+	3000 5600 3000 5550
+Wire Wire Line
+	2150 5600 3000 5600
+Wire Wire Line
+	2150 5950 2150 5600
+$Comp
+L Transistor_Array:ULN2003 U1
+U 1 1 5CD0BD56
+P 3300 5150
+F 0 "U1" V 3346 5680 50  0000 L CNN
+F 1 "ULN2003" V 3255 5680 50  0000 L CNN
+F 2 "digikey-footprints:SOIC-16_W3.90mm" H 3350 4600 50  0001 L CNN
+F 3 "http://www.ti.com/lit/ds/symlink/uln2003a.pdf" H 3400 4950 50  0001 C CNN
+	1    3300 5150
+	0    1    -1   0   
+$EndComp
+$Comp
+L Transistor_Array:ULN2003 U2
+U 1 1 5CD48751
+P 5000 5150
+F 0 "U2" V 5046 5680 50  0000 L CNN
+F 1 "ULN2003" V 4955 5680 50  0000 L CNN
+F 2 "digikey-footprints:SOIC-16_W3.90mm" H 5050 4600 50  0001 L CNN
+F 3 "http://www.ti.com/lit/ds/symlink/uln2003a.pdf" H 5100 4950 50  0001 C CNN
+	1    5000 5150
+	0    1    -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U4
+U 6 1 5D31446D
+P 6050 6250
+F 0 "U4" V 6096 6070 50  0000 R CNN
+F 1 "74HC04" V 6005 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 6050 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 6050 6250 50  0001 C CNN
+	6    6050 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U4
+U 5 1 5D314467
+P 5700 6250
+F 0 "U4" V 5746 6070 50  0000 R CNN
+F 1 "74HC04" V 5655 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 5700 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 5700 6250 50  0001 C CNN
+	5    5700 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U4
+U 4 1 5D314461
+P 5350 6250
+F 0 "U4" V 5396 6070 50  0000 R CNN
+F 1 "74HC04" V 5305 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 5350 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 5350 6250 50  0001 C CNN
+	4    5350 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U4
+U 3 1 5D31445B
+P 5000 6250
+F 0 "U4" V 5046 6070 50  0000 R CNN
+F 1 "74HC04" V 4955 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 5000 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 5000 6250 50  0001 C CNN
+	3    5000 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U4
+U 2 1 5D314455
+P 4650 6250
+F 0 "U4" V 4696 6070 50  0000 R CNN
+F 1 "74HC04" V 4605 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 4650 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 4650 6250 50  0001 C CNN
+	2    4650 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U4
+U 1 1 5D31444F
+P 4300 6250
+F 0 "U4" V 4346 6070 50  0000 R CNN
+F 1 "74HC04" V 4255 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 4300 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 4300 6250 50  0001 C CNN
+	1    4300 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 6 1 5D2EF5E3
+P 3900 6250
+F 0 "U3" V 3946 6070 50  0000 R CNN
+F 1 "74HC04" V 3855 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 3900 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 3900 6250 50  0001 C CNN
+	6    3900 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 5 1 5D2EAB20
+P 3550 6250
+F 0 "U3" V 3596 6070 50  0000 R CNN
+F 1 "74HC04" V 3505 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 3550 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 3550 6250 50  0001 C CNN
+	5    3550 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 4 1 5D2E818A
+P 3200 6250
+F 0 "U3" V 3246 6070 50  0000 R CNN
+F 1 "74HC04" V 3155 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 3200 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 3200 6250 50  0001 C CNN
+	4    3200 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 3 1 5D2E66E1
+P 2850 6250
+F 0 "U3" V 2896 6070 50  0000 R CNN
+F 1 "74HC04" V 2805 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 2850 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 2850 6250 50  0001 C CNN
+	3    2850 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 2 1 5D2E322F
+P 2500 6250
+F 0 "U3" V 2546 6070 50  0000 R CNN
+F 1 "74HC04" V 2455 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 2500 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 2500 6250 50  0001 C CNN
+	2    2500 6250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 1 1 5D2D1A0D
+P 2150 6250
+F 0 "U3" V 2196 6070 50  0000 R CNN
+F 1 "74HC04" V 2105 6070 50  0000 R CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 2150 6250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 2150 6250 50  0001 C CNN
+	1    2150 6250
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1350 5650 1350 5550
+$Comp
+L power:+3.3V #PWR042
+U 1 1 5D3AFCE3
+P 900 5450
+F 0 "#PWR042" H 900 5300 50  0001 C CNN
+F 1 "+3.3V" H 915 5623 50  0000 C CNN
+F 2 "" H 900 5450 50  0001 C CNN
+F 3 "" H 900 5450 50  0001 C CNN
+	1    900  5450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	900  5550 900  5650
+Wire Wire Line
+	900  5450 900  5550
+Connection ~ 900  5550
+Wire Wire Line
+	1350 5550 900  5550
+Wire Wire Line
+	1350 6650 1350 6750
+$Comp
+L power:GND #PWR046
+U 1 1 5D3CC095
+P 900 7050
+F 0 "#PWR046" H 900 6800 50  0001 C CNN
+F 1 "GND" H 905 6877 50  0000 C CNN
+F 2 "" H 900 7050 50  0001 C CNN
+F 3 "" H 900 7050 50  0001 C CNN
+	1    900  7050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	900  6650 900  6750
+Wire Wire Line
+	900  6750 900  7050
+Connection ~ 900  6750
+Wire Wire Line
+	1350 6750 900  6750
+$Comp
+L 74xx:74HC04 U4
+U 7 1 5D314473
+P 1350 6150
+F 0 "U4" H 1580 6196 50  0000 L CNN
+F 1 "74HC04" H 1580 6105 50  0000 L CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 1350 6150 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 1350 6150 50  0001 C CNN
+	7    1350 6150
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HC04 U3
+U 7 1 5D2F87CD
+P 900 6150
+F 0 "U3" H 1130 6196 50  0000 L CNN
+F 1 "74HC04" H 1130 6105 50  0000 L CNN
+F 2 "digikey-footprints:SOIC-14_W3.9mm" H 900 6150 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 900 6150 50  0001 C CNN
+	7    900  6150
+	1    0    0    -1  
+$EndComp
+$Comp
+L MySchLib:G2RL-1-E K?
+U 1 1 5DF7C8D7
+P 9650 3800
+F 0 "K?" H 9221 3754 50  0000 R CNN
+F 1 "G2RL-1-E" H 9221 3845 50  0000 R CNN
+F 2 "" H 10100 3750 50  0001 L CNN
+F 3 "https://www.omron.com/ecb/products/pdf/en-g5q.pdf" H 10150 3400 50  0001 L CNN
+	1    9650 3800
+	1    0    0    1   
+$EndComp
 $EndSCHEMATC

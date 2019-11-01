@@ -5,11 +5,12 @@
 
 #include "main.h"
 #include "PIN.h"
+#include <stdbool.h>
 #define CRC_POLY 0xA001
 #define RE GPIO_PIN_SET
 #define DE GPIO_PIN_RESET
-#define COMM_BUFFER_SIZE 64
-#define N_PARAM_MAX 8
+#define COMM_BUFFER_SIZE 32
+#define N_PARAM_MAX 4
 #define PARAM_LEN_MAX 5
 #define TIMEOUT_RX 1000
 #define DELIM_485 "\r\n"
@@ -28,8 +29,7 @@ struct Serial485
 {
     char command[COMM_BUFFER_SIZE];
     char rx_buffer[2];
-    char tx_buffer[64];
-    uint8_t* rx_buffer[64];
+    char tx_buffer[16];
     uint8_t idx_rx;
     int idx_command;
     int argc;
@@ -44,7 +44,7 @@ struct Serial485
     int timeout_tx;       // estimated transmission time in ms
     int timeout_clear_rx; // time to clear RX buffer
     unsigned int n_available;
-    bool is_active = false; // indicate if the 485 port is in use
+    bool is_active; // indicate if the 485 port is in use
 };
 
 extern struct Serial485 *p485;
@@ -55,7 +55,7 @@ void send_serial485(struct Serial485 *p485, const char *buffer_send);
 void onReceived_serial485(struct Serial485 *p485);
 void handle_serial485(struct Serial485 *p485); // clear RX buffer at certain intervals
 void parse_command(struct Serial485 *p485);
-bool execute_command(int argc, char **argv);
+bool execute_command(struct Serial485 *p485);
 
 
 

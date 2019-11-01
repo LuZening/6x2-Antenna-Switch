@@ -32,6 +32,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
 #include "PIN.h"
 #include "CH395.H"
 #include "CH395CMD.H"
@@ -87,9 +88,8 @@ void Error_Handler(void);
 #define CH395_INT_EXTI_IRQn EXTI0_1_IRQn
 #define NUM_ANTENNA 6
 #define NUM_TRANCEIVERS 2
-#define MAX_LEN_ANT_LABEL 15
+#define MAX_LEN_ANT_LABEL 16
 #define MAX_LEN_ANT_LABELS ((MAX_LEN_ANT_LABEL + 1) * NUM_ANTENNA)
-#define EEPROM_VALID_BYTE 0xAA
 #define N_SELECTORS NUM_TRANCEIVERS
 #define BCD2INT(D0,D1,D2) (D2<<2 | D1<<1 | D0);
 #define BCDM1_0 2
@@ -98,7 +98,9 @@ void Error_Handler(void);
 #define BCDM2_0 4
 #define BCDM2_1 6
 #define BCDM2_2 5
-#define FS_BASE_ADDR 0x08004400 // starting after the first 16KB flash bank
+#define EEPROM_VALID_BYTE 0xAA
+#define EEPROM_BASE_ADDR 0x8005000
+#define FS_BASE_ADDR 0x08005400 // starting after the first 16KB flash bank
 #define SCHED_INTERVAL 2000 // 2us
 #define RW485_ON_CH395 7// 485 RW pin on CH395 extended GPIOs
 // Saved data on EEPROM

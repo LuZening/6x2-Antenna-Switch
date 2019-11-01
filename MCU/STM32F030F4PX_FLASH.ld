@@ -55,13 +55,13 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = 0x20000fff;	/* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x200 ;	/* required amount of heap  */
+_Min_Heap_Size = 0x40 ;	/* required amount of heap  */
 _Min_Stack_Size = 0x400 ;	/* required amount of stack */
 
 /* Memories definition */
 MEMORY
 {
-    FLASH	(rx)	: ORIGIN = 0x8000000,	LENGTH = 16K
+    FLASH	(rx)	: ORIGIN = 0x8000000,	LENGTH = 32K
     RAM	(rwx)	: ORIGIN = 0x20000000,	LENGTH = 4K
 }
 

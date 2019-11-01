@@ -1,6 +1,5 @@
 #include "main.h"
 #include "Lib485.h"
-#include "stdlib.h"
 #include "commands.h"
 #include "Delay.h"
 struct Serial485 _serial485;
@@ -37,7 +36,6 @@ void begin_serial485(struct Serial485 *p485, UART_HandleTypeDef *pSerial, PIN_ty
 {
     int i;
     p485->state_RW = RE;
-    p485->baud = baud;
     p485->timeout_tx = 0;
     p485->idx_rx = 0;
     p485->idx_command = 0;
@@ -88,6 +86,7 @@ void onReceived_serial485(struct Serial485 *p485)
 {
 	p485->timeout_clear_rx = TIMEOUT_RX; // reset rx clear timer
 	// if c is a deliminator, we have a complete command
+	char c = *(p485->rx_buffer);
 	if (strchr(DELIM_485, c) != NULL) // c is a deliminator
 	{
 		if (p485->idx_command > 0) // parse the command if the command buffer is not empty
@@ -135,7 +134,6 @@ void handle_serial485(struct Serial485 *p485)
                 p485->command[0] = 0;
             }
         }
-    }
 }
 
 void parse_command(struct Serial485 *p485)
@@ -185,7 +183,7 @@ bool execute_command(struct Serial485 *p485)
     {
         if (strcmp(p485->argv[0], commands[i]) == 0) // if any of the listed commands matches
         {
-            res = (*command_calls[i])(argc, argv);
+            res = (*command_calls[i])(p485->argc, p485->argv);
             break;
         }
     }

@@ -24,9 +24,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <string.h>
+#include <stdbool.h>
 #include <CH395.h>
 #include "Delay.h"
 #include "Flash_EEPROM.h"
+//#include "Lib485.h
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,6 +100,7 @@ static void MX_NVIC_Init(void);
   */
 int main(void)
 {
+	uint8_t i;
   /* USER CODE BEGIN 1 */
 	Selector[0].PIN_BCD0 = BCD1_0;
 	Selector[0].PIN_BCD1 = BCD1_1;
@@ -135,36 +138,40 @@ int main(void)
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 // Load EEPROM data
+  EEPROM.base_addr = EEPROM_BASE_ADDR;
+  EEPROM.size = 400;
   EEPROM_ReadBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
   if(SavedData.EEPROM_valid_ID != EEPROM_VALID_BYTE)
   {
 	  // create a new EEPROM image
-	  memset(SavedData.ant_labels, 0, sizeof(SavedData.ant_labels));
+	  for(i=0; i<NUM_ANTENNA; ++i)
+	  {
+		  strcpy(SavedData.ant_labels[i], "Ant");
+		  SavedData.ant_labels[i][4] = '1' + i;
+		  SavedData.ant_labels[i][5] = 0;
+	  }
 	  SavedData.EEPROM_valid_ID = EEPROM_VALID_BYTE;
 	  EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
 	  EEPROM_ReadBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
   }
   DEBUG_LOG("Self checking...\n");
-
 //   Check FS
-  FS_begin(&FS, (uint32_t*)FS_BASE_ADDR);
-  FSfile_typedef file = FS_open(&FS, "/a.txt");
   // USART
-  begin_serial485(p485, huart1, RW_485, SCHED_INTERVAL / 1000);
-  HAL_UART_Receive_IT(huart1, p485->rx_buffer, 1);
+//  begin_serial485(p485, &huart1, RW485, SCHED_INTERVAL / 1000);
+//  HAL_UART_Receive_IT(&huart1, p485->rx_buffer, 1);
   // don't forget to override the callback function of USART1
 //   Check ch395
-  uint8_t i;
+	Delay_ms(500); // wait for CH395 being ready from power on`	q1was
 RESET_CH395:
-	Delay_ms(300); // wait for CH395 being ready from power on`	q1was
 	CH395CMDReset();
-	Delay_ms(200);
+	Delay_ms(500); // wait for CH395 being ready from power on`	q1was
 	// initialize CH395 GPIO settings to INPUT/PULL DOWN
 	CH395WriteGPIOAddr(GPIO_DIR_REG, 0);
 	CH395WriteGPIOAddr(GPIO_PU_REG, 0);
 	CH395WriteGPIOAddr(GPIO_PD_REG, 0xff);
   // initialize TCP server
   flag_CH395_ready = CH395TCPServerStart(*(uint32_t*)IP, port);
+  //CH395SetBuffer();
   flag_PHY_change = FALSE;
   flag_IP_conflict = FALSE;
   /* USER CODE END 2 */
@@ -180,16 +187,15 @@ RESET_CH395:
 		  HTTPHandle(&ch395);
 	  }
 	  // execute 485 command
-	  if(p485->is_command_ready)
-	  {
-		  if(execute_command(p485))
-		  {
-			  send_serial485(p485, "\r");
-		  }
-		  else
-			  send_serial485(p485, "?>\r");
-
-	  }
+//	  if(p485->is_command_ready)
+//	  {
+//		  if(execute_command(p485))
+//		  {
+//			  send_serial485(p485, "\r");
+//		  }
+//		  else
+//			  send_serial485(p485, "?>\r");
+//	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -376,10 +382,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	onReceived_serial485(p485);
-}
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+//{
+//	onReceived_serial485(p485);
+//}
 
 void interrupt_CH395()
 {
@@ -410,44 +416,49 @@ void interrupt_CH395()
 			if(sock_int_status & SINT_STAT_SENBUF_FREE) // Send buffer free
 			{
 				ch395.TX_available |= (1 << i);
-				HTTPRequestParseState* pS = parseStates +i -1;
-				if(pS->response_stage == RESPONSE_CONTENT_REMAIN)
-				{
-					uint16_t len = pS->len_response_content_remain;
-					CH395SendData(i, pS->response_content, ((len<MAX_SIZE_PACK)?(len):(len=MAX_SIZE_PACK)));
-					// sent
-					pS->len_response_content_remain -= len;
-					pS->response_content += len; // move the cursor
-					if(pS->len_response_content_remain == 0)
-						resetHTTPParseState(pS);
-					// TODO: multiple packages
-				}
-				else if(pS->response_stage == RESPONSE_PREPARED)
-				{
-					uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
-					uint16_t len_content_this_time = ((pS->len_response_content_remain < max_len_content)
-							? (pS->len_response_content_remain)
-									: (max_len_content));
-					CH395StartSendingData(i, pS->len_response_header + len_content_this_time);
-					CH395ContinueSendingData(pS->response_header, pS->len_response_header);
-					CH395ContinueSendingData(pS->response_content, len_content_this_time);
-					CH395Complete();
-					pS->len_response_content_remain -= len_content_this_time;
-					pS->response_content += len_content_this_time;
-					if(pS->len_response_content_remain == 0) // all content completely sent this time
-					{
-						pS->response_stage = RESPONSE_NOT_PREPARED;
-					}
-					else // content remained to be sent next time
-					{
-						pS->response_stage = RESPONSE_CONTENT_REMAIN;
-					}
-				}
+//				if(ch395.SOCK_responding == i)
+//				{
+//					HTTPRequestParseState* pS = parseStates +i -1;
+//					if(pS->response_stage == RESPONSE_CONTENT_REMAIN) // continue the sending process
+//					{
+//						uint16_t len = pS->len_response_content_remain;
+//						CH395SendData(i, pS->response_content, ((len<MAX_SIZE_PACK)?(len):(len=MAX_SIZE_PACK)));
+//						// sent
+//						pS->len_response_content_remain -= len;
+//						pS->response_content += len; // move the cursor
+//						if(pS->len_response_content_remain == 0)
+//							resetHTTPParseState(pS);
+//						// TODO: multiple packages
+//					}
+//					else if(pS->response_stage == RESPONSE_PREPARED) // start the sending process
+//					{
+//						uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
+//						uint16_t len_content_this_time = ((pS->len_response_content_remain < max_len_content)
+//								? (pS->len_response_content_remain)
+//										: (max_len_content));
+//						CH395StartSendingData(i, pS->len_response_header + len_content_this_time);
+//						CH395ContinueSendingData(pS->response_header, pS->len_response_header);
+//						CH395ContinueSendingData(pS->response_content, len_content_this_time);
+//						CH395Complete();
+//						pS->len_response_content_remain -= len_content_this_time;
+//						pS->response_content += len_content_this_time;
+//						if(pS->len_response_content_remain == 0) // all content completely sent this time
+//						{
+//							ch395.SOCK_responding = -1;
+//							// TODO: enque next sock to respond
+//							pS->response_stage = RESPONSE_NOT_PREPARED;
+//						}
+//						else // content remained to be sent next time
+//						{
+//							pS->response_stage = RESPONSE_CONTENT_REMAIN;
+//						}
+//					}
+//				}
 			}
 //			if(sock_int_status & SINT_STAT_SEND_OK)
 //			{
 //			}
-			if(sock_int_status & SINT_STAT_RECV)
+			if(sock_int_status & SINT_STAT_RECV) // data received on SOCK i
 			{
 				HTTPRequestParseState* pS = parseStates + i - 1;
 				uint16_t len = CH395GetRecvLength(i);
@@ -458,17 +469,20 @@ void interrupt_CH395()
 				if(parse_http(pS, ch395.buffer))
 				{
 					ch395.RX_received |= (1 << i);
+					if(ch395.SOCK_responding < 0) // no socket currently responding to
+						ch395.SOCK_responding = i;
 				}
 				CH395ClearRecvBuf(i);
 			}
-			if(sock_int_status & SINT_STAT_CONNECT)
+			if(sock_int_status & SINT_STAT_CONNECT) // SOCK i connected
 			{
 				ch395.socket_connected |= (1 << i);
 			}
-			if(sock_int_status & SINT_STAT_DISCONNECT)
+			if(sock_int_status & SINT_STAT_DISCONNECT) // SOCK i disconnected
 			{
 				ch395.socket_connected &= ~(1<<i);
 				ch395.RX_received &= ~(1<<i);
+				if(ch395.SOCK_responding == i) ch395.SOCK_responding = -1; // release the responding socket flag
 			}
 //			if(sock_int_status & SINT_STAT_TIM_OUT)
 //			{

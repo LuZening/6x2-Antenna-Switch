@@ -32,11 +32,13 @@ typedef struct
 {
 	volatile uint8_t socket_connected; // bit0...bit7 sock0...sock7
 	volatile uint8_t RX_received; // bit0...bit7 buffer0...buffer7
+	volatile int8_t SOCK_responding; // SOCK 1-7, none if -1
 	volatile uint8_t TX_available; // bit0...bit7
-	uint8_t buffer[CH395_SIZE_BUFFER];
+	char buffer[CH395_SIZE_BUFFER];
 } CH395_TypeDef;
 extern CH395_TypeDef ch395;
 // initialize CH395
+void CH395SetBuffer(); // 2KB send & recv buffer for SOCK0-5
 BOOL CH395TCPServerStart(uint32_t ip, uint16_t port); // start TCP/IP server on CH395 on socket 0, allow multiple connections
 // TODO: CH395 GPIO
 /* ********************************************************************************************************************* */

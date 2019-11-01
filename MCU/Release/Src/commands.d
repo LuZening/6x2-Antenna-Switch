@@ -1,4 +1,4 @@
-Src/FS_test.o: ../Src/FS_test.c ../Inc/main.h \
+Src/commands.o: ../Src/commands.c ../Inc/commands.h ../Inc/main.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h \
  ../Inc/stm32f0xx_hal_conf.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_rcc.h \
@@ -26,7 +26,10 @@ Src/FS_test.o: ../Src/FS_test.c ../Inc/main.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_spi_ex.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h ../Inc/PIN.h \
- ../Inc/CH395.H ../Inc/CH395CMD.H ../Inc/FS.h ../Inc/HTTPServer.h
+ ../Inc/CH395.H ../Inc/CH395CMD.H ../Inc/FS.h ../Inc/HTTPServer.h \
+ ../Inc/main.h ../Inc/Lib485.h
+
+../Inc/commands.h:
 
 ../Inc/main.h:
 
@@ -93,3 +96,7 @@ Src/FS_test.o: ../Src/FS_test.c ../Inc/main.h \
 ../Inc/FS.h:
 
 ../Inc/HTTPServer.h:
+
+../Inc/main.h:
+
+../Inc/Lib485.h:

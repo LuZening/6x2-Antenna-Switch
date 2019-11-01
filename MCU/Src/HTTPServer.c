@@ -57,6 +57,7 @@ void resetHTTPParseState(HTTPRequestParseState *pS)
 	pS->ready = FALSE;
 	pS->response_stage = RESPONSE_NOT_PREPARED;
 	pS->len_response_content_remain = 0;
+	pS->response_header = response_header_shared_buffer; // use shared buffer
 }
 
 const char* HTTPGetContentType(const char* filename)
@@ -249,17 +250,15 @@ void HTTPonNotFound(HTTPRequestParseState *pS)
 
 void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 {
-	uint8_t i;
-	for(i=1; i <= NUM_SOCKETS; ++i)
+	uint8_t i = pch395->SOCK_responding;
+	if(i)
 	{
-		HTTPRequestParseState *pS= parseStates + i - 1;
-		if(((pch395->RX_received) & (1<<i)) && pS->ready) // socket recv buffer non-empty, bit_i is 1
+		HTTPRequestParseState *pS= parseStates +i  - 1;
+		if((pch395->TX_available & (1 << i)) && pS->ready) // socket recv buffer non-empty, bit_i is 1
 		{
-			pch395->RX_received &= ~(1 << i); // clear availibility symbol
-			pS->ready = FALSE;
+			uint8_t j;
 			if(TRUE)
 			{
-				uint8_t j;
 				for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
 				{
 					if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
@@ -272,7 +271,7 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 				{
 					HTTPonNotFound(pS);
 				}
-				if(pS->response_stage == RESPONSE_PREPARED)
+				if(pS->response_stage == RESPONSE_PREPARED) // start the process of data sending
 				{
 					uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
 					uint16_t len_content_this_time = ((pS->len_response_content_remain < max_len_content)
@@ -286,12 +285,43 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 					pS->response_content += len_content_this_time;
 					if(pS->len_response_content_remain == 0) // all content completely sent this time
 					{
-						pS->response_stage = RESPONSE_NOT_PREPARED;
+						resetHTTPParseState(pS);
+						// enque next sock to respond
+						for(j=1; j <= NUM_SOCKETS; ++j)
+						{
+							if(parseStates[j-1].ready && (pch395->socket_connected & (1 << j)))
+							{
+								pch395->SOCK_responding = j;
+								break;
+							}
+						}
 					}
 					else // content remained to be sent next time
 					{
 						pS->response_stage = RESPONSE_CONTENT_REMAIN;
 					}
+				}
+				else if(pS->response_stage == RESPONSE_CONTENT_REMAIN) // continue the sending process
+				{
+					uint16_t len = pS->len_response_content_remain;
+					CH395SendData(i, pS->response_content, ((len<MAX_SIZE_PACK)?(len):(len=MAX_SIZE_PACK)));
+					// sent
+					pS->len_response_content_remain -= len;
+					pS->response_content += len; // move the cursor
+					if(pS->len_response_content_remain == 0) // finished
+					{
+						resetHTTPParseState(pS);
+						// enque next sock to respond
+						for(j=1; j <= NUM_SOCKETS; ++j)
+						{
+							if(parseStates[j-1].ready && (pch395->socket_connected & (1 << j)))
+							{
+								pch395->SOCK_responding = j;
+								break;
+							}
+						}
+					}
+					// TODO: multiple packages
 				}
 			}
 		}
@@ -320,6 +350,7 @@ char* strsepstr(char** stringp, const char* delim)
 }
 
 BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
+
 {
 	char* line, *tok, *tok_arg, *line_tok_saveptr, *word_tok_saveptr, *arg_tok_saveptr;
 	switch(pS->state)

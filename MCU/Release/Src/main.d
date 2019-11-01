@@ -27,7 +27,7 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h ../Inc/PIN.h \
  ../Inc/CH395.H ../Inc/CH395CMD.H ../Inc/FS.h ../Inc/HTTPServer.h \
- ../Inc/CH395.h ../Inc/Delay.h
+ ../Inc/CH395.h ../Inc/Delay.h ../Inc/Flash_EEPROM.h
 
 ../Inc/main.h:
 
@@ -98,3 +98,5 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
 ../Inc/CH395.h:
 
 ../Inc/Delay.h:
+
+../Inc/Flash_EEPROM.h:

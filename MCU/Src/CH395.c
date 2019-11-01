@@ -8,11 +8,27 @@
 #include <CH395.h>
 #include <CH395CMD.h>
 #include "Delay.h"
+void CH395SetBuffer()
+{
+	uint8_t i;
+	uint8_t blk = 0;
+	for(i=0; i < 6; ++i)
+	{
+		CH395SetSocketRecvBuf(i, blk, 4);
+		blk += 4;
+		CH395SetSocketSendBuf(i, blk, 4);
+		blk += 4;
+	}
+}
+
 BOOL CH395TCPServerStart(uint32_t ip, uint16_t port)
 {
 	uint8_t i;
 	// Initialize Stack
 	CH395CMDInitCH395();
+	ch395.RX_received = 0;
+	ch395.TX_available= 0;
+	ch395.SOCK_responding = -1;
 	// Check PHY
 	i=0;
 	do
@@ -41,8 +57,8 @@ BOOL CH395TCPServerStart(uint32_t ip, uint16_t port)
 	}
 
 	CH395OpenSocket(0); // open socket 0
-	CH395TCPListen(0); // start lisening
-	return TRUE;
+	uint8_t s = CH395TCPListen(0); // start lisening
+	return s;
 }
 
 

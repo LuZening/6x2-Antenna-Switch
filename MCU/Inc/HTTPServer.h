@@ -20,7 +20,7 @@
 
 #define MAX_LEN_URI 64
 #define MAX_NUM_ARGS 4
-#define MAX_LEN_COOKIES 64
+#define MAX_LEN_COOKIES 32
 #define MAX_LEN_RESPONSE_HEADER 128
 #define MAX_SIZE_PACK 1400 // maximum size of single TCP package in one transmission
 #define NUM_SOCKETS 3
@@ -64,13 +64,17 @@ typedef struct
 	//BOOL response_ready;	// RESET after use
 	HTTPResonseStage_typedef response_stage;
 	uint16_t len_response_header; // RESET after use
-	char response_header[MAX_LEN_RESPONSE_HEADER];
+//	char response_header[MAX_LEN_RESPONSE_HEADER];
+	char* response_header; // shared buffer
 	uint16_t len_response_content_remain;
 	const uint8_t* response_content;
 	BOOL ready;	// RESET after use
 	uint8_t sock_index; //initialize sock_index
 } HTTPRequestParseState;
 extern HTTPRequestParseState parseStates[NUM_SOCKETS];
+char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
+// The Socket number responding to, which serializes the process on multiple sockets
+
 
 typedef void(*HTTPResponder_FuncType)(HTTPRequestParseState *) ;
 typedef struct

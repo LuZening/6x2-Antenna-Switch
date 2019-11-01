@@ -22,33 +22,33 @@
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="1" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant_label1" name="ant_label1" readonly="true" form="form_label"></td>
+            <td><input type ="text" maxlength="14" id="ant1" name="ant1" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="1" form="form_switch"></td>
         </tr>
 
         <tr>
             <td><input type="radio" name="sel1" value="2" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant_label2" name="ant_label2" readonly="true" form="form_label"></td>
+            <td><input type ="text" maxlength="14" id="ant2" name="ant2" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="2" form="form_switch"></td>
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="3" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant_label3" name="ant_label3" readonly="true" form="form_label"></td>
+            <td><input type ="text" maxlength="14" id="ant3" name="ant3" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="3" form="form_switch"></td>
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="4" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant_label4" name="ant_label4" readonly="true" form="form_label"></td>
+            <td><input type ="text" maxlength="14" id="ant4" name="ant4" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="4" form="form_switch"></td>
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="5" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant_label5" name="ant_label5" readonly="true" form="form_label"></td>
+            <td><input type ="text" maxlength="14" id="ant5" name="ant5" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="5" form="form_switch"></td>
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="6" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant_label6" name="ant_label6" readonly="true" form="form_label"></td>
+            <td><input type ="text" maxlength="14" id="ant6" name="ant6" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="6" form="form_switch"></td>
         </tr>
     </table>
@@ -62,48 +62,54 @@
     {
         var xhttp = new XMLHttpRequest();
         xhttp.onload = function () {
-            console.log("recved")
-            recv = xhttp.responseText; //ant1=&ant2=&...
-            args = recv.split("&");
-            for (arg in args)
+            if(xhttp.status == 200)
             {
-                tmp_splt = arg.split("=");
-                ant = tmp_splt[0]
-                label = tmp_splt[1]
-                id = "ant_label" + ant.split("t")[1]// get number
-                e = document.getElementById(id)
-                e.value = label;
+                console.log("recved")
+                recv = xhttp.responseText; //ant1=&ant2=&...
+                args = recv.split("&");
+                for (arg in args)
+                {
+                    tmp_splt = arg.split("=");
+                    ant = tmp_splt[0]
+                    label = tmp_splt[1]
+                    id = "ant" + ant.split("t")[1]// get number
+                    e = document.getElementById(id)
+                    e.value = label;
+                }
             }
         };
-        xhttp.open("GET", "getlabel");
+        xhttp.open("GET", "getlabel", true); // GET Async
         xhttp.send();
     }
-    // AJAX get switch
+    // AJAX get alloc
     function get_alloc()
     {
         var xhttp = new XMLHttpRequest();
         xhttp.onload = function () {
-            console.log("recved")
-            recv = xhttp.responseText; //sel1=2&sel2=3
-            args = recv.split("&");
-            for (arg in args)
+            if(xhttp.status == 200)
             {
-                tmp_splt = arg.split("=");
-                sel = tmp_splt[0]
-                num = Number(tmp_splt[1])
-                name = "sel" + sel.split("l")[1]// get number
-                e = document.getElementsByName(name)
-                if(num < e.length)
-                    e[num].checked = true;
+                console.log("recved")
+                recv = xhttp.responseText; //sel1=2&sel2=3
+                args = recv.split("&");
+                for (arg in args)
+                {
+                    tmp_splt = arg.split("=");
+                    sel = tmp_splt[0]
+                    num = Number(tmp_splt[1])
+                    name = "sel" + sel.split("l")[1]// get number
+                    e = document.getElementsByName(name)
+                    if(num < e.length)
+                        e[num].checked = true;
+                }
             }
         };
-        xhttp.open("GET", "getalloc");
+        xhttp.open("GET", "getalloc", true); // GET Async
         xhttp.send();
     }
     // TODO: double click to edit
     for(i=1; i<=6; ++i)
     {
-        id = 'ant_label' + (i);
+        id = 'ant' + (i);
         e = document.getElementById(id);
         e.addEventListener("dblclick", (evt)=>{
             e = evt.toElement;

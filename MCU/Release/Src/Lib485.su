@@ -1,0 +1,8 @@
+Lib485.c:15:6:CRC16	16	static
+Lib485.c:35:6:begin_serial485	24	static
+Lib485.c:54:6:set_direction485	8	static
+Lib485.c:73:6:send_serial485	16	static
+Lib485.c:125:6:handle_serial485	0	static
+Lib485.c:139:6:parse_command	16	static
+Lib485.c:85:6:onReceived_serial485	16	static
+Lib485.c:177:6:execute_command	32	static

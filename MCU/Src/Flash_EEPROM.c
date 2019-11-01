@@ -9,7 +9,7 @@
 #include "main.h"
 #include "Flash_EEPROM.h"
 #include "string.h"
-EEPROM_typedef EEPROM = {.base_addr = 0x08004000, .size=0x400};
+EEPROM_typedef EEPROM = {.base_addr=(uint8_t*)EEPROM_BASE_ADDR, .size=0x400};
 
 typedef union
 {

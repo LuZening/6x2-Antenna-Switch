@@ -15,7 +15,7 @@ def str2bytes(s:str):
     return b
 
 N_BYTES = 4
-if __name__ == "__main__":
+if __name__ == "__main__": # arg1: path_folder, arg2: path_image, 
     little_endian = True # Choose between: little-endian or big-endian
     if len(sys.argv) < 3:
         print("Please Speciy input director and output filename")

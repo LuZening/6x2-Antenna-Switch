@@ -27,7 +27,7 @@ Src/HTTPResponders.o: ../Src/HTTPResponders.c ../Inc/main.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h ../Inc/PIN.h \
  ../Inc/CH395.H ../Inc/CH395CMD.H ../Inc/FS.h ../Inc/HTTPServer.h \
- ../Inc/HTTPServer.h ../Inc/FS.h
+ ../Inc/HTTPServer.h ../Inc/FS.h ../Inc/Flash_EEPROM.h
 
 ../Inc/main.h:
 
@@ -98,3 +98,5 @@ Src/HTTPResponders.o: ../Src/HTTPResponders.c ../Inc/main.h \
 ../Inc/HTTPServer.h:
 
 ../Inc/FS.h:
+
+../Inc/Flash_EEPROM.h:
