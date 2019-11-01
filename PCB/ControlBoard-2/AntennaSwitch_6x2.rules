@@ -1,0 +1,266 @@
+
+(rules PCB AntennaSwitch_6x2
+  (snap_angle 
+    fortyfive_degree
+  )
+  (autoroute_settings
+    (fanout off)
+    (autoroute on)
+    (postroute on)
+    (vias on)
+    (via_costs 50)
+    (plane_via_costs 5)
+    (start_ripup_costs 100)
+    (start_pass_no 149)
+    (layer_rule F.Cu
+      (active on)
+      (preferred_direction vertical)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 2.1)
+    )
+    (layer_rule B.Cu
+      (active on)
+      (preferred_direction horizontal)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 1.9)
+    )
+  )
+  (rule
+    (width 203.2)
+    (clear 203.4)
+    (clear 101.6 (type smd_to_turn_gap))
+    (clear 254.2 (type default_+12V))
+    (clear 254.2 (type default_+3V3))
+    (clear 508.2 (type default_CHASIS))
+    (clear 50.8 (type smd_smd))
+    (clear 254.2 (type smd_+12V))
+    (clear 254.2 (type smd_+3V3))
+    (clear 508.2 (type smd_CHASIS))
+    (clear 254.2 (type "kicad_default"_+12V))
+    (clear 254.2 (type "kicad_default"_+3V3))
+    (clear 508.2 (type "kicad_default"_CHASIS))
+    (clear 254.2 (type +12V_+12V))
+    (clear 254.2 (type +12V_+3V3))
+    (clear 254.2 (type +12V_"CH395_GPIO"))
+    (clear 508.2 (type +12V_CHASIS))
+    (clear 254.2 (type +12V_SPI))
+    (clear 254.2 (type +3V3_+3V3))
+    (clear 254.2 (type +3V3_"CH395_GPIO"))
+    (clear 508.2 (type +3V3_CHASIS))
+    (clear 254.2 (type +3V3_SPI))
+    (clear 508.2 (type "CH395_GPIO"_CHASIS))
+    (clear 508.2 (type CHASIS_CHASIS))
+    (clear 508.2 (type CHASIS_SPI))
+    (clear 152.6 (type SPI_SPI))
+  )
+  (padstack "Via[0-1]_800:400_um"
+    (shape
+      (circle F.Cu 800.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 800.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (padstack "Via[0-1]_1200:700_um"
+    (shape
+      (circle F.Cu 1200.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 1200.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (padstack "Via[0-1]_1000:600_um"
+    (shape
+      (circle F.Cu 1000.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 1000.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_800:400_um" "Via[0-1]_800:400_um" default
+  )
+  (via 
+    "Via[0-1]_1200:700_um" "Via[0-1]_1200:700_um" default
+  )
+  (via 
+    "Via[0-1]_1000:600_um" "Via[0-1]_1000:600_um" default
+  )
+  (via 
+    "Via[0-1]_800:400_um-kicad_default" "Via[0-1]_800:400_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_1200:700_um-kicad_default" "Via[0-1]_1200:700_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_1000:600_um-kicad_default" "Via[0-1]_1000:600_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_800:400_um-+12V" "Via[0-1]_800:400_um" +12V
+  )
+  (via 
+    "Via[0-1]_1200:700_um-+12V" "Via[0-1]_1200:700_um" +12V
+  )
+  (via 
+    "Via[0-1]_1000:600_um-+12V" "Via[0-1]_1000:600_um" +12V
+  )
+  (via 
+    "Via[0-1]_800:400_um-+3V3" "Via[0-1]_800:400_um" +3V3
+  )
+  (via 
+    "Via[0-1]_1200:700_um-+3V3" "Via[0-1]_1200:700_um" +3V3
+  )
+  (via 
+    "Via[0-1]_1000:600_um-+3V3" "Via[0-1]_1000:600_um" +3V3
+  )
+  (via 
+    "Via[0-1]_800:400_um-CH395_GPIO" "Via[0-1]_800:400_um" "CH395_GPIO"
+  )
+  (via 
+    "Via[0-1]_1200:700_um-CH395_GPIO" "Via[0-1]_1200:700_um" "CH395_GPIO"
+  )
+  (via 
+    "Via[0-1]_1000:600_um-CH395_GPIO" "Via[0-1]_1000:600_um" "CH395_GPIO"
+  )
+  (via 
+    "Via[0-1]_800:400_um-CHASIS" "Via[0-1]_800:400_um" CHASIS
+  )
+  (via 
+    "Via[0-1]_1200:700_um-CHASIS" "Via[0-1]_1200:700_um" CHASIS
+  )
+  (via 
+    "Via[0-1]_1000:600_um-CHASIS" "Via[0-1]_1000:600_um" CHASIS
+  )
+  (via 
+    "Via[0-1]_800:400_um-SPI" "Via[0-1]_800:400_um" SPI
+  )
+  (via 
+    "Via[0-1]_1200:700_um-SPI" "Via[0-1]_1200:700_um" SPI
+  )
+  (via 
+    "Via[0-1]_1000:600_um-SPI" "Via[0-1]_1000:600_um" SPI
+  )
+  (via_rule
+    default "Via[0-1]_800:400_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_800:400_um-kicad_default"
+  )
+  (via_rule
+    +12V "Via[0-1]_800:400_um-+12V"
+  )
+  (via_rule
+    +3V3 "Via[0-1]_800:400_um-+3V3"
+  )
+  (via_rule
+    "CH395_GPIO" "Via[0-1]_800:400_um-CH395_GPIO"
+  )
+  (via_rule
+    CHASIS "Via[0-1]_800:400_um-CHASIS"
+  )
+  (via_rule
+    SPI "Via[0-1]_800:400_um-SPI"
+  )
+  (class default
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 203.2)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "kicad_default"
+    chasis "Net-(C37-Pad1)" "Net-(C37-Pad2)" "Net-(C38-Pad1)" /Remote/RST "Net-(D1-Pad1)" "Net-(F1-Pad2)" "BCD1_2"
+    "BCD1_1" "BCD1_0" "BCD2_2" "BCD2_1" "BCD2_0" "Net-(J3-Pad3)" "Net-(J3-Pad4)" "Net-(J3-Pad5)"
+    "Net-(J3-Pad6)" /Remote/INT /Remote/SWCLK /Remote/SWDIO "Net-(Q1-Pad3)" "Net-(R18-Pad2)" "Net-(R50-Pad2)" "Net-(R51-Pad2)"
+    "Net-(R52-Pad1)" "Net-(R55-Pad2)" /Remote/485RW /Remote/RXD /Remote/TXD /Remote/A /Remote/B /Remote/RXP
+    /Remote/TXP /Remote/RXN /Remote/TXN /Remote/X+ "/Remote/X-" "Net-(C38-Pad2)" "Net-(D4-Pad2)" "Net-(J1-Pad6)"
+    "Net-(J3-Pad7)" "Net-(J3-Pad8)" "Net-(J4-Pad1)" "Net-(J4-Pad2)" "Net-(J4-Pad3)" "Net-(J4-Pad4)" "Net-(J4-Pad5)" "Net-(J4-Pad6)"
+    "Net-(J5-Pad12)" "Net-(J5-Pad10)" "Net-(J5-Pad9)" "Net-(Q1-Pad1)" "Net-(Q2-Pad3)" "Net-(Q2-Pad1)" "Net-(Q3-Pad3)" "Net-(Q4-Pad3)"
+    "Net-(Q5-Pad3)" "Net-(Q6-Pad3)" "Net-(Q7-Pad3)" "Net-(Q8-Pad3)" "Net-(Q9-Pad3)" "Net-(Q10-Pad3)" "Net-(Q11-Pad3)" "Net-(Q12-Pad3)"
+    "Net-(Q13-Pad3)" "Net-(Q14-Pad3)" "Net-(Q15-Pad1)" "Net-(Q16-Pad1)" "Net-(Q17-Pad1)" "Net-(Q18-Pad1)" "Net-(Q19-Pad1)" "Net-(Q20-Pad1)"
+    "Net-(Q21-Pad1)" "Net-(Q22-Pad1)" "Net-(Q23-Pad1)" "Net-(Q24-Pad1)" "Net-(Q25-Pad1)" "Net-(Q26-Pad1)" "Net-(R1-Pad1)" "Net-(R2-Pad1)"
+    "Net-(R3-Pad1)" "Net-(R4-Pad1)" "Net-(R5-Pad1)" "Net-(R6-Pad1)" "Net-(R7-Pad1)" "Net-(R8-Pad1)" "Net-(R9-Pad1)" "Net-(R11-Pad1)"
+    "Net-(R12-Pad1)" "Net-(R13-Pad1)" "Net-(R14-Pad1)" "Net-(R15-Pad1)" "Net-(R16-Pad1)" "Net-(R17-Pad1)" "/Interlock/SEL1_1" "/Interlock/SEL2_1"
+    "/Interlock/SEL1_2" "/Interlock/SEL2_2" "/Interlock/SEL1_3" "/Interlock/SEL2_3" "/Interlock/SEL1_4" "/Interlock/SEL2_4" "/Interlock/SEL1_5" "/Interlock/SEL2_5"
+    "/Interlock/SEL1_6" "/Interlock/SEL2_6" /Interlock/LOAD /Interlock/REMOTE "Net-(SW1-Pad2)" "Net-(SW2-Pad2)" "Net-(U4-Pad35)" "BCDM1_0"
+    "BCDM1_1" "BCDM1_2" "BCDM2_0" "BCDM2_1" "BCDM2_2" "Net-(U1-Pad100)" "Net-(U1-Pad99)" "Net-(U1-Pad98)"
+    "Net-(U1-Pad97)" "Net-(U1-Pad96)" "Net-(U1-Pad95)" "Net-(U1-Pad92)" "Net-(U1-Pad91)" "Net-(U1-Pad90)" "Net-(U1-Pad64)" "Net-(U1-Pad62)"
+    "Net-(U1-Pad49)" "Net-(U1-Pad14)" "Net-(U1-Pad12)" "Net-(U1-Pad8)" "Net-(U1-Pad1)" "Net-(J1-Pad8)" "Net-(R52-Pad2)" "Net-(R59-Pad2)"
+    "Net-(U4-Pad57)" "Net-(U4-Pad34)" "Net-(U4-Pad33)" "Net-(U4-Pad32)" "Net-(U4-Pad27)" "Net-(U4-Pad26)" "Net-(U4-Pad25)" "Net-(U4-Pad24)"
+    "Net-(U4-Pad23)" "Net-(U4-Pad22)" "Net-(U5-Pad46)" "Net-(U5-Pad45)" "Net-(U5-Pad43)" "Net-(U5-Pad42)" "Net-(U5-Pad41)" "Net-(U5-Pad36)"
+    "Net-(U5-Pad35)" "Net-(U5-Pad21)" "Net-(U5-Pad20)" "Net-(U5-Pad19)" "Net-(U5-Pad18)" "Net-(U5-Pad10)" "Net-(U5-Pad6)" "Net-(U5-Pad5)"
+    "Net-(U5-Pad4)" "Net-(U5-Pad3)" "Net-(U5-Pad2)" "Net-(R59*1-Pad1)" "Net-(U1-Pad30)" "Net-(U1-Pad29)" "Net-(U1-Pad28)" "Net-(U1-Pad27)"
+    "Net-(U1-Pad26)" "Net-(U1-Pad21)" /Interlock/TCK /Interlock/TDO /Interlock/TMS /Interlock/TDI "/Interlock/SEG1_A" "/Interlock/SEG1_B"
+    "/Interlock/SEG1_C" "/Interlock/SEG1_D" "/Interlock/SEG1_E" "/Interlock/SEG1_F" "/Interlock/SEG1_G" "/Interlock/SEG1_DP" "/Interlock/SEG2_A" /Interlock/SEG1
+    "/Interlock/SEG2_B" "/Interlock/SEG2_C" "/Interlock/SEG2_D" "/Interlock/SEG2_E" "/Interlock/SEG2_F" "/Interlock/SEG2_G" "/Interlock/SEG2_DP" "/Interlock/SW1_6"
+    "/Interlock/SW1_5" "/Interlock/SW1_4" "/Interlock/SW1_3" "/Interlock/SW1_2" "/Interlock/SW1_1" "/Interlock/SW2_6" "/Interlock/SW2_5" "/Interlock/SW2_4"
+    "/Interlock/SW2_3" "/Interlock/SW2_2" "/Interlock/SW2_1" "Net-(U1-Pad75)" "Net-(U1-Pad61)"
+    (clearance_class "kicad_default")
+    (via_rule kicad_default)
+    (rule
+      (width 203.2)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class +12V
+    +12V
+    (clearance_class +12V)
+    (via_rule +12V)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class +3V3
+    +3V3 +1V8
+    (clearance_class +3V3)
+    (via_rule +3V3)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "CH395_GPIO"
+    (clearance_class "CH395_GPIO")
+    (via_rule CH395_GPIO)
+    (rule
+      (width 203.2)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class CHASIS
+    (clearance_class CHASIS)
+    (via_rule CHASIS)
+    (rule
+      (width 203.2)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class SPI
+    "/Remote/SPI_MOSI" "/Remote/SPI_MISO" "/Remote/SPI_SCK" "/Remote/SPI_CS"
+    (clearance_class SPI)
+    (via_rule SPI)
+    (rule
+      (width 152.4)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)

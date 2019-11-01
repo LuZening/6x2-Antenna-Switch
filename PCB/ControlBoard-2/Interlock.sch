@@ -849,17 +849,6 @@ F 3 "http://www.unisonic.com.tw/datasheet/S8050.pdf" H 5750 4800 50  0001 L CNN
 	1    5750 4800
 	-1   0    0    1   
 $EndComp
-$Comp
-L CPLD_Altera:EPM240T100 U1
-U 1 1 5E2DC86A
-P 4100 3500
-F 0 "U1" H 4100 6081 50  0000 C CNN
-F 1 "EPM240T100" H 4100 5990 50  0000 C CNN
-F 2 "lc_lib:LQFP-100_14X14X05P" H 4500 1150 50  0001 L CNN
-F 3 "https://www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/max2/max2_mii5v1.pdf" H 4100 3500 50  0001 C CNN
-	1    4100 3500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3700 1100 3800 1100
 Connection ~ 3800 1100
@@ -1896,18 +1885,6 @@ F 3 "http://cdn-reichelt.de/documents/datenblatt/C200/DS-Serie%23LOR.pdf" H 1050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1650 1400 3100 1400
-Wire Wire Line
-	1650 1500 3100 1500
-Wire Wire Line
-	1650 1600 3100 1600
-Wire Wire Line
-	1650 1700 3100 1700
-Wire Wire Line
-	1650 1800 3100 1800
-Wire Wire Line
-	1650 1900 3100 1900
-Wire Wire Line
 	1600 2300 3100 2300
 Wire Wire Line
 	3100 2400 1600 2400
@@ -1935,4 +1912,39 @@ Text Label 5100 1500 0    50   ~ 0
 SEG1_E
 Text Label 2750 5100 0    50   ~ 0
 SEG1_D
+$Comp
+L CPLD_Altera:EPM240T100 U1
+U 1 1 5E2DC86A
+P 4100 3500
+F 0 "U1" H 4100 6081 50  0000 C CNN
+F 1 "EPM240T100" H 4100 5990 50  0000 C CNN
+F 2 "lc_lib:LQFP-100_14X14X05P" H 4500 1150 50  0001 L CNN
+F 3 "https://www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/max2/max2_mii5v1.pdf" H 4100 3500 50  0001 C CNN
+	1    4100 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 1600 2800 1600
+Wire Wire Line
+	3100 1700 2800 1700
+Wire Wire Line
+	3100 1800 2800 1800
+Text Label 2800 1600 0    50   ~ 0
+SW1_1
+Text Label 2800 1500 0    50   ~ 0
+SW1_2
+Text Label 2800 1400 0    50   ~ 0
+SW1_3
+Wire Wire Line
+	2800 1400 3100 1400
+Wire Wire Line
+	2800 1500 3100 1500
+Text Label 2800 1700 0    50   ~ 0
+SW1_4
+Text Label 2800 1800 0    50   ~ 0
+SW1_5
+Text Label 2800 1900 0    50   ~ 0
+SW1_6
+Wire Wire Line
+	2800 1900 3100 1900
 $EndSCHEMATC
