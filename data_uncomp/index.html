@@ -1,6 +1,58 @@
 <html>
 <head>
     <title>Antenna Switch</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            
+        }
+        th {
+            background-color: black;
+            color: white;
+            font-size: 1.2rem;
+        }
+        td {
+            text-align: center;
+            size: 1em;
+        }
+        tr.even {
+            background-color: lightgray;
+        }
+        input[type="radio"] {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        input[type="text"]{
+            border: none;
+            font-size: 1.5rem;
+            text-align: center;
+            background: none;
+        }
+        input[type="submit"]{
+            background: white;
+            color: black;
+            border-width: 4px;
+            border-color:black;
+            width:5rem;
+            height: 3rem;
+            font-size: 1rem;
+            margin-right:1rem;
+            margin-left:5rem;
+        }
+        input[type="submit"]:active{
+            transform:scale(0.95);
+        }
+        footer{
+            margin-top: 2rem;
+            text-align: left;
+            color: gray;
+            font-style: italic;
+            font-size:10px;
+        }
+    </style>
     <script>
         window.onload = function(){get_label(); get_alloc();};
     </script>
@@ -9,7 +61,7 @@
     <h1>6x2 Antenna Switch</h1>
     <form action="switch" method="POST" enctype="application/x-www-form-urlencoded" id="form_switch"></form>
     <form action="setlabel" method="POST" enctype="application/x-www-form-urlencoded" id="form_label"></form>
-    <table border=1>
+    <table border=4>
         <tr>
             <th>Radio A</th>
             <th>Antenna</th>
@@ -20,7 +72,7 @@
             <td></td>
             <td><input type="radio" name="sel2" value="0" form="form_switch"></td>
         </tr>
-        <tr>
+        <tr class="even">
             <td><input type="radio" name="sel1" value="1" form="form_switch"></td>
             <td><input type ="text" maxlength="14" id="ant1" name="ant1" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="1" form="form_switch"></td>
@@ -31,7 +83,7 @@
             <td><input type ="text" maxlength="14" id="ant2" name="ant2" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="2" form="form_switch"></td>
         </tr>
-        <tr>
+        <tr class="even">
             <td><input type="radio" name="sel1" value="3" form="form_switch"></td>
             <td><input type ="text" maxlength="14" id="ant3" name="ant3" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="3" form="form_switch"></td>
@@ -41,7 +93,7 @@
             <td><input type ="text" maxlength="14" id="ant4" name="ant4" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="4" form="form_switch"></td>
         </tr>
-        <tr>
+        <tr class="even">
             <td><input type="radio" name="sel1" value="5" form="form_switch"></td>
             <td><input type ="text" maxlength="14" id="ant5" name="ant5" readonly="true" form="form_label"></td>
             <td><input type="radio" name="sel2" value="5" form="form_switch"></td>
@@ -56,6 +108,10 @@
     <input type="submit" form="form_switch" value="Switch">
     <input type="submit" id="save_labels" form="form_label" value="Save" hidden="true">
 </body>
+<footer>
+    <p>Designed by: Lu, Zening (BI4WOP)</p>
+    <p>Dec. 1, 2019</p>
+</footer>
 <script>
     // AJAX get label
     function get_label()
@@ -67,7 +123,7 @@
                 console.log("recved")
                 recv = xhttp.responseText; //ant1=&ant2=&...
                 args = recv.split("&");
-                for (arg in args)
+                for (arg of args)
                 {
                     tmp_splt = arg.split("=");
                     ant = tmp_splt[0]
@@ -91,7 +147,7 @@
                 console.log("recved")
                 recv = xhttp.responseText; //sel1=2&sel2=3
                 args = recv.split("&");
-                for (arg in args)
+                for (arg of args)
                 {
                     tmp_splt = arg.split("=");
                     sel = tmp_splt[0]
@@ -106,7 +162,7 @@
         xhttp.open("GET", "getalloc", true); // GET Async
         xhttp.send();
     }
-    // TODO: double click to edit
+    // : double click to edit
     for(i=1; i<=6; ++i)
     {
         id = 'ant' + (i);

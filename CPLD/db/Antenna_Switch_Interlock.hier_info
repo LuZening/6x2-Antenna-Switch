@@ -1,0 +1,331 @@
+|Antenna_Switch_Interlock_pin
+BCD1[0] => _.IN1
+BCD1[1] => _.IN1
+BCD1[2] => _.IN1
+BCD2[0] => _.IN1
+BCD2[1] => _.IN1
+BCD2[2] => _.IN1
+BCDM1[0] << W_BCDM1[0].DB_MAX_OUTPUT_PORT_TYPE
+BCDM1[1] << W_BCDM1[1].DB_MAX_OUTPUT_PORT_TYPE
+BCDM1[2] << W_BCDM1[2].DB_MAX_OUTPUT_PORT_TYPE
+BCDM2[0] << W_BCDM2[0].DB_MAX_OUTPUT_PORT_TYPE
+BCDM2[1] << W_BCDM2[1].DB_MAX_OUTPUT_PORT_TYPE
+BCDM2[2] << W_BCDM2[2].DB_MAX_OUTPUT_PORT_TYPE
+LOAD => LOAD.IN1
+REMOTE => _.IN1
+REMOTE => _.IN1
+REMOTE => R_Disp_off.DATAIN
+RST_EXT => ~NO_FANOUT~
+SEG1[0] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[1] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[2] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[3] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[4] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[5] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[6] << Seven_seg_decoder:u_7SEG_A.O
+SEG1[7] << W_diff.DB_MAX_OUTPUT_PORT_TYPE
+SEG1_en << SEG1_en.DB_MAX_OUTPUT_PORT_TYPE
+SEG2[0] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[1] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[2] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[3] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[4] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[5] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[6] << Seven_seg_decoder:u_7SEG_B.O
+SEG2[7] << W_diff.DB_MAX_OUTPUT_PORT_TYPE
+SEG2_en << SEG2_en.DB_MAX_OUTPUT_PORT_TYPE
+SEL1[0] << W_latched_A[0].DB_MAX_OUTPUT_PORT_TYPE
+SEL1[1] << W_latched_A[1].DB_MAX_OUTPUT_PORT_TYPE
+SEL1[2] << W_latched_A[2].DB_MAX_OUTPUT_PORT_TYPE
+SEL1[3] << W_latched_A[3].DB_MAX_OUTPUT_PORT_TYPE
+SEL1[4] << W_latched_A[4].DB_MAX_OUTPUT_PORT_TYPE
+SEL1[5] << W_latched_A[5].DB_MAX_OUTPUT_PORT_TYPE
+SEL2[0] << W_latched_B[0].DB_MAX_OUTPUT_PORT_TYPE
+SEL2[1] << W_latched_B[1].DB_MAX_OUTPUT_PORT_TYPE
+SEL2[2] << W_latched_B[2].DB_MAX_OUTPUT_PORT_TYPE
+SEL2[3] << W_latched_B[3].DB_MAX_OUTPUT_PORT_TYPE
+SEL2[4] << W_latched_B[4].DB_MAX_OUTPUT_PORT_TYPE
+SEL2[5] << W_latched_B[5].DB_MAX_OUTPUT_PORT_TYPE
+SW1[0] => _.IN1
+SW1[1] => _.IN1
+SW1[2] => _.IN1
+SW1[3] => _.IN1
+SW1[4] => _.IN1
+SW1[5] => _.IN1
+SW2[0] => _.IN1
+SW2[1] => _.IN1
+SW2[2] => _.IN1
+SW2[3] => _.IN1
+SW2[4] => _.IN1
+SW2[5] => _.IN1
+
+
+|Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_SW1
+I_bin[0] => Decoder0.IN5
+I_bin[1] => Decoder0.IN4
+I_bin[2] => Decoder0.IN3
+I_bin[3] => Decoder0.IN2
+I_bin[4] => Decoder0.IN1
+I_bin[5] => Decoder0.IN0
+O_bcd[0] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[2] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_SW2
+I_bin[0] => Decoder0.IN5
+I_bin[1] => Decoder0.IN4
+I_bin[2] => Decoder0.IN3
+I_bin[3] => Decoder0.IN2
+I_bin[4] => Decoder0.IN1
+I_bin[5] => Decoder0.IN0
+O_bcd[0] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[2] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|I_MUX:u_IMUX
+I_local_A[0] => O_A.DATAA
+I_local_A[1] => O_A.DATAA
+I_local_A[2] => O_A.DATAA
+I_local_B[0] => O_B.DATAA
+I_local_B[1] => O_B.DATAA
+I_local_B[2] => O_B.DATAA
+I_remote_A[0] => O_A.DATAB
+I_remote_A[1] => O_A.DATAB
+I_remote_A[2] => O_A.DATAB
+I_remote_B[0] => O_B.DATAB
+I_remote_B[1] => O_B.DATAB
+I_remote_B[2] => O_B.DATAB
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+O_A[0] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[1] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[2] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_B[0] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[1] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[2] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|Interlock:u_Interlock
+I_A[0] => I_A[0].IN1
+I_A[1] => I_A[1].IN1
+I_A[2] => I_A[2].IN1
+I_B[0] => I_B[0].IN1
+I_B[1] => I_B[1].IN1
+I_B[2] => I_B[2].IN1
+O_A[0] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[1] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[2] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[3] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[4] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[5] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_B[0] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[1] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[2] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[3] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[4] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[5] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_collision <= O_collision.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|Interlock:u_Interlock|BCD_decoder:u_Interlock_BCD_decoder_A
+I_bcd[0] => Decoder0.IN2
+I_bcd[1] => Decoder0.IN1
+I_bcd[2] => Decoder0.IN0
+O_bin[0] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[1] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[2] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[3] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[4] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[5] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|Interlock:u_Interlock|BCD_decoder:u_Interlock_BCD_decoder_B
+I_bcd[0] => Decoder0.IN2
+I_bcd[1] => Decoder0.IN1
+I_bcd[2] => Decoder0.IN0
+O_bin[0] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[1] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[2] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[3] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[4] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+O_bin[5] <= Decoder0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_I1
+I_bin[0] => Decoder0.IN5
+I_bin[1] => Decoder0.IN4
+I_bin[2] => Decoder0.IN3
+I_bin[3] => Decoder0.IN2
+I_bin[4] => Decoder0.IN1
+I_bin[5] => Decoder0.IN0
+O_bcd[0] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[2] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_I2
+I_bin[0] => Decoder0.IN5
+I_bin[1] => Decoder0.IN4
+I_bin[2] => Decoder0.IN3
+I_bin[3] => Decoder0.IN2
+I_bin[4] => Decoder0.IN1
+I_bin[5] => Decoder0.IN0
+O_bcd[0] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[2] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|Out_latch:u_Olatch
+I_A[0] => O_A.DATAB
+I_A[0] => reg_A[0].DATAIN
+I_A[1] => O_A.DATAB
+I_A[1] => reg_A[1].DATAIN
+I_A[2] => O_A.DATAB
+I_A[2] => reg_A[2].DATAIN
+I_A[3] => O_A.DATAB
+I_A[3] => reg_A[3].DATAIN
+I_A[4] => O_A.DATAB
+I_A[4] => reg_A[4].DATAIN
+I_A[5] => O_A.DATAB
+I_A[5] => reg_A[5].DATAIN
+I_B[0] => O_B.DATAB
+I_B[0] => reg_B[0].DATAIN
+I_B[1] => O_B.DATAB
+I_B[1] => reg_B[1].DATAIN
+I_B[2] => O_B.DATAB
+I_B[2] => reg_B[2].DATAIN
+I_B[3] => O_B.DATAB
+I_B[3] => reg_B[3].DATAIN
+I_B[4] => O_B.DATAB
+I_B[4] => reg_B[4].DATAIN
+I_B[5] => O_B.DATAB
+I_B[5] => reg_B[5].DATAIN
+I_load => reg_B[0].CLK
+I_load => reg_B[1].CLK
+I_load => reg_B[2].CLK
+I_load => reg_B[3].CLK
+I_load => reg_B[4].CLK
+I_load => reg_B[5].CLK
+I_load => reg_A[0].CLK
+I_load => reg_A[1].CLK
+I_load => reg_A[2].CLK
+I_load => reg_A[3].CLK
+I_load => reg_A[4].CLK
+I_load => reg_A[5].CLK
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_A.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => O_B.OUTPUTSELECT
+I_remote => always0.IN0
+I_collision => always0.IN1
+O_A[0] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[1] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[2] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[3] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[4] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_A[5] <= O_A.DB_MAX_OUTPUT_PORT_TYPE
+O_B[0] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[1] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[2] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[3] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[4] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+O_B[5] <= O_B.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_M1
+I_bin[0] => Decoder0.IN5
+I_bin[1] => Decoder0.IN4
+I_bin[2] => Decoder0.IN3
+I_bin[3] => Decoder0.IN2
+I_bin[4] => Decoder0.IN1
+I_bin[5] => Decoder0.IN0
+O_bcd[0] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[2] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_M2
+I_bin[0] => Decoder0.IN5
+I_bin[1] => Decoder0.IN4
+I_bin[2] => Decoder0.IN3
+I_bin[3] => Decoder0.IN2
+I_bin[4] => Decoder0.IN1
+I_bin[5] => Decoder0.IN0
+O_bcd[0] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+O_bcd[2] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Antenna_Switch_Interlock_pin|Seven_seg_decoder:u_7SEG_A
+I[0] => Decoder0.IN2
+I[1] => Decoder0.IN1
+I[2] => Decoder0.IN0
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+O[0] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[1] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[2] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[3] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[4] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[5] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[6] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[7] <= <VCC>
+
+
+|Antenna_Switch_Interlock_pin|Seven_seg_decoder:u_7SEG_B
+I[0] => Decoder0.IN2
+I[1] => Decoder0.IN1
+I[2] => Decoder0.IN0
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+I_collision => O.OUTPUTSELECT
+O[0] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[1] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[2] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[3] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[4] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[5] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[6] <= O.DB_MAX_OUTPUT_PORT_TYPE
+O[7] <= <VCC>
+
+
+|Antenna_Switch_Interlock_pin|Diff:u_Diff
+I_A1[0] => Equal0.IN2
+I_A1[1] => Equal0.IN1
+I_A1[2] => Equal0.IN0
+I_B1[0] => Equal1.IN2
+I_B1[1] => Equal1.IN1
+I_B1[2] => Equal1.IN0
+I_A2[0] => Equal0.IN5
+I_A2[1] => Equal0.IN4
+I_A2[2] => Equal0.IN3
+I_B2[0] => Equal1.IN5
+I_B2[1] => Equal1.IN4
+I_B2[2] => Equal1.IN3
+O_segA <= O_segA.DB_MAX_OUTPUT_PORT_TYPE
+O_segB <= always0.DB_MAX_OUTPUT_PORT_TYPE
+
+

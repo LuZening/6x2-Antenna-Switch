@@ -629,23 +629,6 @@ F 3 "~" H 7450 2550 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	7450 2450 7450 2400
-$Comp
-L Device:R_Small R18
-U 1 1 5EAD0389
-P 7450 3600
-F 0 "R18" H 7509 3646 50  0000 L CNN
-F 1 "1K" H 7509 3555 50  0000 L CNN
-F 2 "lc_lib:0603_R" H 7450 3600 50  0001 C CNN
-F 3 "~" H 7450 3600 50  0001 C CNN
-	1    7450 3600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7450 3500 7450 3450
-Wire Wire Line
-	7450 3700 6150 3700
-Wire Wire Line
-	6150 3700 6150 3300
 Wire Wire Line
 	6150 3300 5100 3300
 Wire Wire Line
@@ -1504,30 +1487,6 @@ Wire Wire Line
 	3100 4800 2750 4800
 Text Label 2750 3700 0    50   ~ 0
 SEL2_6
-Text Label 5950 4300 1    50   ~ 0
-SEL1_1
-Text Label 6850 4300 1    50   ~ 0
-SEL1_2
-Text Label 7750 4300 1    50   ~ 0
-SEL1_3
-Text Label 8650 4300 1    50   ~ 0
-SEL1_4
-Text Label 9550 4300 1    50   ~ 0
-SEL1_5
-Text Label 10450 4300 1    50   ~ 0
-SEL1_6
-Text Label 6400 4300 1    50   ~ 0
-SEL2_1
-Text Label 7300 4300 1    50   ~ 0
-SEL2_2
-Text Label 8200 4300 1    50   ~ 0
-SEL2_3
-Text Label 9100 4300 1    50   ~ 0
-SEL2_4
-Text Label 10000 4300 1    50   ~ 0
-SEL2_5
-Text Label 10900 4300 1    50   ~ 0
-SEL2_6
 Text Notes 2350 4950 0    50   ~ 0
 HIGH EFFECTIVE
 Text Label 2750 3500 0    50   ~ 0
@@ -1613,29 +1572,25 @@ A
 Text Notes 6950 2850 0    50   ~ 0
 B
 Wire Wire Line
-	5950 4300 5950 4800
+	6850 4300 6850 4450
 Wire Wire Line
-	6400 4300 6400 4800
+	7300 4300 7300 4450
 Wire Wire Line
-	6850 4300 6850 4800
+	7750 4300 7750 4450
 Wire Wire Line
-	7300 4300 7300 4800
+	8200 4300 8200 4450
 Wire Wire Line
-	7750 4300 7750 4800
+	8650 4300 8650 4450
 Wire Wire Line
-	8200 4300 8200 4800
+	9100 4300 9100 4450
 Wire Wire Line
-	8650 4300 8650 4800
+	9550 4300 9550 4450
 Wire Wire Line
-	9100 4300 9100 4800
+	10000 4300 10000 4450
 Wire Wire Line
-	9550 4300 9550 4800
+	10450 4300 10450 4450
 Wire Wire Line
-	10000 4300 10000 4800
-Wire Wire Line
-	10450 4300 10450 4800
-Wire Wire Line
-	10900 4300 10900 4800
+	10900 4300 10900 4450
 Wire Wire Line
 	1050 4550 2500 4550
 Wire Wire Line
@@ -1947,4 +1902,477 @@ Text Label 2800 1900 0    50   ~ 0
 SW1_6
 Wire Wire Line
 	2800 1900 3100 1900
+$Comp
+L Device:C_Small C43
+U 1 1 5E3E24BD
+P 2200 3400
+F 0 "C43" H 2292 3446 50  0000 L CNN
+F 1 "104" H 2292 3355 50  0000 L CNN
+F 2 "lc_lib:0603_C" H 2200 3400 50  0001 C CNN
+F 3 "~" H 2200 3400 50  0001 C CNN
+	1    2200 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R19
+U 1 1 5E3E290D
+P 2200 3150
+F 0 "R19" V 2396 3150 50  0000 C CNN
+F 1 "1K" V 2305 3150 50  0000 C CNN
+F 2 "lc_lib:0603_R" H 2200 3150 50  0001 C CNN
+F 3 "~" H 2200 3150 50  0001 C CNN
+	1    2200 3150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2200 3250 2200 3300
+Wire Wire Line
+	2200 3250 2850 3250
+Wire Wire Line
+	2850 3250 2850 3100
+Wire Wire Line
+	2850 3100 3100 3100
+Connection ~ 2200 3250
+$Comp
+L power:GND #PWR0103
+U 1 1 5E41D9C4
+P 2200 3600
+F 0 "#PWR0103" H 2200 3350 50  0001 C CNN
+F 1 "GND" H 2205 3427 50  0000 C CNN
+F 2 "" H 2200 3600 50  0001 C CNN
+F 3 "" H 2200 3600 50  0001 C CNN
+	1    2200 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2200 3500 2200 3600
+Wire Wire Line
+	2200 3050 2200 2950
+$Comp
+L power:+3.3V #PWR0104
+U 1 1 5E45997C
+P 1950 2950
+F 0 "#PWR0104" H 1950 2800 50  0001 C CNN
+F 1 "+3.3V" V 2000 2900 50  0000 C CNN
+F 2 "" H 1950 2950 50  0001 C CNN
+F 3 "" H 1950 2950 50  0001 C CNN
+	1    1950 2950
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1950 2950 2200 2950
+$Comp
+L Connector_Generic:Conn_01x01 J?
+U 1 1 5E486C17
+P 1700 3150
+AR Path="/5EEFD0D7/5E486C17" Ref="J?"  Part="1" 
+AR Path="/5CD199CD/5E486C17" Ref="J9"  Part="1" 
+F 0 "J9" V 1664 3062 50  0000 R CNN
+F 1 "RST" V 1573 3062 50  0000 R CNN
+F 2 "Connectors:PINTST" H 1700 3150 50  0001 C CNN
+F 3 "~" H 1700 3150 50  0001 C CNN
+	1    1700 3150
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1700 3350 2000 3350
+Wire Wire Line
+	2000 3350 2000 3250
+Wire Wire Line
+	2000 3250 2200 3250
+Text Label 2500 3250 0    50   ~ 0
+CPLDRST
+Wire Wire Line
+	6400 4300 6400 4450
+Wire Wire Line
+	5950 4300 5950 4450
+Text Label 5950 3700 1    50   ~ 0
+SEL1_1
+Text Label 10900 3700 1    50   ~ 0
+SEL2_6
+Text Label 10000 3700 1    50   ~ 0
+SEL2_5
+Text Label 9100 3700 1    50   ~ 0
+SEL2_4
+Text Label 8200 3700 1    50   ~ 0
+SEL2_3
+Text Label 7300 3700 1    50   ~ 0
+SEL2_2
+Text Label 6400 3700 1    50   ~ 0
+SEL2_1
+Text Label 10450 3700 1    50   ~ 0
+SEL1_6
+Text Label 9550 3700 1    50   ~ 0
+SEL1_5
+Text Label 8650 3700 1    50   ~ 0
+SEL1_4
+Text Label 7750 3700 1    50   ~ 0
+SEL1_3
+Text Label 6850 3700 1    50   ~ 0
+SEL1_2
+$Comp
+L 74xx:74HC04 U2
+U 1 1 5E57DBD3
+P 5950 4000
+F 0 "U2" V 5904 4180 50  0000 L CNN
+F 1 "74HC04" V 5995 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 5950 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 5950 4000 50  0001 C CNN
+	1    5950 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U2
+U 2 1 5E582005
+P 6400 4000
+F 0 "U2" V 6354 4180 50  0000 L CNN
+F 1 "74HC04" V 6445 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 6400 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6400 4000 50  0001 C CNN
+	2    6400 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U2
+U 3 1 5E58354D
+P 6850 4000
+F 0 "U2" V 6804 4180 50  0000 L CNN
+F 1 "74HC04" V 6895 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 6850 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6850 4000 50  0001 C CNN
+	3    6850 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U2
+U 4 1 5E584C5C
+P 7300 4000
+F 0 "U2" V 7254 4180 50  0000 L CNN
+F 1 "74HC04" V 7345 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 7300 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 7300 4000 50  0001 C CNN
+	4    7300 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U2
+U 5 1 5E5855CF
+P 7750 4000
+F 0 "U2" V 7704 4180 50  0000 L CNN
+F 1 "74HC04" V 7795 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 7750 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 7750 4000 50  0001 C CNN
+	5    7750 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U2
+U 6 1 5E5876C9
+P 8200 4000
+F 0 "U2" V 8154 4180 50  0000 L CNN
+F 1 "74HC04" V 8245 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 8200 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 8200 4000 50  0001 C CNN
+	6    8200 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 7 1 5E588E05
+P 8600 1600
+F 0 "U9" H 8830 1646 50  0000 L CNN
+F 1 "74HC04" H 8830 1555 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 8600 1600 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 8600 1600 50  0001 C CNN
+	7    8600 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 1 1 5E601355
+P 8650 4000
+F 0 "U9" V 8604 4180 50  0000 L CNN
+F 1 "74HC04" V 8695 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 8650 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 8650 4000 50  0001 C CNN
+	1    8650 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 2 1 5E60135B
+P 9100 4000
+F 0 "U9" V 9054 4180 50  0000 L CNN
+F 1 "74HC04" V 9145 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 9100 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 9100 4000 50  0001 C CNN
+	2    9100 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 3 1 5E601361
+P 9550 4000
+F 0 "U9" V 9504 4180 50  0000 L CNN
+F 1 "74HC04" V 9595 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 9550 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 9550 4000 50  0001 C CNN
+	3    9550 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 4 1 5E601367
+P 10000 4000
+F 0 "U9" V 9954 4180 50  0000 L CNN
+F 1 "74HC04" V 10045 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 10000 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10000 4000 50  0001 C CNN
+	4    10000 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 5 1 5E60136D
+P 10450 4000
+F 0 "U9" V 10404 4180 50  0000 L CNN
+F 1 "74HC04" V 10495 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 10450 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10450 4000 50  0001 C CNN
+	5    10450 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L 74xx:74HC04 U9
+U 6 1 5E601373
+P 10900 4000
+F 0 "U9" V 10854 4180 50  0000 L CNN
+F 1 "74HC04" V 10945 4180 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 10900 4000 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10900 4000 50  0001 C CNN
+	6    10900 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small R21
+U 1 1 5E62038B
+P 5950 4550
+F 0 "R21" H 6009 4596 50  0000 L CNN
+F 1 "47K" H 6009 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 5950 4550 50  0001 C CNN
+F 3 "~" H 5950 4550 50  0001 C CNN
+	1    5950 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5950 4650 5950 4800
+$Comp
+L Device:R_Small R22
+U 1 1 5E620694
+P 6400 4550
+F 0 "R22" H 6459 4596 50  0000 L CNN
+F 1 "47K" H 6459 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 6400 4550 50  0001 C CNN
+F 3 "~" H 6400 4550 50  0001 C CNN
+	1    6400 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6400 4650 6400 4800
+$Comp
+L Device:R_Small R23
+U 1 1 5E6209D5
+P 6850 4550
+F 0 "R23" H 6909 4596 50  0000 L CNN
+F 1 "47K" H 6909 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 6850 4550 50  0001 C CNN
+F 3 "~" H 6850 4550 50  0001 C CNN
+	1    6850 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6850 4650 6850 4800
+$Comp
+L Device:R_Small R24
+U 1 1 5E620BEF
+P 7300 4550
+F 0 "R24" H 7359 4596 50  0000 L CNN
+F 1 "47K" H 7359 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 7300 4550 50  0001 C CNN
+F 3 "~" H 7300 4550 50  0001 C CNN
+	1    7300 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7300 4650 7300 4800
+$Comp
+L Device:R_Small R38
+U 1 1 5E620E2D
+P 7750 4550
+F 0 "R38" H 7809 4596 50  0000 L CNN
+F 1 "47K" H 7809 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 7750 4550 50  0001 C CNN
+F 3 "~" H 7750 4550 50  0001 C CNN
+	1    7750 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7750 4650 7750 4800
+$Comp
+L Device:R_Small R39
+U 1 1 5E621065
+P 8200 4550
+F 0 "R39" H 8259 4596 50  0000 L CNN
+F 1 "47K" H 8259 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 8200 4550 50  0001 C CNN
+F 3 "~" H 8200 4550 50  0001 C CNN
+	1    8200 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8200 4650 8200 4800
+$Comp
+L Device:R_Small R40
+U 1 1 5E6212C7
+P 8650 4550
+F 0 "R40" H 8709 4596 50  0000 L CNN
+F 1 "47K" H 8709 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 8650 4550 50  0001 C CNN
+F 3 "~" H 8650 4550 50  0001 C CNN
+	1    8650 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8650 4650 8650 4800
+$Comp
+L Device:R_Small R41
+U 1 1 5E6215A6
+P 9100 4550
+F 0 "R41" H 9159 4596 50  0000 L CNN
+F 1 "47K" H 9159 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 9100 4550 50  0001 C CNN
+F 3 "~" H 9100 4550 50  0001 C CNN
+	1    9100 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9100 4650 9100 4800
+$Comp
+L Device:R_Small R42
+U 1 1 5E621817
+P 9550 4550
+F 0 "R42" H 9609 4596 50  0000 L CNN
+F 1 "47K" H 9609 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 9550 4550 50  0001 C CNN
+F 3 "~" H 9550 4550 50  0001 C CNN
+	1    9550 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9550 4650 9550 4800
+$Comp
+L Device:R_Small R43
+U 1 1 5E621A5F
+P 10000 4550
+F 0 "R43" H 10059 4596 50  0000 L CNN
+F 1 "47K" H 10059 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 10000 4550 50  0001 C CNN
+F 3 "~" H 10000 4550 50  0001 C CNN
+	1    10000 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10000 4650 10000 4800
+$Comp
+L Device:R_Small R60
+U 1 1 5E621C75
+P 10450 4550
+F 0 "R60" H 10509 4596 50  0000 L CNN
+F 1 "47K" H 10509 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 10450 4550 50  0001 C CNN
+F 3 "~" H 10450 4550 50  0001 C CNN
+	1    10450 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10450 4650 10450 4800
+$Comp
+L Device:R_Small R61
+U 1 1 5E62201D
+P 10900 4550
+F 0 "R61" H 10959 4596 50  0000 L CNN
+F 1 "47K" H 10959 4505 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 10900 4550 50  0001 C CNN
+F 3 "~" H 10900 4550 50  0001 C CNN
+	1    10900 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10900 4650 10900 4800
+$Comp
+L 74xx:74HC04 U2
+U 7 1 5E622DA2
+P 9500 1550
+F 0 "U2" H 9730 1596 50  0000 L CNN
+F 1 "74HC04" H 9730 1505 50  0000 L CNN
+F 2 "lc_lib:TSSOP-14" H 9500 1550 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 9500 1550 50  0001 C CNN
+	7    9500 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R18
+U 1 1 5EAD0389
+P 7050 3400
+F 0 "R18" H 7109 3446 50  0000 L CNN
+F 1 "1K" H 7109 3355 50  0000 L CNN
+F 2 "lc_lib:0603_R" H 7050 3400 50  0001 C CNN
+F 3 "~" H 7050 3400 50  0001 C CNN
+	1    7050 3400
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7450 3450 7400 3450
+Wire Wire Line
+	7400 3450 7400 3400
+Wire Wire Line
+	7400 3400 7150 3400
+Wire Wire Line
+	6950 3400 6150 3400
+Wire Wire Line
+	6150 3400 6150 3300
+$Comp
+L power:+3.3V #PWR013
+U 1 1 5E6EEDC1
+P 8600 1100
+F 0 "#PWR013" H 8600 950 50  0001 C CNN
+F 1 "+3.3V" H 8615 1273 50  0000 C CNN
+F 2 "" H 8600 1100 50  0001 C CNN
+F 3 "" H 8600 1100 50  0001 C CNN
+	1    8600 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR014
+U 1 1 5E6F0F2B
+P 8600 2100
+F 0 "#PWR014" H 8600 1850 50  0001 C CNN
+F 1 "GND" H 8605 1927 50  0000 C CNN
+F 2 "" H 8600 2100 50  0001 C CNN
+F 3 "" H 8600 2100 50  0001 C CNN
+	1    8600 2100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8600 2100 9500 2100
+Wire Wire Line
+	9500 2100 9500 2050
+Connection ~ 8600 2100
+Wire Wire Line
+	8600 1100 9300 1100
+Wire Wire Line
+	9300 1100 9300 1050
+Wire Wire Line
+	9300 1050 9500 1050
+Connection ~ 8600 1100
 $EndSCHEMATC

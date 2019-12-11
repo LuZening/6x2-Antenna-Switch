@@ -1,0 +1,4 @@
+CH395SPI_HW.c:23:6:CH395_PORT_INIT	8	static
+CH395SPI_HW.c:57:6:xWriteCH395Cmd	16	static
+CH395SPI_HW.c:72:7:xWriteCH395Data	16	static
+CH395SPI_HW.c:97:11:xReadCH395Data	16	static

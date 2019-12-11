@@ -1,0 +1,23 @@
+// 7SEG display decoder
+// I: BCD 3bit High effective ranging 0-7
+// O: Low Effective 7SEG signal
+module Seven_seg_decoder(I, O); // input: BCD HIGH Effective, output: LOW effective
+input [2:0] I;
+output reg [6:0] O;
+always @ (I)
+begin
+	case (I)
+		3'd0 : O = 7'b1000000;
+		3'd1 : O = 7'b1111001;
+		3'd2 : O = 7'b0100100;
+		3'd3 : O = 7'b0110000;
+		3'd4 : O = 7'b0011001;
+		3'd5 : O = 7'b0010010;
+		3'd6 : O = 7'b0000010;
+		3'd7 : O = 7'b1111000;
+		//3'd8 : O = 7'b0000000;
+		//3'd9 : O = 7'b0010000;
+		default : O = 7'b1111111;
+	endcase
+end
+endmodule

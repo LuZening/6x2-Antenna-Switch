@@ -1,0 +1,78 @@
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+
+# Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+# File: C:\Users\Zening\OneDrive\RADIO\Projects\6x2_Antenna_switch\CPLD\Antenna_Switch_Interlock_2.csv
+# Generated on: Tue Nov 19 12:05:59 2019
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,Fitter Location,I/O Standard,Reserved,Current Strength,Strict Preservation
+BCD1[2],Input,,,PIN_28,,,,
+BCD1[1],Input,,,PIN_19,,,,
+BCD1[0],Input,,,PIN_21,,,,
+BCD2[2],Input,,,PIN_68,,,,
+BCD2[1],Input,,,PIN_67,,,,
+BCD2[0],Input,,,PIN_73,,,,
+BCDM1[2],Output,,,PIN_43,,,,
+BCDM1[1],Output,,,PIN_52,,,,
+BCDM1[0],Output,,,PIN_42,,,,
+BCDM2[2],Output,,,PIN_85,,,,
+BCDM2[1],Output,,,PIN_91,,,,
+BCDM2[0],Output,,,PIN_97,,,,
+LOAD,Bidir,,,PIN_14,,,,
+REMOTE,Bidir,,,PIN_16,,,,
+RST_EXT,Bidir,,,PIN_3,,,,
+SEG1[7],Bidir,,,PIN_74,,,,
+SEG1[6],Bidir,,,PIN_55,,,,
+SEG1[5],Bidir,,,PIN_48,,,,
+SEG1[4],Bidir,,,PIN_56,,,,
+SEG1[3],Bidir,,,PIN_36,,,,
+SEG1[2],Bidir,,,PIN_44,,,,
+SEG1[1],Bidir,,,PIN_50,,,,
+SEG1[0],Bidir,,,PIN_54,,,,
+SEG1_en,Output,,,PIN_47,,,,
+SEG2[7],Bidir,,,PIN_4,,,,
+SEG2[6],Bidir,,,PIN_95,,,,
+SEG2[5],Bidir,,,PIN_96,,,,
+SEG2[4],Bidir,,,PIN_100,,,,
+SEG2[3],Bidir,,,PIN_66,,,,
+SEG2[2],Bidir,,,PIN_29,,,,
+SEG2[1],Bidir,,,PIN_2,,,,
+SEG2[0],Bidir,,,PIN_92,,,,
+SEG2_en,Output,,,PIN_39,,,,
+SEL1[5],Output,,,PIN_40,,,,
+SEL1[4],Output,,,PIN_38,,,,
+SEL1[3],Output,,,PIN_37,,,,
+SEL1[2],Output,,,PIN_90,,,,
+SEL1[1],Output,,,PIN_41,,,,
+SEL1[0],Output,,,PIN_20,,,,
+SEL2[5],Output,,,PIN_61,,,,
+SEL2[4],Output,,,PIN_88,,,,
+SEL2[3],Output,,,PIN_89,,,,
+SEL2[2],Output,,,PIN_62,,,,
+SEL2[1],Output,,,PIN_58,,,,
+SEL2[0],Output,,,PIN_87,,,,
+SW1[5],Input,,,PIN_35,,,,
+SW1[4],Input,,,PIN_98,,,,
+SW1[3],Input,,,PIN_33,,,,
+SW1[2],Input,,,PIN_34,,,,
+SW1[1],Input,,,PIN_18,,,,
+SW1[0],Input,,,PIN_30,,,,
+SW2[5],Input,,,PIN_53,,,,
+SW2[4],Input,,,PIN_82,,,,
+SW2[3],Input,,,PIN_57,,,,
+SW2[2],Input,,,PIN_84,,,,
+SW2[1],Input,,,PIN_69,,,,
+SW2[0],Input,,,PIN_64,,,,

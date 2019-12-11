@@ -1,0 +1,15 @@
+HTTPServer.c:51:6:resetHTTPParseState	16	static
+HTTPServer.c:63:13:HTTPGetContentType	16	static
+HTTPServer.c:88:6:HTTPSendFile	72	static
+HTTPServer.c:162:6:HTTPSendStr	40	static
+HTTPServer.c:217:6:HTTPredirect	152	static
+HTTPServer.c:226:6:HTTPonNotFound	152	static
+HTTPServer.c:260:6:HTTPHandle	40	static
+HTTPServer.c:347:6:HTTPclose	16	static
+HTTPServer.c:355:7:strsepstr	32	static
+HTTPServer.c:375:6:parse_http	48	static
+HTTPServer.c:504:13:getHTTPArg	32	static
+HTTPServer.c:532:9:atou8	24	static
+HTTPServer.c:549:9:u16toa	32	static
+HTTPServer.c:570:7:strcpy_f	16	static
+HTTPServer.c:582:7:strncpy_f	24	static

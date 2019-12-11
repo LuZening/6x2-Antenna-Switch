@@ -113,7 +113,7 @@ Wire Wire Line
 Wire Wire Line
 	5350 3100 5950 3100
 Wire Wire Line
-	5850 1450 5850 2500
+	5850 1450 5850 2300
 Wire Wire Line
 	5850 2500 5950 2500
 $Comp
@@ -156,8 +156,6 @@ $EndComp
 Wire Wire Line
 	7450 2600 7850 2600
 Text Label 800  2450 0    50   ~ 0
-RST
-Text Label 5750 2800 0    50   ~ 0
 RST
 Wire Wire Line
 	5950 2800 5850 2800
@@ -307,12 +305,6 @@ Wire Wire Line
 	6050 1850 6050 2150
 Wire Wire Line
 	7450 3500 7900 3500
-Wire Wire Line
-	6150 1450 6150 1550
-Wire Wire Line
-	6150 1550 6250 1550
-Text Label 6250 1550 0    50   ~ 0
-INT
 Wire Wire Line
 	3800 6750 3750 6750
 Wire Wire Line
@@ -492,9 +484,6 @@ F 3 "~" H 5850 2900 50  0001 C CNN
 	1    5850 2900
 	1    0    0    -1  
 $EndComp
-Connection ~ 5850 2800
-Wire Wire Line
-	5850 2800 5750 2800
 $Comp
 L power:GND #PWR041
 U 1 1 5F2DC47A
@@ -626,17 +615,6 @@ F 2 "" H 7250 1050 50  0001 C CNN
 F 3 "" H 7250 1050 50  0001 C CNN
 	1    7250 1050
 	1    0    0    -1  
-$EndComp
-$Comp
-L MySchLib:HR913550A J5
-U 1 1 5F3FE682
-P 4800 1350
-F 0 "J5" V 5038 -128 50  0000 R CNN
-F 1 "HR913550A" V 4947 -128 50  0000 R CNN
-F 2 "MyPCBLib:HR913550A" H 4800 1350 50  0001 C CNN
-F 3 "" H 4800 1350 50  0001 C CNN
-	1    4800 1350
-	0    -1   -1   0   
 $EndComp
 Wire Wire Line
 	5000 3850 5000 4000
@@ -918,17 +896,6 @@ RXP
 Text Label 5400 3400 0    50   ~ 0
 RXN
 $Comp
-L Device:C_Small C27
-U 1 1 5CB45F46
-P 7250 2050
-F 0 "C27" H 7100 2100 50  0000 L CNN
-F 1 "104" H 7100 2000 50  0000 L CNN
-F 2 "lc_lib:0603_C" H 7250 2050 50  0001 C CNN
-F 3 "~" H 7250 2050 50  0001 C CNN
-	1    7250 2050
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C_Small C28
 U 1 1 5CB48A99
 P 7450 2050
@@ -977,15 +944,8 @@ Wire Wire Line
 	8050 2200 7850 2200
 Connection ~ 7050 2200
 Wire Wire Line
-	7250 2150 7250 2200
-Connection ~ 7250 2200
-Wire Wire Line
-	7250 2200 7050 2200
-Wire Wire Line
 	7450 2150 7450 2200
 Connection ~ 7450 2200
-Wire Wire Line
-	7450 2200 7250 2200
 Wire Wire Line
 	7650 2150 7650 2200
 Connection ~ 7650 2200
@@ -1086,11 +1046,6 @@ F 3 "~" H 8250 1750 50  0001 C CNN
 	1    8250 1750
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7050 1950 7250 1950
-Connection ~ 7250 1950
-Wire Wire Line
-	7250 1950 7450 1950
 $Comp
 L Device:C_Small C31
 U 1 1 5CC55A09
@@ -1451,4 +1406,40 @@ F 3 "" H 4900 3900 50  0001 C CNN
 	1    4900 3900
 	1    0    0    -1  
 $EndComp
+$Comp
+L Connector_Generic:Conn_01x01 J2
+U 1 1 5E3B6863
+P 800 1950
+F 0 "J2" V 764 1862 50  0000 R CNN
+F 1 "Conn_01x01" V 673 1862 50  0000 R CNN
+F 2 "Connectors:PINTST" H 800 1950 50  0001 C CNN
+F 3 "~" H 800 1950 50  0001 C CNN
+	1    800  1950
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	800  2150 800  2450
+Connection ~ 800  2450
+Wire Wire Line
+	7050 1950 7450 1950
+Wire Wire Line
+	7050 2200 7450 2200
+$Comp
+L MySchLib:HR913550A J5
+U 1 1 5F3FE682
+P 4800 1350
+F 0 "J5" V 5038 -128 50  0000 R CNN
+F 1 "HR913550A" V 4947 -128 50  0000 R CNN
+F 2 "MyPCBLib:HR913550A" H 4800 1350 50  0001 C CNN
+F 3 "" H 4800 1350 50  0001 C CNN
+	1    4800 1350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6150 1450 6150 2300
+Wire Wire Line
+	6150 2300 5850 2300
+Connection ~ 5850 2300
+Wire Wire Line
+	5850 2300 5850 2500
 $EndSCHEMATC

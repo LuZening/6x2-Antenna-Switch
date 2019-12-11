@@ -1,0 +1,11 @@
+Fitter Status : Successful - Thu Nov 21 01:44:22 2019
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Revision Name : Antenna_Switch_Interlock
+Top-level Entity Name : Antenna_Switch_Interlock_pin
+Family : MAX II
+Device : EPM240T100C3
+Timing Models : Final
+Total logic elements : 89 / 240 ( 37 % )
+Total pins : 57 / 80 ( 71 % )
+Total virtual pins : 0
+UFM blocks : 0 / 1 ( 0 % )

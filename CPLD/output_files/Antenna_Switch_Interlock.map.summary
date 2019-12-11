@@ -1,0 +1,9 @@
+Analysis & Synthesis Status : Successful - Thu Nov 21 01:44:17 2019
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Revision Name : Antenna_Switch_Interlock
+Top-level Entity Name : Antenna_Switch_Interlock_pin
+Family : MAX II
+Total logic elements : 101
+Total pins : 57
+Total virtual pins : 0
+UFM blocks : 0 / 1 ( 0 % )

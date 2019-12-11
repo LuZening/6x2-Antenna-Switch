@@ -1,4 +1,0 @@
-POST /setlabel HTTP/1.1
-Content-Length: 39
-
-ant1=Y4cc&ant2=2tna&ant3=cccc&ant4=4tna

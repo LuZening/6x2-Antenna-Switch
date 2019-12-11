@@ -1,0 +1,1 @@
+python FS_image_gen.py ../data data.bin

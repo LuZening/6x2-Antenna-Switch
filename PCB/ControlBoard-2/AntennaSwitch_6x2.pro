@@ -1,4 +1,4 @@
-update=2019/10/31 22:16:34
+update=2019/11/1 18:37:06
 version=1
 last_client=kicad
 [general]
@@ -243,7 +243,7 @@ Enabled=0
 [pcbnew/Netclasses]
 [pcbnew/Netclasses/Default]
 Name=Default
-Clearance=0.2032
+Clearance=0.1524
 TrackWidth=0.2032
 ViaDiameter=0.8
 ViaDrill=0.4
@@ -265,7 +265,7 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/2]
 Name=+3V3
-Clearance=0.254
+Clearance=0.2032
 TrackWidth=0.25
 ViaDiameter=0.8
 ViaDrill=0.4
@@ -276,7 +276,7 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/3]
 Name=CH395_GPIO
-Clearance=0.2032
+Clearance=0.1524
 TrackWidth=0.2032
 ViaDiameter=0.8
 ViaDrill=0.4
@@ -287,7 +287,7 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/4]
 Name=CHASIS
-Clearance=0.508
+Clearance=0.2032
 TrackWidth=0.2032
 ViaDiameter=0.8
 ViaDrill=0.4
@@ -297,6 +297,17 @@ dPairWidth=0.2
 dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/5]
+Name=RS485
+Clearance=0.508
+TrackWidth=0.2032
+ViaDiameter=0.8
+ViaDrill=0.4
+uViaDiameter=0.3
+uViaDrill=0.1
+dPairWidth=0.2
+dPairGap=0.25
+dPairViaGap=0.25
+[pcbnew/Netclasses/6]
 Name=SPI
 Clearance=0.1524
 TrackWidth=0.1524

@@ -1,0 +1,78 @@
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+
+# Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+# File: C:\Users\Zening\OneDrive\RADIO\Projects\6x2_Antenna_switch\CPLD\Antenna_Switch_Interlock.csv
+# Generated on: Tue Nov 19 11:39:33 2019
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,I/O Standard,Reserved,Current Strength,Strict Preservation
+BCD1[2],Input,PIN_78,2,,as bidirectional,,
+BCD1[1],Input,PIN_77,2,,as bidirectional,,
+BCD1[0],Input,PIN_76,2,,as bidirectional,,
+BCD2[2],Input,PIN_83,2,,as bidirectional,,
+BCD2[1],Input,PIN_82,2,,as bidirectional,,
+BCD2[0],Input,PIN_81,2,,as bidirectional,,
+BCDM1[2],Output,PIN_86,2,,as output driving vcc,,
+BCDM1[1],Output,PIN_85,2,,as output driving vcc,,
+BCDM1[0],Output,PIN_84,2,,as output driving vcc,,
+BCDM2[2],Output,PIN_89,2,,as output driving vcc,,
+BCDM2[1],Output,PIN_88,2,,as output driving vcc,,
+BCDM2[0],Output,PIN_87,2,,as output driving vcc,,
+LOAD,Input,PIN_33,1,3.3V Schmitt Trigger Input,as bidirectional,,
+REMOTE,Input,PIN_34,1,3.3V Schmitt Trigger Input,as bidirectional,,
+RST_EXT,Input,PIN_27,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SEG1[6],Output,PIN_58,2,,as output driving vcc,,
+SEG1[5],Output,PIN_57,2,,as output driving vcc,,
+SEG1[4],Output,PIN_52,2,,as output driving vcc,,
+SEG1[3],Output,PIN_51,1,,as output driving vcc,,
+SEG1[2],Output,PIN_53,2,,as output driving vcc,,
+SEG1[1],Output,PIN_55,2,,as output driving vcc,,
+SEG1[0],Output,PIN_56,2,,as output driving vcc,,
+SEG1_en,Output,PIN_50,1,,as output driving vcc,,
+SEG2[6],Output,PIN_67,2,,as output driving vcc,,
+SEG2[5],Output,PIN_69,2,,as output driving vcc,,
+SEG2[4],Output,PIN_66,2,,as output driving vcc,,
+SEG2[3],Output,PIN_68,2,,as output driving vcc,,
+SEG2[2],Output,PIN_70,2,,as output driving vcc,,
+SEG2[1],Output,PIN_73,2,,as output driving vcc,,
+SEG2[0],Output,PIN_71,2,,as output driving vcc,,
+SEG2_en,Output,PIN_74,2,,as output driving vcc,,
+SEL1[5],Output,PIN_36,1,,as output driving vcc,,
+SEL1[4],Output,PIN_38,1,,as output driving vcc,,
+SEL1[3],Output,PIN_40,1,,as output driving vcc,,
+SEL1[2],Output,PIN_42,1,,as output driving vcc,,
+SEL1[1],Output,PIN_44,1,,as output driving vcc,,
+SEL1[0],Output,PIN_48,1,,as output driving vcc,,
+SEL2[5],Output,PIN_35,1,,as output driving vcc,,
+SEL2[4],Output,PIN_37,1,,as output driving vcc,,
+SEL2[3],Output,PIN_39,1,,as output driving vcc,,
+SEL2[2],Output,PIN_41,1,,as output driving vcc,,
+SEL2[1],Output,PIN_43,1,,as output driving vcc,,
+SEL2[0],Output,PIN_47,1,,as output driving vcc,,
+SW1[5],Input,PIN_7,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW1[4],Input,PIN_6,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW1[3],Input,PIN_5,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW1[2],Input,PIN_2,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW1[1],Input,PIN_3,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW1[0],Input,PIN_4,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW2[5],Input,PIN_20,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW2[4],Input,PIN_19,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW2[3],Input,PIN_18,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW2[2],Input,PIN_17,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW2[1],Input,PIN_16,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SW2[0],Input,PIN_15,1,3.3V Schmitt Trigger Input,as bidirectional,,
+SEG1[7],Output,PIN_54,2,,as output driving vcc,,
+SEG2[7],Output,PIN_72,2,,as output driving vcc,,
