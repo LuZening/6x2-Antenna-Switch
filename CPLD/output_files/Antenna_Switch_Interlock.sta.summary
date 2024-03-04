@@ -2,7 +2,19 @@
 Timing Analyzer Summary
 ------------------------------------------------------------
 
+Type  : Setup 'LOAD'
+Slack : -3.790
+TNS   : -45.464
+
+Type  : Hold 'LOAD'
+Slack : 0.921
+TNS   : 0.000
+
 Type  : Minimum Pulse Width 'LOAD'
+Slack : -2.289
+TNS   : -2.289
+
+Type  : Minimum Pulse Width 'REMOTE'
 Slack : -2.289
 TNS   : -2.289
 

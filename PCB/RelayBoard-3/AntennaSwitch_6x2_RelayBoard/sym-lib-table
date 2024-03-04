@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name AntennaSwitch_6x2_RelayBoard-rescue)(type Legacy)(uri ${KIPRJMOD}/AntennaSwitch_6x2_RelayBoard-rescue.lib)(options "")(descr ""))
+)

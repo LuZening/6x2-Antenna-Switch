@@ -1,7 +1,6 @@
-Lib485.c:15:6:CRC16	24	static
-Lib485.c:35:6:begin_serial485	24	static
-Lib485.c:54:6:set_direction485	16	static
-Lib485.c:73:6:send_serial485	24	static
-Lib485.c:125:6:handle_serial485	24	static
-Lib485.c:178:6:parse_command	24	static
-Lib485.c:216:6:execute_command	32	static
+Lib485.c:14:13:start_receive_DMA	16	static
+Lib485.c:24:6:begin_serial485	16	static
+Lib485.c:42:6:set_direction_serial485	16	static
+Lib485.c:49:6:send_serial485	24	static
+Lib485.c:73:6:HAL_UARTEx_RxEventCallback	40	static
+Lib485.c:109:6:HAL_UART_ErrorCallback	24	static

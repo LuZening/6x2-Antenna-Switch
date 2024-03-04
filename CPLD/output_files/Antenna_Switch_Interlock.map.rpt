@@ -1,5 +1,5 @@
 Analysis & Synthesis report for Antenna_Switch_Interlock
-Thu Nov 21 01:44:17 2019
+Sun Mar 03 22:58:51 2024
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -13,10 +13,15 @@ Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
   5. Analysis & Synthesis Source Files Read
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
-  8. General Register Statistics
-  9. Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_B"
- 10. Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_A"
- 11. Analysis & Synthesis Messages
+  8. User-Specified and Inferred Latches
+  9. General Register Statistics
+ 10. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 11. Port Connectivity Checks: "Seven_seg_decoder:u_External_7SEG_B"
+ 12. Port Connectivity Checks: "Seven_seg_decoder:u_External_7SEG_A"
+ 13. Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_B"
+ 14. Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_A"
+ 15. Port Connectivity Checks: "I_MUX:u_IMUX"
+ 16. Analysis & Synthesis Messages
 
 
 
@@ -42,12 +47,12 @@ refer to the applicable agreement for further details.
 +---------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                              ;
 +-----------------------------+---------------------------------------------+
-; Analysis & Synthesis Status ; Successful - Thu Nov 21 01:44:17 2019       ;
+; Analysis & Synthesis Status ; Successful - Sun Mar 03 22:58:51 2024       ;
 ; Quartus Prime Version       ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name               ; Antenna_Switch_Interlock                    ;
 ; Top-level Entity Name       ; Antenna_Switch_Interlock_pin                ;
 ; Family                      ; MAX II                                      ;
-; Total logic elements        ; 101                                         ;
+; Total logic elements        ; 136                                         ;
 ; Total pins                  ; 57                                          ;
 ; Total virtual pins          ; 0                                           ;
 ; UFM blocks                  ; 0 / 1 ( 0 % )                               ;
@@ -134,8 +139,8 @@ refer to the applicable agreement for further details.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 4           ;
-; Maximum allowed            ; 2           ;
+; Number detected on machine ; 16          ;
+; Maximum allowed            ; 8           ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
 ; Maximum used               ; 1           ;
@@ -145,76 +150,92 @@ refer to the applicable agreement for further details.
 +----------------------------+-------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                                 ;
-+----------------------------------+-----------------+------------------------+------------------------------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                                                                   ; Library ;
-+----------------------------------+-----------------+------------------------+------------------------------------------------------------------------------------------------+---------+
-; Seven_seg_decoder.v              ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Seven_seg_decoder.v            ;         ;
-; Out_latch.v                      ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Out_latch.v                    ;         ;
-; interlock.v                      ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v                    ;         ;
-; Diff.v                           ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Diff.v                         ;         ;
-; BCD_encoder.v                    ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_encoder.v                  ;         ;
-; BCD_decoder.v                    ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_decoder.v                  ;         ;
-; I_MUX.v                          ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/I_MUX.v                        ;         ;
-; Antenna_Switch_Interlock_pin.v   ; yes             ; User Verilog HDL File  ; C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v ;         ;
-+----------------------------------+-----------------+------------------------+------------------------------------------------------------------------------------------------+---------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                    ;
++----------------------------------+-----------------+------------------------+-----------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                                                      ; Library ;
++----------------------------------+-----------------+------------------------+-----------------------------------------------------------------------------------+---------+
+; Seven_seg_decoder.v              ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Seven_seg_decoder.v            ;         ;
+; Out_latch.v                      ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Out_latch.v                    ;         ;
+; interlock.v                      ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v                    ;         ;
+; Diff.v                           ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Diff.v                         ;         ;
+; BCD_encoder.v                    ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_encoder.v                  ;         ;
+; BCD_decoder.v                    ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_decoder.v                  ;         ;
+; I_MUX.v                          ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/I_MUX.v                        ;         ;
+; Antenna_Switch_Interlock_pin.v   ; yes             ; User Verilog HDL File  ; E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v ;         ;
++----------------------------------+-----------------+------------------------+-----------------------------------------------------------------------------------+---------+
 
 
-+-----------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                                       ;
-+---------------------------------------------+-------------------------------------+
-; Resource                                    ; Usage                               ;
-+---------------------------------------------+-------------------------------------+
-; Total logic elements                        ; 101                                 ;
-;     -- Combinational with no register       ; 88                                  ;
-;     -- Register only                        ; 12                                  ;
-;     -- Combinational with a register        ; 1                                   ;
-;                                             ;                                     ;
-; Logic element usage by number of LUT inputs ;                                     ;
-;     -- 4 input functions                    ; 58                                  ;
-;     -- 3 input functions                    ; 27                                  ;
-;     -- 2 input functions                    ; 3                                   ;
-;     -- 1 input functions                    ; 1                                   ;
-;     -- 0 input functions                    ; 0                                   ;
-;                                             ;                                     ;
-; Logic elements by mode                      ;                                     ;
-;     -- normal mode                          ; 101                                 ;
-;     -- arithmetic mode                      ; 0                                   ;
-;     -- qfbk mode                            ; 0                                   ;
-;     -- register cascade mode                ; 0                                   ;
-;     -- synchronous clear/load mode          ; 0                                   ;
-;     -- asynchronous clear/load mode         ; 0                                   ;
-;                                             ;                                     ;
-; Total registers                             ; 13                                  ;
-; I/O pins                                    ; 57                                  ;
-; Maximum fan-out node                        ; Interlock:u_Interlock|O_collision~2 ;
-; Maximum fan-out                             ; 33                                  ;
-; Total fan-out                               ; 393                                 ;
-; Average fan-out                             ; 2.49                                ;
-+---------------------------------------------+-------------------------------------+
++------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary          ;
++---------------------------------------------+--------+
+; Resource                                    ; Usage  ;
++---------------------------------------------+--------+
+; Total logic elements                        ; 136    ;
+;     -- Combinational with no register       ; 124    ;
+;     -- Register only                        ; 12     ;
+;     -- Combinational with a register        ; 0      ;
+;                                             ;        ;
+; Logic element usage by number of LUT inputs ;        ;
+;     -- 4 input functions                    ; 73     ;
+;     -- 3 input functions                    ; 46     ;
+;     -- 2 input functions                    ; 5      ;
+;     -- 1 input functions                    ; 0      ;
+;     -- 0 input functions                    ; 0      ;
+;                                             ;        ;
+; Logic elements by mode                      ;        ;
+;     -- normal mode                          ; 136    ;
+;     -- arithmetic mode                      ; 0      ;
+;     -- qfbk mode                            ; 0      ;
+;     -- register cascade mode                ; 0      ;
+;     -- synchronous clear/load mode          ; 0      ;
+;     -- asynchronous clear/load mode         ; 0      ;
+;                                             ;        ;
+; Total registers                             ; 12     ;
+; I/O pins                                    ; 57     ;
+; Maximum fan-out node                        ; REMOTE ;
+; Maximum fan-out                             ; 54     ;
+; Total fan-out                               ; 512    ;
+; Average fan-out                             ; 2.65   ;
++---------------------------------------------+--------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                           ;
-+---------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+----------------------------------------------------------+------------------------------+--------------+
-; Compilation Hierarchy Node      ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name                                      ; Entity Name                  ; Library Name ;
-+---------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+----------------------------------------------------------+------------------------------+--------------+
-; |Antenna_Switch_Interlock_pin   ; 101 (13)    ; 13           ; 0          ; 57   ; 0            ; 88 (12)      ; 12 (0)            ; 1 (1)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin                            ; Antenna_Switch_Interlock_pin ; work         ;
-;    |BCD_encoder:u_BCD_enc_I1|   ; 3 (3)       ; 0            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_I1   ; BCD_encoder                  ; work         ;
-;    |BCD_encoder:u_BCD_enc_I2|   ; 3 (3)       ; 0            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_I2   ; BCD_encoder                  ; work         ;
-;    |BCD_encoder:u_BCD_enc_M1|   ; 5 (5)       ; 0            ; 0          ; 0    ; 0            ; 5 (5)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_M1   ; BCD_encoder                  ; work         ;
-;    |BCD_encoder:u_BCD_enc_M2|   ; 5 (5)       ; 0            ; 0          ; 0    ; 0            ; 5 (5)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_M2   ; BCD_encoder                  ; work         ;
-;    |BCD_encoder:u_BCD_enc_SW1|  ; 2 (2)       ; 0            ; 0          ; 0    ; 0            ; 2 (2)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_SW1  ; BCD_encoder                  ; work         ;
-;    |BCD_encoder:u_BCD_enc_SW2|  ; 2 (2)       ; 0            ; 0          ; 0    ; 0            ; 2 (2)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_SW2  ; BCD_encoder                  ; work         ;
-;    |Diff:u_Diff|                ; 4 (4)       ; 0            ; 0          ; 0    ; 0            ; 4 (4)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Diff:u_Diff                ; Diff                         ; work         ;
-;    |I_MUX:u_IMUX|               ; 10 (10)     ; 0            ; 0          ; 0    ; 0            ; 10 (10)      ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|I_MUX:u_IMUX               ; I_MUX                        ; work         ;
-;    |Interlock:u_Interlock|      ; 15 (15)     ; 0            ; 0          ; 0    ; 0            ; 15 (15)      ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Interlock:u_Interlock      ; Interlock                    ; work         ;
-;    |Out_latch:u_Olatch|         ; 25 (25)     ; 12           ; 0          ; 0    ; 0            ; 13 (13)      ; 12 (12)           ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Out_latch:u_Olatch         ; Out_latch                    ; work         ;
-;    |Seven_seg_decoder:u_7SEG_A| ; 7 (7)       ; 0            ; 0          ; 0    ; 0            ; 7 (7)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Seven_seg_decoder:u_7SEG_A ; Seven_seg_decoder            ; work         ;
-;    |Seven_seg_decoder:u_7SEG_B| ; 7 (7)       ; 0            ; 0          ; 0    ; 0            ; 7 (7)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Seven_seg_decoder:u_7SEG_B ; Seven_seg_decoder            ; work         ;
-+---------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+----------------------------------------------------------+------------------------------+--------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                             ;
++------------------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------------------------------------------+------------------------------+--------------+
+; Compilation Hierarchy Node               ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name                                               ; Entity Name                  ; Library Name ;
++------------------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------------------------------------------+------------------------------+--------------+
+; |Antenna_Switch_Interlock_pin            ; 136 (51)    ; 12           ; 0          ; 57   ; 0            ; 124 (51)     ; 12 (0)            ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin                                     ; Antenna_Switch_Interlock_pin ; work         ;
+;    |BCD_encoder:u_BCD_enc_I1|            ; 3 (3)       ; 0            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_I1            ; BCD_encoder                  ; work         ;
+;    |BCD_encoder:u_BCD_enc_I2|            ; 3 (3)       ; 0            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_I2            ; BCD_encoder                  ; work         ;
+;    |BCD_encoder:u_BCD_enc_M1|            ; 5 (5)       ; 0            ; 0          ; 0    ; 0            ; 5 (5)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_M1            ; BCD_encoder                  ; work         ;
+;    |BCD_encoder:u_BCD_enc_M2|            ; 5 (5)       ; 0            ; 0          ; 0    ; 0            ; 5 (5)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_M2            ; BCD_encoder                  ; work         ;
+;    |BCD_encoder:u_BCD_enc_SW1|           ; 2 (2)       ; 0            ; 0          ; 0    ; 0            ; 2 (2)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_SW1           ; BCD_encoder                  ; work         ;
+;    |BCD_encoder:u_BCD_enc_SW2|           ; 2 (2)       ; 0            ; 0          ; 0    ; 0            ; 2 (2)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|BCD_encoder:u_BCD_enc_SW2           ; BCD_encoder                  ; work         ;
+;    |Diff:u_Diff|                         ; 4 (4)       ; 0            ; 0          ; 0    ; 0            ; 4 (4)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Diff:u_Diff                         ; Diff                         ; work         ;
+;    |I_MUX:u_IMUX|                        ; 10 (10)     ; 0            ; 0          ; 0    ; 0            ; 10 (10)      ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|I_MUX:u_IMUX                        ; I_MUX                        ; work         ;
+;    |Interlock:u_Interlock|               ; 15 (15)     ; 0            ; 0          ; 0    ; 0            ; 15 (15)      ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Interlock:u_Interlock               ; Interlock                    ; work         ;
+;    |Out_latch:u_Olatch|                  ; 24 (24)     ; 12           ; 0          ; 0    ; 0            ; 12 (12)      ; 12 (12)           ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Out_latch:u_Olatch                  ; Out_latch                    ; work         ;
+;    |Seven_seg_decoder:u_7SEG_B|          ; 3 (3)       ; 0            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Seven_seg_decoder:u_7SEG_B          ; Seven_seg_decoder            ; work         ;
+;    |Seven_seg_decoder:u_External_7SEG_A| ; 9 (9)       ; 0            ; 0          ; 0    ; 0            ; 9 (9)        ; 0 (0)             ; 0 (0)            ; 0 (0)           ; 0 (0)      ; |Antenna_Switch_Interlock_pin|Seven_seg_decoder:u_External_7SEG_A ; Seven_seg_decoder            ; work         ;
++------------------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------------------------------------------+------------------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++---------------------------------------------------------------------------------------------------+
+; User-Specified and Inferred Latches                                                               ;
++----------------------------------------------------+---------------------+------------------------+
+; Latch Name                                         ; Latch Enable Signal ; Free of Timing Hazards ;
++----------------------------------------------------+---------------------+------------------------+
+; R_remote_BCD1[0]                                   ; REMOTE              ; yes                    ;
+; R_remote_BCD2[0]                                   ; REMOTE              ; yes                    ;
+; R_remote_BCD1[1]                                   ; REMOTE              ; yes                    ;
+; R_remote_BCD2[1]                                   ; REMOTE              ; yes                    ;
+; R_remote_BCD1[2]                                   ; REMOTE              ; yes                    ;
+; R_remote_BCD2[2]                                   ; REMOTE              ; yes                    ;
+; Number of user-specified and inferred latches = 6  ;                     ;                        ;
++----------------------------------------------------+---------------------+------------------------+
+Note: All latches listed above may not be present at the end of synthesis due to various synthesis optimizations.
 
 
 +------------------------------------------------------+
@@ -222,7 +243,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 13    ;
+; Total registers                              ; 12    ;
 ; Number of registers using Synchronous Clear  ; 0     ;
 ; Number of registers using Synchronous Load   ; 0     ;
 ; Number of registers using Asynchronous Clear ; 0     ;
@@ -232,22 +253,63 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------+
-; Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_B"                                                                                          ;
-+------+--------+----------+----------------------------------------------------------------------------------------------------------------------+
-; Port ; Type   ; Severity ; Details                                                                                                              ;
-+------+--------+----------+----------------------------------------------------------------------------------------------------------------------+
-; O    ; Output ; Warning  ; Output or bidir port (8 bits) is wider than the port expression (7 bits) it drives; bit(s) "O[7..7]" have no fanouts ;
-+------+--------+----------+----------------------------------------------------------------------------------------------------------------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                   ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output         ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+------------------------------------+
+; 10:1               ; 6 bits    ; 36 LEs        ; 36 LEs               ; 0 LEs                  ; No         ; |Antenna_Switch_Interlock_pin|SEG1 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+------------------------------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------+
-; Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_A"                                                                                          ;
-+------+--------+----------+----------------------------------------------------------------------------------------------------------------------+
-; Port ; Type   ; Severity ; Details                                                                                                              ;
-+------+--------+----------+----------------------------------------------------------------------------------------------------------------------+
-; O    ; Output ; Warning  ; Output or bidir port (8 bits) is wider than the port expression (7 bits) it drives; bit(s) "O[7..7]" have no fanouts ;
-+------+--------+----------+----------------------------------------------------------------------------------------------------------------------+
++-----------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Seven_seg_decoder:u_External_7SEG_B"                                                       ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port        ; Type   ; Severity ; Details                                                                             ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+; I_collision ; Input  ; Info     ; Stuck at GND                                                                        ;
+; O[7]        ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Seven_seg_decoder:u_External_7SEG_A"                                                       ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port        ; Type   ; Severity ; Details                                                                             ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+; I_collision ; Input  ; Info     ; Stuck at GND                                                                        ;
+; O[7]        ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_B"                                                                                                               ;
++------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------------------+
+; Port ; Type   ; Severity ; Details                                                                                                                                   ;
++------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------------------+
+; I    ; Input  ; Warning  ; Input port expression (3 bits) is smaller than the input port (4 bits) it drives.  Extra input bit(s) "I[3..3]" will be connected to GND. ;
+; O[7] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                       ;
++------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Seven_seg_decoder:u_7SEG_A"                                                                                                               ;
++------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------------------+
+; Port ; Type   ; Severity ; Details                                                                                                                                   ;
++------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------------------+
+; I    ; Input  ; Warning  ; Input port expression (3 bits) is smaller than the input port (4 bits) it drives.  Extra input bit(s) "I[3..3]" will be connected to GND. ;
+; O[7] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                       ;
++------+--------+----------+-------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "I_MUX:u_IMUX"                                                                                                                                                                         ;
++------------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port       ; Type  ; Severity ; Details                                                                                                                                                                          ;
++------------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; I_remote_A ; Input ; Warning  ; Input port expression (4 bits) is wider than the input port (3 bits) it drives.  The 1 most-significant bit(s) in the expression will be dangling if they have no other fanouts. ;
+; I_remote_B ; Input ; Warning  ; Input port expression (4 bits) is wider than the input port (3 bits) it drives.  The 1 most-significant bit(s) in the expression will be dangling if they have no other fanouts. ;
++------------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
 +-------------------------------+
@@ -256,48 +318,64 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
-    Info: Processing started: Thu Nov 21 01:43:59 2019
+    Info: Processing started: Sun Mar 03 22:58:40 2024
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off Antenna_Switch_Interlock -c Antenna_Switch_Interlock
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 2 of the 2 processors detected
+Info (20030): Parallel compilation is enabled and will use 8 of the 8 processors detected
 Info (12021): Found 1 design units, including 1 entities, in source file seven_seg_decoder.v
-    Info (12023): Found entity 1: Seven_seg_decoder File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Seven_seg_decoder.v Line: 4
+    Info (12023): Found entity 1: Seven_seg_decoder File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Seven_seg_decoder.v Line: 4
 Info (12021): Found 1 design units, including 1 entities, in source file out_latch.v
-    Info (12023): Found entity 1: Out_latch File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Out_latch.v Line: 9
+    Info (12023): Found entity 1: Out_latch File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Out_latch.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file interlock.v
-    Info (12023): Found entity 1: Interlock File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 7
+    Info (12023): Found entity 1: Interlock File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 7
 Info (12021): Found 1 design units, including 1 entities, in source file diff.v
-    Info (12023): Found entity 1: Diff File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Diff.v Line: 2
+    Info (12023): Found entity 1: Diff File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Diff.v Line: 2
 Info (12021): Found 1 design units, including 1 entities, in source file bcd_encoder.v
-    Info (12023): Found entity 1: BCD_encoder File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_encoder.v Line: 2
+    Info (12023): Found entity 1: BCD_encoder File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_encoder.v Line: 2
 Info (12021): Found 1 design units, including 1 entities, in source file bcd_decoder.v
-    Info (12023): Found entity 1: BCD_decoder File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_decoder.v Line: 3
+    Info (12023): Found entity 1: BCD_decoder File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/BCD_decoder.v Line: 3
 Info (12021): Found 1 design units, including 1 entities, in source file i_mux.v
-    Info (12023): Found entity 1: I_MUX File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/I_MUX.v Line: 3
+    Info (12023): Found entity 1: I_MUX File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/I_MUX.v Line: 3
 Info (12021): Found 1 design units, including 1 entities, in source file antenna_switch_interlock_pin.v
-    Info (12023): Found entity 1: Antenna_Switch_Interlock_pin File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 15
+    Info (12023): Found entity 1: Antenna_Switch_Interlock_pin File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 15
 Info (12127): Elaborating entity "Antenna_Switch_Interlock_pin" for the top level hierarchy
-Info (12128): Elaborating entity "BCD_encoder" for hierarchy "BCD_encoder:u_BCD_enc_SW1" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 74
-Info (12128): Elaborating entity "I_MUX" for hierarchy "I_MUX:u_IMUX" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 77
-Info (12128): Elaborating entity "Interlock" for hierarchy "Interlock:u_Interlock" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 78
-Warning (10230): Verilog HDL assignment warning at interlock.v(16): truncated value with size 32 to match size of target (1) File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 16
-Warning (10230): Verilog HDL assignment warning at interlock.v(22): truncated value with size 32 to match size of target (6) File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 22
-Warning (10230): Verilog HDL assignment warning at interlock.v(23): truncated value with size 32 to match size of target (6) File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 23
-Info (12128): Elaborating entity "BCD_decoder" for hierarchy "Interlock:u_Interlock|BCD_decoder:u_Interlock_BCD_decoder_A" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 19
-Info (12128): Elaborating entity "Out_latch" for hierarchy "Out_latch:u_Olatch" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 83
-Info (12128): Elaborating entity "Seven_seg_decoder" for hierarchy "Seven_seg_decoder:u_7SEG_A" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 93
-Info (12128): Elaborating entity "Diff" for hierarchy "Diff:u_Diff" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 100
-Warning (12241): 2 hierarchies have connectivity warnings - see the Connectivity Checks report folder
+Warning (10235): Verilog HDL Always Construct warning at Antenna_Switch_Interlock_pin.v(96): variable "R_display_IP" is read inside the Always Construct but isn't in the Always Construct's Event Control File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 96
+Warning (10240): Verilog HDL Always Construct warning at Antenna_Switch_Interlock_pin.v(94): inferring latch(es) for variable "R_remote_BCD1", which holds its previous value in one or more paths through the always construct File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Warning (10240): Verilog HDL Always Construct warning at Antenna_Switch_Interlock_pin.v(94): inferring latch(es) for variable "R_remote_BCD2", which holds its previous value in one or more paths through the always construct File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Warning (10230): Verilog HDL assignment warning at Antenna_Switch_Interlock_pin.v(132): truncated value with size 32 to match size of target (4) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 132
+Warning (10230): Verilog HDL assignment warning at Antenna_Switch_Interlock_pin.v(133): truncated value with size 32 to match size of target (4) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 133
+Warning (10235): Verilog HDL Always Construct warning at Antenna_Switch_Interlock_pin.v(163): variable "REMOTE" is read inside the Always Construct but isn't in the Always Construct's Event Control File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 163
+Warning (10230): Verilog HDL assignment warning at Antenna_Switch_Interlock_pin.v(169): truncated value with size 32 to match size of target (3) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 169
+Warning (10230): Verilog HDL assignment warning at Antenna_Switch_Interlock_pin.v(170): truncated value with size 32 to match size of target (3) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 170
+Info (10041): Inferred latch for "R_remote_BCD2[0]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD2[1]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD2[2]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD2[3]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD1[0]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD1[1]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD1[2]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (10041): Inferred latch for "R_remote_BCD1[3]" at Antenna_Switch_Interlock_pin.v(94) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 94
+Info (12128): Elaborating entity "BCD_encoder" for hierarchy "BCD_encoder:u_BCD_enc_SW1" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 91
+Info (12128): Elaborating entity "I_MUX" for hierarchy "I_MUX:u_IMUX" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 104
+Info (12128): Elaborating entity "Interlock" for hierarchy "Interlock:u_Interlock" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 106
+Warning (10230): Verilog HDL assignment warning at interlock.v(16): truncated value with size 32 to match size of target (1) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 16
+Warning (10230): Verilog HDL assignment warning at interlock.v(22): truncated value with size 32 to match size of target (6) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 22
+Warning (10230): Verilog HDL assignment warning at interlock.v(23): truncated value with size 32 to match size of target (6) File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 23
+Info (12128): Elaborating entity "BCD_decoder" for hierarchy "Interlock:u_Interlock|BCD_decoder:u_Interlock_BCD_decoder_A" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/interlock.v Line: 19
+Info (12128): Elaborating entity "Out_latch" for hierarchy "Out_latch:u_Olatch" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 111
+Info (12128): Elaborating entity "Seven_seg_decoder" for hierarchy "Seven_seg_decoder:u_7SEG_A" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 125
+Info (12128): Elaborating entity "Diff" for hierarchy "Diff:u_Diff" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 149
+Warning (12241): 3 hierarchies have connectivity warnings - see the Connectivity Checks report folder
 Warning (21074): Design contains 1 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "RST_EXT" File: C:/Users/Zening/OneDrive/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 45
-Info (21057): Implemented 158 device resources after synthesis - the final resource count might be different
+    Warning (15610): No output dependent on input pin "RST_EXT" File: E:/Projects/RADIO/Projects/6x2_Antenna_switch/CPLD/Antenna_Switch_Interlock_pin.v Line: 48
+Info (21057): Implemented 193 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 21 input pins
     Info (21059): Implemented 36 output pins
-    Info (21061): Implemented 101 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 7 warnings
-    Info: Peak virtual memory: 4712 megabytes
-    Info: Processing ended: Thu Nov 21 01:44:17 2019
-    Info: Elapsed time: 00:00:18
-    Info: Total CPU time (on all processors): 00:00:39
+    Info (21061): Implemented 136 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 15 warnings
+    Info: Peak virtual memory: 4708 megabytes
+    Info: Processing ended: Sun Mar 03 22:58:51 2024
+    Info: Elapsed time: 00:00:11
+    Info: Total CPU time (on all processors): 00:00:08
 
 

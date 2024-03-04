@@ -127,7 +127,7 @@ set_global_assignment -name VERILOG_FILE BCD_encoder.v
 set_global_assignment -name VERILOG_FILE BCD_decoder.v
 set_global_assignment -name VERILOG_FILE I_MUX.v
 set_global_assignment -name VERILOG_FILE Antenna_Switch_Interlock_pin.v
-set_global_assignment -name RESERVE_ALL_UNUSED_PINS "AS INPUT TRI-STATED WITH WEAK PULL-UP"
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS "AS OUTPUT DRIVING GROUND"
 set_global_assignment -name ISP_CLAMP_STATE_DEFAULT HIGH
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BCD1
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BCD1[2]

@@ -8,7 +8,8 @@
 #include "main.h"
 #include "HTTPServer.h"
 #include "FS.h"
-#include "Flash_EEPROM.h"
+#include "Flash_EEPROM/Flash_EEPROM.h"
+#include "Config/Config.h"
 
 /* URI: /
  * METHOD: GET
@@ -27,13 +28,14 @@ void onSwitch(HTTPRequestParseState* pS)
 {
 	const char *A = getHTTPArg(pS, "sel1");
 	const char *B = getHTTPArg(pS, "sel2");
+	uint8_t antnums[2];
 	if(A && B)
 	{
-		uint8_t nA = atou8(A);
-		uint8_t nB = atou8(B);
-		if(nA <= NUM_ANTENNA && nB<=NUM_ANTENNA)
+		antnums[0] = atou8(A);
+		antnums[1] = atou8(B);
+		if(antnums[0] <= NUM_ANTENNA && antnums[1] <= NUM_ANTENNA)
 		{
-			switch_Antenna(nA, nB);
+			switch_Antenna(antnums, 2);
 			//HTTPSendStr(pS, 200, "OK\r\n");
 			HTTPredirect(pS, "/");
 			return;
@@ -49,17 +51,18 @@ void onSwitch(HTTPRequestParseState* pS)
  * */
 void onGetAlloc(HTTPRequestParseState* pS)
 {
-	static char s_tmp[10];
-	uint8_t d = get_Antenna();
+	static char s_tmp[16];
+	uint8_t antnums[N_SELECTORS];
+	get_Antenna_real_BCDs(antnums, N_SELECTORS);
 	char *p;
 	p = s_tmp;
 	strcpy(p, "sel1=");
 	p+=5;
-	*p = (uint8_t)(d & 0xf) + '0'; // "sel1=%d"
+	*p = (antnums[0]) + '0'; // "sel1=%d"
 	p++;
 	strcpy(p, "&sel2="); // "sel1=%d&sel2="
 	p+=6;
-	*p = (uint8_t)(d >> 4) + '0'; // "sel1=%d&sel2=%d"
+	*p = antnums[1] + '0'; // "sel1=%d&sel2=%d"
 	p++;
 	strcpy(p, "\r\n");
 	p+=2;
@@ -99,10 +102,10 @@ void onSetLabel(HTTPRequestParseState* pS)
 		const char* s_label;
 		if((s_label = getHTTPArg(pS, s_tmp)) != NULL)
 		{
-			strncpy(SavedData.ant_labels[i-1], s_label, MAX_LEN_ANT_LABEL);
+			strncpy(cfg.sAntNames[i-1], s_label, MAX_LEN_ANT_LABEL);
 		}
 	}
-	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
+//	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
 	//HTTPSendStr(pS, 200, "OK");
 	HTTPredirect(pS, "/");
 }
@@ -119,7 +122,8 @@ void onGetLabel(HTTPRequestParseState* pS)
 		s++;
 		*s = '=';
 		s++;
-		s = strncpy_f(s, SavedData.ant_labels[i], MAX_LEN_ANT_LABEL);
+		s = strncpy_f(s, cfg.sAntNames[i], MAX_LEN_ANT_LABEL);
+		isModified = true;
 		if(i != NUM_ANTENNA-1)
 		{
 			*s = '&';

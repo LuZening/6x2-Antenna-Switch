@@ -1,0 +1,21 @@
+G04 Layer: BottomSilkscreenLayer*
+G04 EasyEDA Pro v2.1.32.5533625a, 2023-09-11 21:51:51*
+G04 Gerber Generator version 0.3*
+G04 Scale: 100 percent, Rotated: No, Reflected: No *
+G04 Dimensions in millimeters  *
+G04 leading zeros omitted , absolute positions ,3 integer and 6 decimal *
+G04 #@! TF.GenerationSoftware,KiCad,Pcbnew,(5.1.10)-1*
+G04 #@! TF.CreationDate,2023-09-11T23:26:28+08:00*
+G04 #@! TF.ProjectId,AntennaSwitch_6x2_RelayBoard,416e7465-6e6e-4615-9377-697463685f36,rev?*
+G04 #@! TF.SameCoordinates,Original*
+G04 #@! TF.FileFunction,Paste,Top*
+G04 #@! TF.FilePolarity,Positive*
+%FSLAX46Y46*%
+G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
+G04 Created by KiCad (PCBNEW (5.1.10)-1) date 2023-09-11 23:26:28*
+%MOMM*%
+%LPD*%
+G01*
+G04 APERTURE LIST*
+G04 APERTURE END LIST*
+M02*

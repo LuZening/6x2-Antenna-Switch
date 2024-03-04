@@ -1,5 +1,5 @@
 Flow report for Antenna_Switch_Interlock
-Thu Nov 21 01:44:33 2019
+Sun Mar 03 22:59:02 2024
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -40,14 +40,14 @@ refer to the applicable agreement for further details.
 +---------------------------------------------------------------------+
 ; Flow Summary                                                        ;
 +-----------------------+---------------------------------------------+
-; Flow Status           ; Successful - Thu Nov 21 01:44:33 2019       ;
+; Flow Status           ; Successful - Sun Mar 03 22:59:02 2024       ;
 ; Quartus Prime Version ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name         ; Antenna_Switch_Interlock                    ;
 ; Top-level Entity Name ; Antenna_Switch_Interlock_pin                ;
 ; Family                ; MAX II                                      ;
 ; Device                ; EPM240T100C3                                ;
 ; Timing Models         ; Final                                       ;
-; Total logic elements  ; 89 / 240 ( 37 % )                           ;
+; Total logic elements  ; 124 / 240 ( 52 % )                          ;
 ; Total pins            ; 57 / 80 ( 71 % )                            ;
 ; Total virtual pins    ; 0                                           ;
 ; UFM blocks            ; 0 / 1 ( 0 % )                               ;
@@ -59,7 +59,7 @@ refer to the applicable agreement for further details.
 +-------------------+--------------------------+
 ; Option            ; Setting                  ;
 +-------------------+--------------------------+
-; Start date & time ; 11/21/2019 01:44:01      ;
+; Start date & time ; 03/03/2024 22:58:40      ;
 ; Main task         ; Compilation              ;
 ; Revision Name     ; Antenna_Switch_Interlock ;
 +-------------------+--------------------------+
@@ -70,7 +70,7 @@ refer to the applicable agreement for further details.
 +---------------------------------------+---------------------------------+--------------------------+-------------+-------------------------+
 ; Assignment Name                       ; Value                           ; Default Value            ; Entity Name ; Section Id              ;
 +---------------------------------------+---------------------------------+--------------------------+-------------+-------------------------+
-; COMPILER_SIGNATURE_ID                 ; 169736365901968.157427183903200 ; --                       ; --          ; --                      ;
+; COMPILER_SIGNATURE_ID                 ; 193675816873123.170947792017100 ; --                       ; --          ; --                      ;
 ; EDA_BOARD_DESIGN_TIMING_TOOL          ; Stamp (Timing)                  ; <None>                   ; --          ; --                      ;
 ; EDA_DESIGN_ENTRY_SYNTHESIS_TOOL       ; Precision Synthesis             ; <None>                   ; --          ; --                      ;
 ; EDA_INPUT_DATA_FORMAT                 ; Vqm                             ; --                       ; --          ; eda_design_synthesis    ;
@@ -93,12 +93,12 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:00:18     ; 1.0                     ; 4712 MB             ; 00:00:39                           ;
-; Fitter               ; 00:00:04     ; 1.0                     ; 5069 MB             ; 00:00:04                           ;
-; Assembler            ; 00:00:01     ; 1.0                     ; 4658 MB             ; 00:00:01                           ;
-; Timing Analyzer      ; 00:00:04     ; 1.0                     ; 4659 MB             ; 00:00:03                           ;
-; EDA Netlist Writer   ; 00:00:02     ; 1.0                     ; 4619 MB             ; 00:00:03                           ;
-; Total                ; 00:00:29     ; --                      ; --                  ; 00:00:50                           ;
+; Analysis & Synthesis ; 00:00:11     ; 1.0                     ; 4708 MB             ; 00:00:08                           ;
+; Fitter               ; 00:00:03     ; 1.0                     ; 5721 MB             ; 00:00:01                           ;
+; Assembler            ; 00:00:01     ; 1.0                     ; 4651 MB             ; 00:00:00                           ;
+; Timing Analyzer      ; 00:00:02     ; 1.0                     ; 4669 MB             ; 00:00:01                           ;
+; EDA Netlist Writer   ; 00:00:01     ; 1.0                     ; 4615 MB             ; 00:00:00                           ;
+; Total                ; 00:00:18     ; --                      ; --                  ; 00:00:10                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -107,11 +107,11 @@ refer to the applicable agreement for further details.
 +----------------------+------------------+------------+------------+----------------+
 ; Module Name          ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
 +----------------------+------------------+------------+------------+----------------+
-; Analysis & Synthesis ; Seefoo-Surface   ; Windows 10 ; 10.0       ; x86_64         ;
-; Fitter               ; Seefoo-Surface   ; Windows 10 ; 10.0       ; x86_64         ;
-; Assembler            ; Seefoo-Surface   ; Windows 10 ; 10.0       ; x86_64         ;
-; Timing Analyzer      ; Seefoo-Surface   ; Windows 10 ; 10.0       ; x86_64         ;
-; EDA Netlist Writer   ; Seefoo-Surface   ; Windows 10 ; 10.0       ; x86_64         ;
+; Analysis & Synthesis ; DESKTOP-AKFBIT2  ; Windows 10 ; 10.0       ; x86_64         ;
+; Fitter               ; DESKTOP-AKFBIT2  ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; DESKTOP-AKFBIT2  ; Windows 10 ; 10.0       ; x86_64         ;
+; Timing Analyzer      ; DESKTOP-AKFBIT2  ; Windows 10 ; 10.0       ; x86_64         ;
+; EDA Netlist Writer   ; DESKTOP-AKFBIT2  ; Windows 10 ; 10.0       ; x86_64         ;
 +----------------------+------------------+------------+------------+----------------+
 
 

@@ -19,7 +19,7 @@
 
 //#define __ON_BOARD_
 
-
+char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
 
 
 /*	HTTP String Constants	*/
@@ -39,7 +39,7 @@ const char HTTP_CONTENT_TYPE_PNG[] = "image/png";
 const char HTTP_CONTENT_TYPE_JPEG[] = "image/jpeg";
 const char HTTP_CONTENT_TYPE_GIF[] = "image/gif";
 
-volatile HTTPRequestParseState parseStates[NUM_SOCKETS] =
+HTTPRequestParseState parseStates[NUM_SOCKETS] =
 {
 	{.state = 0,
 	.argc = 0,
@@ -287,32 +287,38 @@ void HTTPonNotFound(HTTPRequestParseState *pS)
 
 void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 {
-	int8_t i = pch395->SOCK_responding;
+
+	int8_t i = pch395->SOCK_responding; // NOTE: number:i begins from 1
 	uint8_t j;
 	if(i > 0)
 	{
 		HTTPRequestParseState *pS = &parseStates[i-1];
-		if(pS->ready  && pS->response_stage == RESPONSE_NOT_PREPARED) // socket recv buffer non-empty, bit_i is 1
+		// CASE: Socket recv has request, no response under preparation, can prepare a new response
+		if(pS->ready  && pS->response_stage == RESPONSE_NOT_PREPARED)
 		{
-			if(true)
+
+			for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
 			{
-				for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
+				if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
 				{
-					if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
-					{
-						(HTTPResponders[j].func)(pS); // call HTTPResponder service function
-						break;
-					}
-				}
-				if(j >= NUM_HTTP_RESPONDERS) // Resource not found
-				{
-					HTTPonNotFound(pS);
+					(HTTPResponders[j].func)(pS); // call HTTPResponder service function
+					break;
 				}
 			}
+			if(j >= NUM_HTTP_RESPONDERS) // Resource not found
+			{
+				HTTPonNotFound(pS);
+			}
+
 		}
-		if((pch395->TX_available & (1 << i)) != 0 && pS->ready) // socket recv buffer non-empty, bit_i is 1
+
+		// CASE : CH395 chip is free for transmission,
+		// judge if response has been prepared for transmission
+		if((pch395->TX_available & (1 << i)) != 0 && pS->ready)
 		{
-			if(pS->response_stage == RESPONSE_PREPARED) // start the process of data sending
+			// CASE 1: parser has prepared the response content,
+			// start the process of data transmission
+			if(pS->response_stage == RESPONSE_PREPARED)
 			{
 				uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
 				uint16_t len_content_this_time = ((pS->len_response_content_remain < max_len_content)
@@ -337,15 +343,17 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 					pS->response_stage = RESPONSE_CONTENT_REMAIN;
 				}
 			}
-			else if(pS->response_stage == RESPONSE_CONTENT_REMAIN) // continue the sending process
+			// CASE2: previous response has remaining parts to be done, continue the sending process
+			else if(pS->response_stage == RESPONSE_CONTENT_REMAIN)
 			{
 				uint16_t len = pS->len_response_content_remain;
 				CH395SendData(i, pS->response_content, ((len<MAX_SIZE_PACK)?(len):(len=MAX_SIZE_PACK)));
 				ch395.TX_available &= ~(1<<i);
-				// sent
+				// move the cursor to record how much content has been transmitted
 				pS->len_response_content_remain -= len;
 				pS->response_content += len; // move the cursor
-				if(pS->len_response_content_remain == 0) // finished
+				// judge if transmission has finished
+				if(pS->len_response_content_remain == 0)
 				{
 					HTTPclose(i);
 					resetHTTPParseState(pS);
@@ -354,7 +362,9 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 				}
 			}
 		}
-		if(pS->sock_index==i && !pS->ready)
+
+		// CASE:
+		if(pS->sock_index == i && !pS->ready)
 		{
 			ch395.SOCK_responding = getNextSock();
 			CH395TCPDisconnect(i);
@@ -362,6 +372,8 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 	}
 }
 #endif
+
+
 int8_t getNextSock()
 {
 	int8_t j;
@@ -374,6 +386,7 @@ int8_t getNextSock()
 	}
 	return -1;
 }
+
 void HTTPclose(uint8_t i) // Sock Index to disconnect
 {
 	CH395TCPDisconnect(i);
@@ -527,6 +540,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 		pS->state = 0;
 		pS->ready = false;
 		return false;
+
 }
 
 
@@ -620,4 +634,46 @@ char* strncpy_f(char* dest, const char* src, uint16_t len)
 	}
 	*dest = 0;
 	return dest;
+}
+
+uint8_t IPv4_to_s(char* __restrict s ,const  uint8_t* __restrict IP)
+{
+  	uint8_t n = 0;
+	uint8_t idx = 0;
+  for(uint8_t i = 0; i < 4; ++i)
+  {
+	uint8_t d = IP[i];
+	uint8_t nd = 0;
+	if(d > 0)
+	{
+		while(d)
+		{
+			s[idx++] = (d % 10) + '0';
+			d /= 10;
+			++nd;
+		}
+	}
+	else
+	{
+		s[idx++] = '0';
+	}
+	// reverse
+	for(uint8_t j = 0; j < nd / 2; ++j)
+	{
+		char c;
+		c = s[idx - 1 - j];
+		s[idx - 1 - j] = s[idx - nd + j];
+		s[idx - nd + j] = c;
+	}
+	// add dot
+	if(i < 3)
+	{
+		s[idx++] = '.';
+	}
+	else
+	{
+		s[idx] = 0;
+	}
+  }
+	return idx;
 }

@@ -1,0 +1,19 @@
+[Version]
+SW990001
+
+[Layers]
+0 = 7, 0
+尺寸 = 4, 2
+草图标线 = 50, 7
+文字 = 10, 2
+
+[Entities]
+尺寸 [1] = BYLAYER, BYLAYER, 尺寸
+草图直线 [16] = BYLAYER, BYLAYER, 草图标线
+注释 [2] = BYLAYER, BYLAYER, 文字
+中心线 [14] = BYLAYER, BYLAYER, 草图标线
+隐藏线 [15] = BYLAYER, BYLAYER, 草图标线
+
+[Colors]
+0 -> 0
+

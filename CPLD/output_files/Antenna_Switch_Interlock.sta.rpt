@@ -1,5 +1,5 @@
 Timing Analyzer report for Antenna_Switch_Interlock
-Thu Nov 21 01:44:30 2019
+Sun Mar 03 22:59:00 2024
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -16,16 +16,19 @@ Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
   8. Recovery Summary
   9. Removal Summary
  10. Minimum Pulse Width Summary
- 11. Clock Transfers
- 12. Report TCCS
- 13. Report RSKM
- 14. Unconstrained Paths Summary
- 15. Clock Status Summary
- 16. Unconstrained Input Ports
- 17. Unconstrained Output Ports
- 18. Unconstrained Input Ports
- 19. Unconstrained Output Ports
- 20. Timing Analyzer Messages
+ 11. Setup: 'LOAD'
+ 12. Hold: 'LOAD'
+ 13. Setup Transfers
+ 14. Hold Transfers
+ 15. Report TCCS
+ 16. Report RSKM
+ 17. Unconstrained Paths Summary
+ 18. Clock Status Summary
+ 19. Unconstrained Input Ports
+ 20. Unconstrained Output Ports
+ 21. Unconstrained Input Ports
+ 22. Unconstrained Output Ports
+ 23. Timing Analyzer Messages
 
 
 
@@ -67,8 +70,8 @@ refer to the applicable agreement for further details.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 4           ;
-; Maximum allowed            ; 2           ;
+; Number detected on machine ; 16          ;
+; Maximum allowed            ; 8           ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
 ; Maximum used               ; 1           ;
@@ -78,13 +81,14 @@ refer to the applicable agreement for further details.
 +----------------------------+-------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Clocks                                                                                                                                                                           ;
-+------------+------+--------+------------+-------+-------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+----------+
-; Clock Name ; Type ; Period ; Frequency  ; Rise  ; Fall  ; Duty Cycle ; Divide by ; Multiply by ; Phase ; Offset ; Edge List ; Edge Shift ; Inverted ; Master ; Source ; Targets  ;
-+------------+------+--------+------------+-------+-------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+----------+
-; LOAD       ; Base ; 1.000  ; 1000.0 MHz ; 0.000 ; 0.500 ;            ;           ;             ;       ;        ;           ;            ;          ;        ;        ; { LOAD } ;
-+------------+------+--------+------------+-------+-------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+----------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Clocks                                                                                                                                                                             ;
++------------+------+--------+------------+-------+-------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+------------+
+; Clock Name ; Type ; Period ; Frequency  ; Rise  ; Fall  ; Duty Cycle ; Divide by ; Multiply by ; Phase ; Offset ; Edge List ; Edge Shift ; Inverted ; Master ; Source ; Targets    ;
++------------+------+--------+------------+-------+-------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+------------+
+; LOAD       ; Base ; 1.000  ; 1000.0 MHz ; 0.000 ; 0.500 ;            ;           ;             ;       ;        ;           ;            ;          ;        ;        ; { LOAD }   ;
+; REMOTE     ; Base ; 1.000  ; 1000.0 MHz ; 0.000 ; 0.500 ;            ;           ;             ;       ;        ;           ;            ;          ;        ;        ; { REMOTE } ;
++------------+------+--------+------------+-------+-------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+------------+
 
 
 ----------------
@@ -93,16 +97,22 @@ refer to the applicable agreement for further details.
 No paths to report.
 
 
------------------
-; Setup Summary ;
------------------
-No paths to report.
++--------------------------------+
+; Setup Summary                  ;
++-------+--------+---------------+
+; Clock ; Slack  ; End Point TNS ;
++-------+--------+---------------+
+; LOAD  ; -3.790 ; -45.464       ;
++-------+--------+---------------+
 
 
-----------------
-; Hold Summary ;
-----------------
-No paths to report.
++-------------------------------+
+; Hold Summary                  ;
++-------+-------+---------------+
+; Clock ; Slack ; End Point TNS ;
++-------+-------+---------------+
+; LOAD  ; 0.921 ; 0.000         ;
++-------+-------+---------------+
 
 
 --------------------
@@ -117,19 +127,242 @@ No paths to report.
 No paths to report.
 
 
-+--------------------------------+
-; Minimum Pulse Width Summary    ;
-+-------+--------+---------------+
-; Clock ; Slack  ; End Point TNS ;
-+-------+--------+---------------+
-; LOAD  ; -2.289 ; -2.289        ;
-+-------+--------+---------------+
++---------------------------------+
+; Minimum Pulse Width Summary     ;
++--------+--------+---------------+
+; Clock  ; Slack  ; End Point TNS ;
++--------+--------+---------------+
+; LOAD   ; -2.289 ; -2.289        ;
+; REMOTE ; -2.289 ; -2.289        ;
++--------+--------+---------------+
 
 
--------------------
-; Clock Transfers ;
--------------------
-Nothing to report.
++-------------------------------------------------------------------------------------------------------------------------------+
+; Setup: 'LOAD'                                                                                                                 ;
++--------+------------------+-----------------------------+--------------+-------------+--------------+------------+------------+
+; Slack  ; From Node        ; To Node                     ; Launch Clock ; Latch Clock ; Relationship ; Clock Skew ; Data Delay ;
++--------+------------------+-----------------------------+--------------+-------------+--------------+------------+------------+
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.790 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.012      ;
+; -3.786 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.008      ;
+; -3.786 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.008      ;
+; -3.786 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.008      ;
+; -3.786 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.570     ; 4.008      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.682 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.944      ;
+; -3.678 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.940      ;
+; -3.678 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.940      ;
+; -3.678 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.940      ;
+; -3.678 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.530     ; 3.940      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.313 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.526      ;
+; -3.309 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.522      ;
+; -3.309 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.522      ;
+; -3.309 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.522      ;
+; -3.309 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.522      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.245 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.803      ;
+; -3.241 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.799      ;
+; -3.241 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.799      ;
+; -3.241 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.799      ;
+; -3.241 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.234     ; 3.799      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.155 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.154 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.367      ;
+; -3.151 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.363      ;
+; -3.151 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.363      ;
+; -3.151 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.363      ;
+; -3.151 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.580     ; 3.363      ;
+; -3.150 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.363      ;
+; -3.150 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.363      ;
+; -3.150 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.363      ;
+; -3.150 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; -0.579     ; 3.363      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.245 ; REMOTE           ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.341      ;
+; -2.241 ; REMOTE           ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.337      ;
+; -2.241 ; REMOTE           ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.337      ;
+; -2.241 ; REMOTE           ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.337      ;
+; -2.241 ; REMOTE           ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.500        ; 3.804      ; 6.337      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.745 ; REMOTE           ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.341      ;
+; -1.741 ; REMOTE           ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.337      ;
+; -1.741 ; REMOTE           ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.337      ;
+; -1.741 ; REMOTE           ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.337      ;
+; -1.741 ; REMOTE           ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 1.000        ; 3.804      ; 6.337      ;
++--------+------------------+-----------------------------+--------------+-------------+--------------+------------+------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------+
+; Hold: 'LOAD'                                                                                                                 ;
++-------+------------------+-----------------------------+--------------+-------------+--------------+------------+------------+
+; Slack ; From Node        ; To Node                     ; Launch Clock ; Latch Clock ; Relationship ; Clock Skew ; Data Delay ;
++-------+------------------+-----------------------------+--------------+-------------+--------------+------------+------------+
+; 0.921 ; REMOTE           ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.863      ;
+; 0.921 ; REMOTE           ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.863      ;
+; 0.921 ; REMOTE           ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.863      ;
+; 0.921 ; REMOTE           ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.863      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 0.925 ; REMOTE           ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; 3.804      ; 4.867      ;
+; 1.421 ; REMOTE           ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.863      ;
+; 1.421 ; REMOTE           ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.863      ;
+; 1.421 ; REMOTE           ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.863      ;
+; 1.421 ; REMOTE           ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.863      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 1.425 ; REMOTE           ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; -0.500       ; 3.804      ; 4.867      ;
+; 3.062 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.621      ;
+; 3.062 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.621      ;
+; 3.175 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.734      ;
+; 3.232 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.791      ;
+; 3.261 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 2.819      ;
+; 3.288 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.847      ;
+; 3.302 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 2.870      ;
+; 3.321 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.880      ;
+; 3.341 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 2.899      ;
+; 3.342 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 2.900      ;
+; 3.343 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 2.901      ;
+; 3.343 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.902      ;
+; 3.348 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.252      ;
+; 3.378 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.937      ;
+; 3.387 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.291      ;
+; 3.390 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.949      ;
+; 3.391 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 2.949      ;
+; 3.407 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.966      ;
+; 3.408 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.967      ;
+; 3.409 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 2.968      ;
+; 3.447 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.005      ;
+; 3.454 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.013      ;
+; 3.481 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.385      ;
+; 3.484 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.042      ;
+; 3.502 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.061      ;
+; 3.505 ; R_remote_BCD1[0] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.064      ;
+; 3.534 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.093      ;
+; 3.537 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.441      ;
+; 3.565 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.124      ;
+; 3.567 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.126      ;
+; 3.583 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.142      ;
+; 3.589 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.493      ;
+; 3.590 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.494      ;
+; 3.591 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.495      ;
+; 3.600 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.208      ;
+; 3.602 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.210      ;
+; 3.639 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.207      ;
+; 3.656 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.560      ;
+; 3.657 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.561      ;
+; 3.658 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.217      ;
+; 3.658 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.562      ;
+; 3.659 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.218      ;
+; 3.659 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.217      ;
+; 3.660 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.218      ;
+; 3.661 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.220      ;
+; 3.662 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.220      ;
+; 3.664 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.223      ;
+; 3.664 ; R_remote_BCD2[0] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.579     ; 3.223      ;
+; 3.665 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.223      ;
+; 3.665 ; R_remote_BCD2[2] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.580     ; 3.223      ;
+; 3.686 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.294      ;
+; 3.692 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.300      ;
+; 3.751 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.655      ;
+; 3.754 ; R_remote_BCD1[1] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.234     ; 3.658      ;
+; 3.778 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.346      ;
+; 3.780 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.348      ;
+; 3.781 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.349      ;
+; 3.782 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.350      ;
+; 3.794 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.402      ;
+; 3.811 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.379      ;
+; 3.878 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.486      ;
+; 3.918 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.526      ;
+; 3.930 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.498      ;
+; 3.931 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.499      ;
+; 3.932 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[0] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.500      ;
+; 4.025 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.593      ;
+; 4.028 ; R_remote_BCD1[2] ; Out_latch:u_Olatch|reg_B[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.570     ; 3.596      ;
+; 4.186 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[4] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.794      ;
+; 4.187 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[2] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.795      ;
+; 4.189 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[3] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.797      ;
+; 4.192 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[1] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.800      ;
+; 4.192 ; R_remote_BCD2[1] ; Out_latch:u_Olatch|reg_A[5] ; REMOTE       ; LOAD        ; 0.000        ; -0.530     ; 3.800      ;
++-------+------------------+-----------------------------+--------------+-------------+--------------+------------+------------+
+
+
++-------------------------------------------------------------------+
+; Setup Transfers                                                   ;
++------------+----------+----------+----------+----------+----------+
+; From Clock ; To Clock ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
++------------+----------+----------+----------+----------+----------+
+; REMOTE     ; LOAD     ; 0        ; 0        ; 324      ; 552      ;
++------------+----------+----------+----------+----------+----------+
+Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
+
+
++-------------------------------------------------------------------+
+; Hold Transfers                                                    ;
++------------+----------+----------+----------+----------+----------+
+; From Clock ; To Clock ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
++------------+----------+----------+----------+----------+----------+
+; REMOTE     ; LOAD     ; 0        ; 0        ; 324      ; 552      ;
++------------+----------+----------+----------+----------+----------+
+Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
 
 ---------------
@@ -152,19 +385,20 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Illegal Clocks                  ; 0     ; 0    ;
 ; Unconstrained Clocks            ; 0     ; 0    ;
 ; Unconstrained Input Ports       ; 19    ; 19   ;
-; Unconstrained Input Port Paths  ; 913   ; 913  ;
+; Unconstrained Input Port Paths  ; 646   ; 646  ;
 ; Unconstrained Output Ports      ; 36    ; 36   ;
-; Unconstrained Output Port Paths ; 942   ; 942  ;
+; Unconstrained Output Port Paths ; 968   ; 968  ;
 +---------------------------------+-------+------+
 
 
-+-------------------------------------+
-; Clock Status Summary                ;
-+--------+-------+------+-------------+
-; Target ; Clock ; Type ; Status      ;
-+--------+-------+------+-------------+
-; LOAD   ; LOAD  ; Base ; Constrained ;
-+--------+-------+------+-------------+
++--------------------------------------+
+; Clock Status Summary                 ;
++--------+--------+------+-------------+
+; Target ; Clock  ; Type ; Status      ;
++--------+--------+------+-------------+
+; LOAD   ; LOAD   ; Base ; Constrained ;
+; REMOTE ; REMOTE ; Base ; Constrained ;
++--------+--------+------+-------------+
 
 
 +---------------------------------------------------------------------------------------------------+
@@ -315,38 +549,47 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
-    Info: Processing started: Thu Nov 21 01:44:26 2019
+    Info: Processing started: Sun Mar 03 22:58:58 2024
 Info: Command: quartus_sta Antenna_Switch_Interlock -c Antenna_Switch_Interlock
 Info: qsta_default_script.tcl version: #1
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 2 of the 2 processors detected
+Info (20030): Parallel compilation is enabled and will use 8 of the 8 processors detected
 Info (21077): Low junction temperature is 0 degrees C
 Info (21077): High junction temperature is 85 degrees C
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
+Warning (335093): The Timing Analyzer is analyzing 6 combinational loops as latches. For more details, run the Check Timing command in the Timing Analyzer or view the "User-Specified and Inferred Latches" table in the Analysis & Synthesis report.
 Critical Warning (332012): Synopsys Design Constraints File file not found: 'Antenna_Switch_Interlock.sdc'. A Synopsys Design Constraints File is required by the Timing Analyzer to get proper timing constraints. Without it, the Compiler will not properly optimize the design.
 Info (332142): No user constrained base clocks found in the design. Calling "derive_clocks -period 1.0"
 Info (332105): Deriving Clocks
+    Info (332105): create_clock -period 1.000 -name REMOTE REMOTE
     Info (332105): create_clock -period 1.000 -name LOAD LOAD
 Info: Found TIMING_ANALYZER_REPORT_SCRIPT_INCLUDE_DEFAULT_ANALYSIS = ON
 Info (332140): No fmax paths to report
 Info: Can't run Report Timing Closure Recommendations. The current device family is not supported.
-Info (332140): No Setup paths to report
-Info (332140): No Hold paths to report
+Critical Warning (332148): Timing requirements not met
+Info (332146): Worst-case setup slack is -3.790
+    Info (332119):     Slack       End Point TNS Clock 
+    Info (332119): ========= =================== =====================
+    Info (332119):    -3.790             -45.464 LOAD 
+Info (332146): Worst-case hold slack is 0.921
+    Info (332119):     Slack       End Point TNS Clock 
+    Info (332119): ========= =================== =====================
+    Info (332119):     0.921               0.000 LOAD 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
-Critical Warning (332148): Timing requirements not met
 Info (332146): Worst-case minimum pulse width slack is -2.289
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
     Info (332119):    -2.289              -2.289 LOAD 
+    Info (332119):    -2.289              -2.289 REMOTE 
 Info (332001): The selected device family is not supported by the report_metastability command.
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
-Info: Quartus Prime Timing Analyzer was successful. 0 errors, 3 warnings
-    Info: Peak virtual memory: 4659 megabytes
-    Info: Processing ended: Thu Nov 21 01:44:30 2019
-    Info: Elapsed time: 00:00:04
-    Info: Total CPU time (on all processors): 00:00:03
+Info: Quartus Prime Timing Analyzer was successful. 0 errors, 4 warnings
+    Info: Peak virtual memory: 4669 megabytes
+    Info: Processing ended: Sun Mar 03 22:59:00 2024
+    Info: Elapsed time: 00:00:02
+    Info: Total CPU time (on all processors): 00:00:01
 
 

@@ -43,11 +43,11 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+#define N_BCD_PINS 3
+
 typedef struct
 {
-	PIN_typedef PIN_BCD0;
-	PIN_typedef PIN_BCD1;
-	PIN_typedef PIN_BCD2;
+	PIN_typedef PIN_BCDs[N_BCD_PINS];
 	uint8_t sel; // the number of selected antenna 0...7
 } AntennaSelector_typedef;
 
@@ -55,7 +55,6 @@ typedef struct
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -80,6 +79,8 @@ void Error_Handler(void);
 #define CH395_INT_GPIO_Port GPIOA
 #define SPI1_CS_Pin GPIO_PIN_4
 #define SPI1_CS_GPIO_Port GPIOA
+#define XDISPLAY_Pin GPIO_PIN_10
+#define XDISPLAY_GPIO_Port GPIOB
 #define RW485_Pin GPIO_PIN_11
 #define RW485_GPIO_Port GPIOB
 #define BCDM2_2_Pin GPIO_PIN_12
@@ -129,8 +130,9 @@ extern SavedData_typedef SavedData;
 // CH395 interrupt handler
 void reset_CH395();
 void interrupt_CH395();
-void switch_Antenna(uint8_t A, uint8_t B);
-uint8_t get_Antenna();
+void switch_Antenna(uint8_t *antnums, uint8_t n);
+void get_Antenna_real_BCDs(uint8_t* antnums, uint8_t n);
+void display_IP (bool start);
 extern AntennaSelector_typedef Selector[];
 /* USER CODE END Private defines */
 

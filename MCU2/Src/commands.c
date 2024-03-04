@@ -1,51 +1,144 @@
+/*
+ * commands.c
+ *
+ *  Created on: 2023年3月2日
+ *      Author: cpholzn
+ */
+
+
 #include "commands.h"
-#include "Lib485.h"
-#include "HTTPServer.h"
-extern struct Serial485* p485;
-// YAESU GS232 compatible commands
-// callback functions of each command
-const char *commands[N_COMM] = {
-//    "R", // Clockwise
-	"R", // reset
-	"S", // swtich S [0-6] [0-6]\r
-	"G", // get G\r Return: [0-6] [0-6]\r
-};
-bool (*command_calls[N_COMM])(int, char **) = {
-		on_485_reset,
-		on_485_switch,
-		on_485_getalloc,
-};
+#include "command_funcs_OTRSP.h"
+#include <stdint.h>
+#include <string.h>
+#include "strsep.h"
+
+#define MIN(x,y) ((x < y)?(x):(y))
 
 
-/************************************************
- *             HANDLE RS485 commands            *
- * *********************************************/
 
-bool on_485_reset(int argc, char** argv)
+CommandParser_t CommandParser;
+
+
+void command_parser_init(CommandParser_t *p, CommandProtocol_t proto)
 {
-	return true;
+	p->protocol = proto;
+	p->hasResponse = 0;
 }
-bool on_485_switch(int argc, char** argv)
+
+size_t utoaz(uint32_t v, char* buf, int8_t nDigits)
 {
-	if(argc < 3)
+	size_t i = 0;
+	while(v || (nDigits > 0))
 	{
-		return false;
+		buf[i++] = (v % 10) + '0';
+		v /= 10;
+		nDigits--;
 	}
-	const char *A = argv[1];
-	const char *B = argv[2];
-	if(A && B)
+	uint8_t j = 0;
+	char c;
+	for(j=0; j < i / 2; ++j)
 	{
-		uint8_t nA = atou8(A);
-		uint8_t nB = atou8(B);
-		if(nA <= NUM_ANTENNA && nB<=NUM_ANTENNA)
-		{
-			switch_Antenna(nA, nB);
-			return true;
-		}
+		c = buf[j];
+		buf[j] = buf[i - j - 1];
+		buf[i - j - 1] = c;
 	}
-	return false;
+	buf[i] = 0;
+	return i;
 }
-bool on_485_getalloc(int argc, char** argv)
+
+size_t itoaz(int32_t v, char* buf, int8_t nDigits)
 {
-	return false;
+	size_t i = 0;
+	bool isNeg =false;
+	if(v < 0)
+	{
+	    v = -v;
+	    isNeg = true;
+	}
+	while((v != 0) || (nDigits > 0))
+	{
+		buf[i++] = (((uint32_t)v) % 10) + '0';
+		v /= 10;
+		nDigits--;
+	}
+    if(isNeg) buf[i++] = '-';
+	uint8_t j = 0;
+	char c;
+	for(j=0; j < i / 2; ++j)
+	{
+		c = buf[j];
+		buf[j] = buf[i - j - 1];
+		buf[i - j - 1] = c;
+	}
+	buf[i] = 0;
+	return i;
 }
+
+err_t my_atou(const char* buf, int8_t nMaxLen, uint32_t* retval)
+{
+	const char* p = buf;
+	uint32_t v = 0;
+	while(*p && (nMaxLen > 0))
+	{
+        uint8_t d = *p - '0';
+        if(d > 9) goto failed;
+		v = v * 10 + (*p - '0');
+		p++;
+		nMaxLen--;
+	}
+    *retval = v;
+    return ERR_OK;
+failed:
+    return ERR_FAILED;
+}
+
+err_t my_atoi(const char* buf, int8_t nMaxLen, int32_t* retval)
+{
+	const char* p = buf;
+	int32_t v = 0;
+	bool isNeg;
+	if(*p == '-')
+	{
+		isNeg = true;
+		p++;
+	}
+	while(*p && (nMaxLen > 0))
+	{
+		v = v * 10 + (*p - '0');
+		p++;
+		nMaxLen--;
+	}
+
+	*retval = (isNeg ? (-v) : v);
+
+    return ERR_OK;
+failed:
+    return ERR_FAILED;
+}
+
+
+
+
+
+
+
+
+int execute_command_string(CommandParser_t* pParser, const char* s, size_t len)
+{
+    int r = -1;
+    switch(pParser->protocol)
+    {
+    case COMMAND_PROTOCOL_OTRSP:
+    	pParser->bufRet[0] = 0;
+    	r = parse_command_OTRSP(s, len, pParser->bufRet);
+    	if(pParser->bufRet[0]) // parsed is valid
+    		pParser->hasResponse = strnlen(pParser->bufRet, sizeof(pParser->bufRet));
+    	break;
+    default:
+    	break;
+    }
+    return r;
+}
+
+
+

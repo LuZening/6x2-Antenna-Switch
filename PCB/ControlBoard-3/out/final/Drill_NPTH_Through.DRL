@@ -1,0 +1,23 @@
+G04 Layer: BottomSilkscreenLayer*
+G04 EasyEDA Pro v2.1.32.5533625a, 2023-09-11 21:51:51*
+G04 Gerber Generator version 0.3*
+G04 Scale: 100 percent, Rotated: No, Reflected: No *
+G04 Dimensions in millimeters  *
+G04 leading zeros omitted , absolute positions ,3 integer and 6 decimal *
+M48
+; DRILL file {KiCad (5.1.10)-1} date 09/11/23 22:03:52
+; FORMAT={-:-/ absolute / metric / decimal}
+; #@! TF.CreationDate,2023-09-11T22:03:52+08:00
+; #@! TF.GenerationSoftware,Kicad,Pcbnew,(5.1.10)-1
+; #@! TF.FileFunction,NonPlated,1,2,NPTH
+FMAT,2
+METRIC
+T1C3.250
+%
+G90
+G05
+T1
+X51.459Y-137.088
+X62.889Y-137.088
+T0
+M30

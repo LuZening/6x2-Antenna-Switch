@@ -28,19 +28,40 @@ extern "C" {
  * CH395 status
  * ***/
 #define CH395_SOCKS_AVAIL 8
-#define CH395_SIZE_BUFFER 2048
+#define CH395_SIZE_BUFFER (1024+512)
+
+typedef enum
+{
+	CH395_PROTOCOL_NOT_USED = 0,
+	CH395_PROTOCOL_TCP,
+	CH395_PROTOCOL_HTTP
+} CH395_protocol_t;
+
 typedef struct
 {
+
+	uint16_t ports[CH395_SOCKS_AVAIL]; // NOTE: skip [0]
+	uint8_t protocols[CH395_SOCKS_AVAIL]; // NOTE: skip [0]
+} CH395_cfg_t;
+
+typedef struct
+{
+
+	CH395_cfg_t cfg;
+
 	volatile uint8_t socket_connected; // bit0...bit7 sock0...sock7
 	volatile uint8_t RX_received; // bit0...bit7 buffer0...buffer7
 	volatile int8_t SOCK_responding; // SOCK 1-7, none if -1
 	volatile uint8_t TX_available; // bit0...bit7
 	char buffer[CH395_SIZE_BUFFER];
+
 } CH395_TypeDef;
+
 extern CH395_TypeDef ch395;
 // initialize CH395
 void CH395SetBuffer(); // 2KB send & recv buffer for SOCK0-5
-BOOL CH395TCPServerStart(uint32_t ip, uint16_t port); // start TCP/IP server on CH395 on socket 0, allow multiple connections
+// start HTTP server on CH395 on socket 0 and TCP server on socket 4,allow multiple connections
+BOOL CH395TCPServerStart(uint32_t ip, uint16_t port_http_server, uint16_t port_tcp_server);
 // TODO: CH395 GPIO
 /* ********************************************************************************************************************* */
 /* 命令代码 */

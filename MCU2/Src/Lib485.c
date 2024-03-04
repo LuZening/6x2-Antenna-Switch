@@ -1,230 +1,116 @@
 #include "main.h"
 #include "Lib485.h"
 #include "commands.h"
-#include "Delay.h"
-struct Serial485 _serial485;
-struct Serial485 *p485 = &_serial485;
-#define OWN 0
-#define GS232 1
-#define COMPATIBILITY GS232
-#ifdef RW485_ON_CH395
-#include "CH395.h"
-#endif
-//#define COMPATIBILITY OWN
-// Compliance with CRC16 MODBUS procotols
-uint CRC16(char *s, int len) // chr_termin excluded
+#include <string.h>
+
+#define RE 1
+#define DE 0
+
+Serial485 _serial485;
+Serial485 *p485 = &_serial485;
+
+
+
+static void start_receive_DMA(Serial485 *p485)
 {
-    unsigned int CRC_reg = 0xffff; // initialize 16-bit CRC register
-    while (len-- && (*s > 0))
-    {
-        CRC_reg = CRC_reg ^ *s;
-        s++;
-        for (int i = 0; i < 8; ++i)
-        {
-            if (CRC_reg & 0x1) // shift 1
-            {
-                CRC_reg >>= 1;
-                CRC_reg ^= CRC_POLY;
-            }
-            else // shift 0
-                CRC_reg >>= 1;
-        }
-    }
-    return CRC_reg;
-}
-void begin_serial485(struct Serial485 *p485, UART_HandleTypeDef *pSerial, PIN_typedef pin_RW, int timer_ms)
-{
-    int i;
-    p485->state_RW = RE;
-    p485->timeout_tx = 0;
-    p485->idx_rx = 0;
-    p485->idx_command = 0;
-    *(p485->command) = 0;
-    p485->argc = 0;
-    p485->argv[0] = p485->argv0;
-    p485->is_command_ready = false;
-    p485->timer_ms = timer_ms;
-    p485->timeout_clear_rx = TIMEOUT_RX;
-    p485->n_available = 0;
-    p485->pSerial = pSerial;
-    p485->pin_RW = pin_RW;
-    HAL_GPIO_WritePin(pin_RW.group, pin_RW.pin, RE); // toggle receive mode
+    p485->rx_head = 0;
+    p485->rx_old_pos = 0;
+    // start IDLE interrupt
+//    __HAL_UART_ENABLE_IT(p485->cfg.pSerial, UART_IT_IDLE);
+    // start DMA
+    HAL_UARTEx_ReceiveToIdle_DMA(p485->cfg.pSerial, p485->rx_buffer, sizeof(p485->rx_buffer));
 }
 
-void set_direction485(struct Serial485 *p485, uint8_t direction)
+void begin_serial485(Serial485 *p485, const Serial485_cfg_t* pCfg)
+{
+	memcpy(&p485->cfg, pCfg, sizeof(Serial485_cfg_t));
+    p485->state_RW = RE;
+    *(p485->command) = 0;
+    p485->len_unprocessed_command = 0;
+    HAL_GPIO_WritePin(pCfg->pin_RW.group, pCfg->pin_RW.pin, RE); // toggle receive mode
+
+    // TRICK: store Serial485 pointer in AdvFeatureInit(uint32_t) member
+	// for later iterruption use
+	p485->cfg.pSerial->AdvancedInit.AdvFeatureInit = (uint32_t)(p485);
+
+    start_receive_DMA(p485);
+    // when DMA interrupts, parse command and restart receiving
+
+
+}
+
+void set_direction_serial485(Serial485 *p485, uint8_t direction)
 {
 	//RE: receive; DE: write
-#ifdef RW485_ON_CH395
-	uint8_t v = CH395ReadGPIOAddr(GPIO_IN_REG);
-	switch(direction)
-	{
-	case GPIO_PIN_SET:
-		v |= (1<<RW485_ON_CH395);
-		break;
-	case GPIO_PIN_RESET:
-		v &= ~(1 << RW485_ON_CH395);
-	}
-	CH395WriteGPIOAddr(GPIO_OUT_REG, v);
-#else
-	HAL_GPIO_WritePin(p485->pin_RW.group, p485->pin_RW.pin, direction);
-#endif
+	p485->state_RW = direction;
+	HAL_GPIO_WritePin(p485->cfg.pin_RW.group, p485->cfg.pin_RW.pin, direction);
 }
 
-void send_serial485(struct Serial485 *p485, const char *str)
+void send_serial485(Serial485 *p485, const char *buffer_send, int16_t len)
 {
-    int len_content;
-    set_direction485(p485, DE);
-    p485->state_RW = DE;
-    len_content = strlen(str);
-    HAL_UART_Transmit(p485->pSerial, str, len_content, HAL_MAX_DELAY);
-    Delay_us(20);
-    set_direction485(p485, RE);
-    p485->state_RW = RE;
+
+
+	if(len < 0)
+		len = strnlen(buffer_send, sizeof(p485->tx_buffer));
+	if(len == 0) return;
+	strncpy(p485->tx_buffer, buffer_send, len);
+	while(!p485->busy);
+	p485->busy = true;
+	set_direction_serial485(p485, DE);
+    HAL_UART_Transmit_DMA(p485->cfg.pSerial, p485->tx_buffer, len);
+    // when DMA interrupts, clear busy flags
 }
 
-//void onReceived_serial485(struct Serial485 *p485)
-//{
-//	p485->timeout_clear_rx = TIMEOUT_RX; // reset rx clear timer
-//	// if c is a deliminator, we have a complete command
-//	char c = *(p485->rx_buffer);
-//	if (strchr(DELIM_485, c) != NULL) // c is a deliminator
-//	{
-//		if (p485->idx_command > 0) // parse the command if the command buffer is not empty
-//		{
-//			p485->command[p485->idx_command] = 0;
-//			// eliminate the trailling deliminating characters
-//			parse_command(p485);
-//			// execute command if a command has been parsed
-//			// Do not execute command in an interrupr service function
-//			// execute it in the main loop
-//			if (p485->is_command_ready)
-//			{
-//				if (execute_command(p485->argc, (char **)(p485->argv)))
-//				{
-//					send_serial485(p485, "\r"); // succeeded
-//				}
-//				else
-//				{
-//					send_serial485(p485, "?>\r"); // bad command
-//				}
-//				// clean up the command flags
-//				p485->is_command_ready = false;
-//				p485->idx_command = 0;
-//				p485->argc = 0;
-//			}
-//		} // discard the deliminator if the command is null
-//	}
-//	else
-//	{
-//		p485->command[(p485->idx_command)++] = c;
-//	}
-//}
-
-// call this function at each interval
-// switches DE to RE when transmission finished
-void handle_serial485(struct Serial485 *p485)
+/**
+ *  @Attention will be called on either HC/TC or idle!!! and cannot be distinguished
+  * @brief  User implementation of the Reception Event Callback
+  *         (Rx event notification called after use of advanced reception service).
+  * @param  huart UART handle
+  * @param  Size  Number of data available in application reception buffer (indicates a position in
+  *               reception buffer until which, data are available)
+  * @retval None
+  */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-        // countdown rx clear timer
-	char c;
-	if(HAL_OK == HAL_UART_Receive(p485->pSerial, &c, 1, 0))
-	{
-		p485->timeout_clear_rx = TIMEOUT_RX; // reset rx clear timer
-		if (strchr(DELIM_485, c) != NULL) // c is a deliminator
-		{
-			if (p485->idx_command > 0) // parse the command if the command buffer is not empty
-			{
-				p485->command[p485->idx_command] = 0;
-				// eliminate the trailling deliminating characters
-				parse_command(p485);
-				// execute command if a command has been parsed
-				// Do not execute command in an interrupr service function
-				// execute it in the main loop
-				if (p485->is_command_ready)
-				{
-					if (execute_command(p485->argc, (char **)(p485->argv)))
-					{
-						send_serial485(p485, "\r"); // succeeded
-					}
-					else
-					{
-						send_serial485(p485, "?>\r"); // bad command
-					}
-					// clean up the command flags
-					p485->is_command_ready = false;
-					p485->idx_command = 0;
-					p485->argc = 0;
-				}
-			} // discard the deliminator if the command is null
-		}
-		else
-		{
-			p485->command[(p485->idx_command)++] = c;
-		}
-	}
-	else
-	{
-        if (p485->timeout_clear_rx > 0)
-        {
-            p485->timeout_clear_rx -= p485->timer_ms;
-            if (p485->timeout_clear_rx <= 0)
-            {
-                p485->idx_command = 0; // clear the rx buffer
-                p485->command[0] = 0;
-            }
-        }
-	}
+	Serial485* p485 = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
+	uint16_t *phead = &(p485->rx_head); // reserved for circular DMA mode
+	uint16_t *pold_pos = &(p485->rx_old_pos);
+	uint16_t len_command;
+  /* check if idle signal received, under non-circular DMA (normal mode)
+   * enters here either HC/TC or IDLE
+   * case 1: Size == old_pos, means idle received, process data from [header, Size), move head to Size
+   * case 2: Size == RX_BUFFER_LEN, means buffer is full (TC), must process, and IDLE int will not be triggered instead
+   */
+  if(
+		  (Size == *pold_pos) // case 1
+		  || (Size == sizeof(p485->rx_buffer)) // case 2
+		  )
+  {
+	  if(p485->len_unprocessed_command == 0) // do not overwrite unprocessed command
+	  {
+
+		  len_command =  Size - *phead;
+		  strncpy(p485->command, p485->rx_buffer + *phead, len_command);
+		  p485->command[len_command] = 0;
+
+		  // process command
+		  p485->len_unprocessed_command = len_command;
+	  }
+
+	  // restart DMA
+	  start_receive_DMA(p485);
+  }
+  else // HC event, do nothing
+	  *pold_pos = Size;
+
 }
 
-void parse_command(struct Serial485 *p485)
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-    char *command = p485->command;
-    char *tok;
-    p485->argc = 0;
-#if COMPATIBILITY == GS232
-    p485->argv[0][0] = command[0];
-    if (p485->idx_command > 1 &&
-        command[0] != 'M' && command[1] >= '0' && command[1] <= '9') // handle cases like O2
-    {
-        p485->argv[0][1] = command[1];
-        p485->argv[0][2] = 0;
-        command+=2;
-    }
-    else
-    {
-        p485->argv[0][1] = 0;
-        command++;
-    }
-    p485->argc = 1;
-    tok = strtok(command, DELIM_COMM_485);
-    while (tok)
-    {
-        p485->argv[(p485->argc)++] = tok;
-        tok = strtok(NULL, DELIM_COMM_485);
-    }
-#elif COMPATIBILITY == OWN
-    tok = strtok(command, DELIM_COMM_485);
-    while (tok)
-    {
-        p485->argv[(p485->argc)++] = tok;
-        tok = strtok(NULL, DELIM_COMM_485);
-    }
-#endif
-    p485->is_active = true;
-    p485->is_command_ready = true;
+	// restart DMA receiving when error occures
+	// restart DMA
+	Serial485* p485 = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
+	start_receive_DMA(p485);
 }
 
-bool execute_command(int argc, char** argv)
-{
-    int i;
-    bool res = false;
-    // search in command list
-    for (i = 0; i < N_COMM; ++i)
-    {
-        if (strcmp(argv[0], commands[i]) == 0) // if any of the listed commands matches
-        {
-            res = (*command_calls[i])(argc, argv);
-            break;
-        }
-    }
-    return res;
-}

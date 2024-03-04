@@ -54,7 +54,7 @@
         }
     </style>
     <script>
-        window.onload = function(){get_label(); get_alloc();};
+        window.onload = function(){onload_tasks();};
     </script>
 </head>
 <body>
@@ -113,6 +113,12 @@
     <p>Dec. 1, 2019</p>
 </footer>
 <script>
+
+    function onload_tasks()
+    {
+        setTimeout(get_label, 400);
+        setTimeout(get_alloc, 1000);
+    }
     // AJAX get label
     function get_label()
     {

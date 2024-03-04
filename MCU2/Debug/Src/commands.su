@@ -1,3 +1,7 @@
-commands.c:24:6:on_485_reset	16	static
-commands.c:28:6:on_485_switch	40	static
-commands.c:48:6:on_485_getalloc	16	static
+string.h:122:8:strsep	40	static
+commands.c:22:6:command_parser_init	16	static
+commands.c:28:8:utoaz	40	static
+commands.c:49:8:itoaz	40	static
+commands.c:77:7:my_atou	40	static
+commands.c:95:7:my_atoi	40	static
+commands.c:126:5:execute_command_string	32	static

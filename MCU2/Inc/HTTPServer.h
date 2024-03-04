@@ -19,7 +19,7 @@
 
 #define MAX_LEN_URI 64
 #define MAX_NUM_ARGS 4
-#define MAX_LEN_COOKIES 256
+#define MAX_LEN_COOKIES 64
 #define MAX_LEN_RESPONSE_HEADER 512
 #define MAX_SIZE_PACK 1350 // maximum size of single TCP package in one transmission
 #define NUM_SOCKETS CH395_SOCKS_AVAIL
@@ -57,6 +57,7 @@ typedef struct
 	Method method;
 	HTTPConnection_typedef connection;
 	char URI[MAX_LEN_URI]; // RESET after use
+	uint16_t port;
 	uint8_t argc;	// RESET after use
 	char* argv[MAX_NUM_ARGS];
 	char cookies[MAX_LEN_COOKIES];	// RESET after use
@@ -70,8 +71,8 @@ typedef struct
 	BOOL ready;	// RESET after use
 	uint8_t sock_index; //initialize sock_index
 } HTTPRequestParseState;
-extern volatile HTTPRequestParseState parseStates[NUM_SOCKETS];
-char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
+extern HTTPRequestParseState parseStates[NUM_SOCKETS];
+extern char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
 // The Socket number responding to, which serializes the process on multiple sockets
 
 
@@ -100,5 +101,5 @@ uint8_t atou8(const char* s);
 uint8_t u16toa(uint16_t, char*);
 char* strcpy_f(char* dest, const char* src); // fast strcpy
 char* strncpy_f(char* dest, const char* src, uint16_t len);
-
+uint8_t IPv4_to_s(char* __restrict s ,const  uint8_t* __restrict IP);
 #endif /* HTTPSERVER_H_ */

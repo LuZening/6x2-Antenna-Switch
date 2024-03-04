@@ -1,7 +1,7 @@
 // output D-latch
 // I_A: Switch A Input 6bit HIGH effective
 // I_B: Switch B Input 6bit HIGH effective
-// I_load: negedge effective load signal
+// I_load: HIGH effective load signal
 // I_remote: HIGH effective remote enabling signal
 // I_collision: HIGH effective collision signal
 // O_A: HIGH effective Switch A output
@@ -17,15 +17,18 @@ reg [5:0] reg_A = 6'b0;
 output [5:0] O_B;
 reg [5:0] reg_B = 6'b0;
 
-assign O_A = (I_remote)?(I_A):(reg_A);
-assign O_B = (I_remote)?(I_B):(reg_B); // bypass registered outputs if remote is enabled
 
-always @ (negedge I_load) // load inputs to registors at fall edge of I_load
+
+always @ (posedge I_load) // load inputs to registors at fall edge of I_load
 begin
 	if(!I_collision && !I_remote)
 	begin
-		reg_A = I_A;
-		reg_B = I_B;
+		reg_A <= I_A;
+		reg_B <= I_B;
 	end
 end
+
+assign O_A = (I_remote)?(I_A):(reg_A);
+assign O_B = (I_remote)?(I_B):(reg_B); // bypass registered outputs if remote is enabled
+
 endmodule
