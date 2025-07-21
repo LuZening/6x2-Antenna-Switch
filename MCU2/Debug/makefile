@@ -11,6 +11,7 @@ RM := rm -rf
 -include sources.mk
 -include Startup/subdir.mk
 -include Src/subdir.mk
+-include Drivers/SerialOverTCP/subdir.mk
 -include Drivers/STM32F0xx_HAL_Driver/Src/subdir.mk
 -include Drivers/Flash_EEPROM/subdir.mk
 -include Drivers/Config/subdir.mk

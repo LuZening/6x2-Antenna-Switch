@@ -29,7 +29,10 @@ typedef struct
     // welding params
     uint8_t nRadioToAntNums[2];
     char sAntNames[6][CONFIG_BYTESTRING_LONG_LEN];
-
+    // network commands
+    uint16_t portHTTP;
+    uint16_t portTCP;
+    uint16_t portUDP;
 } Config; // size of config is around 192Bytes
 
 

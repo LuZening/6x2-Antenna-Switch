@@ -1,2 +1,2 @@
-CH395.c:11:6:CH395SetBuffer	16	static
-CH395.c:24:6:CH395TCPServerStart	32	static
+CH395.c:12:6:CH395SetBuffer	16	static
+CH395.c:25:6:CH395TCPServerStart	40	static

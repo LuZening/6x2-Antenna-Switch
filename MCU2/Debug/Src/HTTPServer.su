@@ -10,8 +10,9 @@ HTTPServer.c:390:6:HTTPclose	16	static
 HTTPServer.c:398:7:strsepstr	32	static
 HTTPServer.c:418:6:parse_http	56	static
 HTTPServer.c:548:13:getHTTPArg	32	static
-HTTPServer.c:576:9:atou8	24	static
-HTTPServer.c:593:9:u16toa	32	static
-HTTPServer.c:614:7:strcpy_f	16	static
-HTTPServer.c:626:7:strncpy_f	24	static
-HTTPServer.c:639:9:IPv4_to_s	40	static
+HTTPServer.c:578:9:atou8	24	static
+HTTPServer.c:595:10:atou16	24	static
+HTTPServer.c:613:9:u16toa	32	static
+HTTPServer.c:634:7:strcpy_f	16	static
+HTTPServer.c:646:7:strncpy_f	24	static
+HTTPServer.c:659:9:IPv4_to_s	40	static

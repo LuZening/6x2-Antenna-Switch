@@ -42,6 +42,9 @@ void init_config(Config *p)
     memset(p->sAntNames, 0, sizeof(p->sAntNames));
     memset(p->nRadioToAntNums, 0, sizeof(p->nRadioToAntNums));
 
+    p->portHTTP = 80;
+    p->portTCP = 502;
+    p->portUDP = 1500;
     isModified = true;
     #ifdef USE_MUTEX_ON_CFG
     xSemaphoreGive(mtxConfig);

@@ -13,6 +13,9 @@
 #include "Flash_EEPROM/Flash_EEPROM.h"
 #endif
 
+#if defined(USE_STM32_FATFS)
+#include "ff.h"
+#endif
 
 Config cfg;
 
@@ -45,6 +48,26 @@ void load_config(Config* p_cfg)
 
     #if defined(USE_STM32_FLASH_EEPROM)
     EEPROM_ReadBytes(&EEPROM, (uint8_t*)p_cfg, sizeof(Config));
+	#elif defined(USE_STM32_FATFS)
+    FIL fcfg;
+    FRESULT fr;
+    size_t sizeRead;
+    fr = f_open(&fcfg, FS_PATH_CONFIG_FILE, FA_READ);
+    if(fr == FR_OK)
+    {
+    	fr = f_read(&fcfg, p_cfg, sizeof(Config), &sizeRead);
+    	if(fr != FR_OK || sizeRead != sizeof(Config))
+    	{
+    		printf("Unable to read config file\n");
+    		init_config(p_cfg);
+    	}
+    	f_close(&fcfg);
+    }
+    if(fr != FR_OK)
+    {
+    	init_config(p_cfg);
+    	printf("Unable to open config file\n");
+    }
     #elif defined(USE_24C_EEPROM)
     EEPROM_ReadRange(&eeprom, ADDR_CONFIG_BEGIN, p_cfg->bytes, sizeof(Config));
     #elif defined(ESP32)
@@ -87,6 +110,25 @@ void save_config(Config* p_cfg)
 
     #if defined(USE_STM32_FLASH_EEPROM)
     EEPROM_WriteBytes(&EEPROM, (uint8_t*)p_cfg, sizeof(Config));
+	#elif defined(USE_STM32_FATFS)
+    FIL fcfg;
+    FRESULT fr;
+    size_t sizeWrotten;
+    fr = f_open(&fcfg, FS_PATH_CONFIG_FILE, FA_WRITE);
+    if(fr == FR_OK)
+    {
+    	fr = f_write(&fcfg, p_cfg, sizeof(Config), &sizeWrotten);
+    	if(fr != FR_OK)
+    	{
+    		printf("Unable to write config file\n");
+    	}
+    	f_close(&fcfg);
+    }
+    else
+    {
+    	printf("Unable to create config file\n");
+    }
+
     #elif defined(USE_24C_EEPROM)
     EEPROM_release_WP(&eeprom);
     // ACK_polling_AT24C(pEEPROM);
@@ -137,7 +179,8 @@ SAVE_CONFIG_FAILED:
 bool config_check_valid(Config* p)
 {
     uint8_t check = strncmp(p->sValid, VALID_STRING, sizeof(p->sValid));
-    return (check == 0);
+    bool check2 = (p->portHTTP > 0) && (p->portTCP > 0) && (p->portUDP > 0);
+    return (check == 0) && check2;
 
 }
 

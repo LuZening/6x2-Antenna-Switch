@@ -127,7 +127,7 @@ Wire Wire Line
 	9950 700  10500 700 
 Connection ~ 9950 700 
 Text GLabel 10650 700  2    50   Output ~ 0
-A
+B
 Wire Wire Line
 	2050 2300 2000 2300
 Wire Wire Line
@@ -226,7 +226,7 @@ Wire Wire Line
 Wire Wire Line
 	5000 4100 5000 4400
 Text GLabel 1500 4150 0    50   Output ~ 0
-B
+A
 Wire Wire Line
 	9450 3500 9450 3400
 Wire Wire Line
@@ -1352,42 +1352,42 @@ F 3 "~" H 6650 4700 50  0001 C CNN
 	1    6650 4700
 	1    0    0    -1  
 $EndComp
-Text Label 2650 2400 0    50   ~ 0
-ANT1
-Text Label 4150 2400 0    50   ~ 0
-ANT2
-Text Label 5500 2400 0    50   ~ 0
-ANT3
-Text Label 6950 2400 0    50   ~ 0
-ANT4
-Text Label 8150 2400 0    50   ~ 0
-ANT5
-Text Label 9800 2450 0    50   ~ 0
+Text Label 2650 2400 3    50   ~ 0
 ANT6
+Text Label 4100 2400 3    50   ~ 0
+ANT5
+Text Label 5500 2400 3    50   ~ 0
+ANT4
+Text Label 7000 2400 3    50   ~ 0
+ANT3
+Text Label 8150 2400 3    50   ~ 0
+ANT2
+Text Label 9800 2450 3    50   ~ 0
+ANT1
 Text Label 2000 1950 0    50   ~ 0
-ANT1_A
-Text Label 3950 1900 0    50   ~ 0
-ANT2_A
-Text Label 5400 1900 0    50   ~ 0
-ANT3_A
-Text Label 6900 1900 0    50   ~ 0
-ANT4_A
-Text Label 8350 1900 0    50   ~ 0
-ANT5_A
-Text Label 9850 1900 0    50   ~ 0
 ANT6_A
+Text Label 3950 1900 0    50   ~ 0
+ANT5_A
+Text Label 5400 1900 0    50   ~ 0
+ANT4_A
+Text Label 6900 1900 0    50   ~ 0
+ANT3_A
+Text Label 8350 1900 0    50   ~ 0
+ANT2_A
+Text Label 9850 1900 0    50   ~ 0
+ANT1_A
 Text Label 2000 3100 0    50   ~ 0
-ANT1_B
-Text Label 3450 3100 0    50   ~ 0
-ANT2_B
-Text Label 4800 3100 0    50   ~ 0
-ANT3_B
-Text Label 6300 3100 0    50   ~ 0
-ANT4_B
-Text Label 7500 3100 0    50   ~ 0
-ANT5_B
-Text Label 9150 3100 0    50   ~ 0
 ANT6_B
+Text Label 3450 3100 0    50   ~ 0
+ANT5_B
+Text Label 4800 3100 0    50   ~ 0
+ANT4_B
+Text Label 6300 3100 0    50   ~ 0
+ANT3_B
+Text Label 7500 3100 0    50   ~ 0
+ANT2_B
+Text Label 9150 3150 0    50   ~ 0
+ANT1_B
 Connection ~ 7950 4700
 Wire Wire Line
 	7950 4700 7950 5100
@@ -1423,11 +1423,11 @@ Wire Wire Line
 Wire Wire Line
 	4000 6600 4000 6900
 Text Label 5800 6900 1    50   ~ 0
-SEL1_6
+SEL2_1
 Text Label 5600 6900 1    50   ~ 0
-SEL1_5
+SEL2_2
 Text Label 5400 6900 1    50   ~ 0
-SEL1_4
+SEL2_3
 Wire Wire Line
 	3900 6900 3900 6700
 $Comp

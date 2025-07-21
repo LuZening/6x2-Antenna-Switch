@@ -5,8 +5,8 @@
 #include "Config_user_define.h"
 
 #ifdef FREERTOS
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 #define USE_MUTEX_ON_CFG 1
 #endif
 
@@ -34,6 +34,7 @@ typedef enum
     CONFIG_VAR_I32,
 	CONFIG_VAR_BYTESTRING,
     CONFIG_VAR_BYTESTRING_LONG,
+	CONFIG_VAR_OBJ,
 } config_var_type_t;
 
 typedef struct

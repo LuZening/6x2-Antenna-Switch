@@ -22,26 +22,36 @@ void onHome(HTTPRequestParseState *pS)
 
 /* URI: /switch
  * METHOD: POST
- * Args: sel1=[0-6]&sel2=[0-6]
+ * Args: sel1=[0-6|255]&sel2=[0-6|255]
  * Usage: switch antenna */
 void onSwitch(HTTPRequestParseState* pS)
 {
+	// arguments my not be fully filled
 	const char *A = getHTTPArg(pS, "sel1");
 	const char *B = getHTTPArg(pS, "sel2");
-	uint8_t antnums[2];
-	if(A && B)
+	uint8_t antnums[N_SELECTORS];
+	char argname[8] = "sel";
+	for(uint8_t i = 0; i < N_SELECTORS; ++i)
 	{
-		antnums[0] = atou8(A);
-		antnums[1] = atou8(B);
-		if(antnums[0] <= NUM_ANTENNA && antnums[1] <= NUM_ANTENNA)
-		{
-			switch_Antenna(antnums, 2);
-			//HTTPSendStr(pS, 200, "OK\r\n");
-			HTTPredirect(pS, "/");
-			return;
-		}
+		argname[3] = '1' + i;
+		argname[4] = 0;
+		const char* sV = getHTTPArg(pS, argname);
+		uint8_t v = 255; // 255 means no change
+		if(sV) v = atou8(sV); // if seli does not exist, treat it as 255
+		antnums[i] = v;
 	}
-	HTTPSendStr(pS, 300, "Invalid\r\n");
+
+	int8_t r = switch_Antenna(antnums, N_SELECTORS);
+
+	if(r == 0) // OK
+	{
+		//HTTPSendStr(pS, 200, "OK\r\n");
+		HTTPredirect(pS, "/");
+	}
+	else
+	{
+		HTTPSendStr(pS, 300, "Invalid\r\n");
+	}
 }
 
 /* URI: /getAlloc
@@ -103,8 +113,10 @@ void onSetLabel(HTTPRequestParseState* pS)
 		if((s_label = getHTTPArg(pS, s_tmp)) != NULL)
 		{
 			strncpy(cfg.sAntNames[i-1], s_label, MAX_LEN_ANT_LABEL);
+			isModified = true;
 		}
 	}
+
 //	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
 	//HTTPSendStr(pS, 200, "OK");
 	HTTPredirect(pS, "/");
@@ -133,6 +145,98 @@ void onGetLabel(HTTPRequestParseState* pS)
 	HTTPSendStr(pS, 200, s_tmp);
 }
 
+/* URI: /setport
+ * METHOD: POST
+ * Args: portHTTP=80&portTCP=502
+ * Usage: switch antenna */
+void onSetPort(HTTPRequestParseState* pS)
+{
+	const uint8_t MAXLEN = 5;
+	if(pS->argc < 2)
+	{
+		HTTPSendStr(pS, 300, "Bad args");
+		return;
+	}
+
+	const char* s;
+	uint16_t v = 0;
+	s = getHTTPArg(pS, "portHTTP");
+	if (s)
+	{
+		uint16_t len = strnlen(s, MAXLEN);
+		if(len <= MAXLEN && len > 0)
+		{
+			v = atou16(s);
+		}
+	}
+	if(v)
+	{
+		cfg.portHTTP = (uint16_t)v;
+		isModified = true;
+//		HTTPredirect(pS, "/");
+	}
+	else
+	{
+		HTTPSendStr(pS, 300, "Bad HTTP port number");
+		return;
+	}
+
+	v = 0;
+	s = getHTTPArg(pS, "portTCP");
+	if (s)
+	{
+		uint16_t len = strnlen(s, MAXLEN);
+		if(len <= MAXLEN && len > 0)
+		{
+			v = atou16(s);
+		}
+	}
+	if(v)
+	{
+		cfg.portTCP = (uint16_t)v;
+		isModified = true;
+//		HTTPredirect(pS, "/");
+	}
+	else
+	{
+		HTTPSendStr(pS, 300, "Bad HTTP port number");
+		return;
+	}
+
+	HTTPredirect(pS, "/");
+
+//	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
+	//HTTPSendStr(pS, 200, "OK");
+
+}
+
+
+void onGetPort(HTTPRequestParseState* pS)
+{
+	static char s_tmp[9+5+9+5+1]; // portHTTP=65535&portTCP=65535
+	char* s = s_tmp;
+	uint16_t port;
+
+	// MAXLEN = 9 + 5
+	strcpy(s, "portHTTP=");
+	s += 9;
+	port = cfg.portHTTP;
+	s += u16toa(port, s);
+
+	// MAXLEN = 9 + 5
+	strcpy(s, "&portTCP=");
+	s += 9;
+	port = cfg.portTCP;
+	s += u16toa(port, s);
+
+	*s = '\0';
+
+	HTTPSendStr(pS, 200, s_tmp);
+}
+
+
+
+
 HTTPResponder_typedef HTTPResponders[] ={
 		{.uri="/", .func=onHome},
 		{.uri = "/switch", .func=onSwitch},
@@ -141,4 +245,6 @@ HTTPResponder_typedef HTTPResponders[] ={
 		{.uri = "/reset", .func=onReset},
 		{.uri = "/setlabel", .func=onSetLabel},
 		{.uri = "/getlabel", .func=onGetLabel},
+		{.uri = "/setport", .func=onSetPort},
+		{.uri = "/getport", .func=onGetPort},
 };

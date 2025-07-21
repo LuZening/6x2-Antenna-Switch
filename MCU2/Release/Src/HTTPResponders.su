@@ -3,5 +3,7 @@ HTTPResponders.c:27:6:onSwitch	24	static
 HTTPResponders.c:76:6:onStatus	8	static
 HTTPResponders.c:81:6:onReset	8	static
 HTTPResponders.c:52:6:onGetAlloc	24	static
-HTTPResponders.c:113:6:onGetLabel	48	static
-HTTPResponders.c:90:6:onSetLabel	24	static
+HTTPResponders.c:204:6:onGetPort	24	static
+HTTPResponders.c:115:6:onGetLabel	48	static
+HTTPResponders.c:142:6:onSetPort	24	static
+HTTPResponders.c:90:6:onSetLabel	32	static

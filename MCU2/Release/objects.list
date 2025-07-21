@@ -20,6 +20,7 @@
 "./Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o"
 "./Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o"
 "./Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o"
+"./Drivers/SerialOverTCP/SerialOverTCP.o"
 "./Src/CH395.o"
 "./Src/CH395CMD.o"
 "./Src/CH395SPI_HW.o"

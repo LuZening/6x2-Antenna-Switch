@@ -24,6 +24,7 @@ SUBDIRS := \
 Drivers/Config \
 Drivers/Flash_EEPROM \
 Drivers/STM32F0xx_HAL_Driver/Src \
+Drivers/SerialOverTCP \
 Src \
 Startup \
 

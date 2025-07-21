@@ -13,13 +13,7 @@
 #include "Config/Config.h"
 
 
-const char* commands_OTRSP[] = {
-"?", // ping
-"?AUX", // get antenna assignment by radio num
-"AUX", // set antenna assignment by radio num
-"?NAME", // get antenna name by antenna num
-"NAME", // set antenna name by antenna num
-};
+
 
 
 int fn_ping(uint8_t argc, char** argv, char* ret)
@@ -143,6 +137,13 @@ error:
 }
 
 
+const char* commands_OTRSP[] = {
+"?", // ping
+"?AUX", // get antenna assignment by radio num
+"AUX", // set antenna assignment by radio num
+"?NAME", // get antenna name by antenna num
+"NAME", // set antenna name by antenna num
+};
 
 const cmd_executer_func_t command_executers_OTRSP[] = {
 		fn_ping,
@@ -158,10 +159,10 @@ int parse_command_OTRSP(const char* s, uint16_t len, char* ret)
 {
 
     uint32_t i  = 0;
-    const char *delim = " ";
+
     static char buf[16] = {0};
     char* pbuf = buf;
-    int r = -1;
+
     size_t argc = 0;
     static char* argv[4];
 
@@ -205,6 +206,7 @@ int parse_command_OTRSP(const char* s, uint16_t len, char* ret)
     // detect number arguments, each digit takes as 1 argument (if exists)
     while(len > 0 && argc < 4)
     {
+    	// skip spaces between command and oprands
 		while((len > 0) && (*s == ' ' || *s == ',' || *s == '\t'))
 		{
 			--len;
@@ -212,13 +214,13 @@ int parse_command_OTRSP(const char* s, uint16_t len, char* ret)
 		}
 		if(len > 0 && *s >= '0' && *s <= '9')
 		{
-			*(pbuf++) = *s;
+			*pbuf = *s;
 			argv[argc] = pbuf;
+
 			++argc;
 			++s;
 			--len;
-			*(pbuf++) = 0; // terminate the 1st number argument
-
+			*(++pbuf) = 0; // move forward AND terminate the 1st number argument
 		}
 		else
 		{
@@ -235,8 +237,7 @@ end_parse:
     if(i < N_commands_OTRSP)
     {
         cmd_executer_func_t fn = command_executers_OTRSP[i];
-        int err = 0;
-        if(fn) err = fn(argc, argv, ret); // execute command
+        if(fn) fn(argc, argv, ret); // execute command
     }
     // bad command
     else

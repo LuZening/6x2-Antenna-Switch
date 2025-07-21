@@ -31,7 +31,7 @@
 #include "Flash_EEPROM/Flash_EEPROM.h"
 #include "FS.h"
 #include "commands.h"
-
+#include "SerialOverTCP.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,8 +42,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define MIN(x,y) ((x < y)?(x):(y))
-#define PORT_HTTP 80
-#define PORT_TCP 502
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -99,10 +98,15 @@ AntennaSelector_typedef SelectorM[N_SELECTORS];
 
 // TODO: antenna labels non-volatile on FLASH
 uint8_t IP[4] =
-{ 192, 168, 4, 1 };
+{ 0, 0, 0, 0 };
 char sIP_dec[16] =
 { 0 };
-uint16_t port_http = 80, port_tcp = 502;
+
+uint8_t IP_gateway[4] = {0,0,0,0};
+uint8_t IP_mask[4] = {255,255,255,0};
+uint8_t MAC[6] = {0,0,0,0,0,0};
+
+
 // flags
 volatile BOOL flag_PHY_reconn = false;
 volatile BOOL flag_IP_conflict = false;
@@ -116,6 +120,11 @@ char ant_labels[MAX_LEN_ANT_LABELS] =
 bool isShowingIP = false;
 static int8_t idxDisplayIP = -1;
 static uint8_t lenDisplayIP = 0;
+// broad case updates to all clients when antenna switched
+bool needUpdate = false;
+// updatedFlag for each socket
+uint16_t needUpdateFlagForEachSocket = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -139,7 +148,7 @@ BOOL parse_tcp_uart_command(char *s, size_t len);
   * @brief  The application entry point.
   * @retval int
   */
-int main(void)
+int main()
 {
   /* USER CODE BEGIN 1 */
 	uint8_t i;
@@ -168,11 +177,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	// init 485
-	Serial485_cfg_t cfg485 =
-	{ .pSerial = &huart2, .pin_RW =
-	{ RW485_GPIO_Port, RW485_Pin } };
-	begin_serial485(p485, &cfg485);
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -187,7 +192,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_DMA_Init();
-//  MX_IWDG_Init();
+  MX_IWDG_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 
@@ -218,6 +223,7 @@ int main(void)
 		init_config(&cfg);
 	}
 
+
 	/* init: antenna selections */
 	uint8_t antnums[N_SELECTORS];
 	for (i = 0; i < N_SELECTORS; ++i)
@@ -226,21 +232,36 @@ int main(void)
 	}
 	switch_Antenna(antnums, N_SELECTORS);
 
+
+
+	// init 485
+	Serial485_cfg_t cfg485 =
+	{ .pSerial = &huart2, .pin_RW =
+	{ RW485_GPIO_Port, RW485_Pin } };
+	begin_serial485(p485, &cfg485);
+
+
+
 	/* init: File System for webpages*/
 	FS_begin(&FS, (uint32_t*) FS_BASE_ADDR);
-	i = FS_exists(&FS, "/index.html");
-	i = FS_exists(&FS, "/b.f");
+//	i = FS_exists(&FS, "/index.html");
+//	i = FS_exists(&FS, "/b.f");
 
-//	HAL_IWDG_Refresh(&hiwdg); // feed dog
+#ifndef DEBUG
+	HAL_IWDG_Refresh(&hiwdg); // feed dog
+#endif
+
 	/* init: Ethernet chip */
-	HAL_Delay(350); // wait for CH395 being ready from power on
-	for (i = 0; i < 0xff; ++i)
+	HAL_Delay(200); // wait for CH395 being ready from power on
+	for (i = 5; i < 0xff; ++i)
 	{
 		if (CH395CMDCheckExist(i) != (uint8_t) ~i)
 		{
 			DEBUG_LOG("CH395 self check error!\n");
-			break;
+			HAL_Delay(50);
 		}
+		else
+			break;
 	}
 
 	RESET_CH395: reset_CH395();
@@ -253,14 +274,63 @@ int main(void)
 	while (1)
 	{
 
-//		HAL_IWDG_Refresh(&hiwdg); // feed dog
+#ifndef DEBUG
+		HAL_IWDG_Refresh(&hiwdg); // feed dog
+#endif
 		/* TASK0: handle CH395 interrupt flags */
 		{
+			// CASE1: PHY disconnected, need to reconnect, use up the reconn flag to avoid reentrance
 			if (flag_PHY_reconn && !flag_CH395_ready)
+			{
+				flag_PHY_reconn = false;
 				goto RESET_CH395;
+			}
+			// CASE NORMAL: respond to requests
 			if (flag_CH395_ready && ch395.RX_received)
 			{
-				HTTPHandle(&ch395);
+				HTTPHandle(&ch395); // prepare respond to stocking requests
+			}
+			// broadcast updates to the clients
+			if(needUpdate || (needUpdateFlagForEachSocket != 0))
+			{
+				// light on all flags for all the sockets
+				if(needUpdate)
+				{
+					for(i = 1; i < NUM_SOCKETS; ++i)
+					{
+						if((ch395.socket_connected & (1U << i)) == 0)
+							needUpdateFlagForEachSocket &= ~(1U << i); // clear flag if socket not connected
+						else if(
+							(parseStates[i].connection == UPGRADED_WS)
+							||
+							(ch395.cfg.protocols[i] == CH395_PROTOCOL_TCP)
+						)
+							needUpdateFlagForEachSocket |= (1U << i); // light on the flag if the protocol is TCP or WebSocket
+					}
+					needUpdate = false;
+				}
+				for(i = 1; i < NUM_SOCKETS; ++i)
+				{
+					// transmit only if the CH395 chip is not busy
+					if(ch395.TX_available & (1U << i) != 0)
+					{
+						HTTPRequestParseState *pS = parseStates +i - 1;
+						if(pS->connection == UPGRADED_WS)
+						{
+							// TODO: prepare content to WebSocket
+							ws_make_text_frame(pS->response_header, MAX_LEN_RESPONSE_HEADER, )
+						}
+						else if(ch395.cfg.protocols[i] == CH395_PROTOCOL_TCP)
+						{
+							// TODO: prepare content to TCP
+						}
+						CH395StartSendingData(i, pS->len_response_header);
+						CH395ContinueSendingData((uint8_t*)pS->response_header, pS->len_response_header);
+						CH395Complete();
+						ch395.TX_available &= ~(1<<i);
+					}
+				}
+				// TODO: broadcast updates to all clients on WebSocket and TCP
 			}
 			// monitoring the interrupt Pin
 			while (HAL_GPIO_ReadPin(CH395_INT_GPIO_Port, CH395_INT_Pin)
@@ -275,7 +345,7 @@ int main(void)
 		// TASK1: handle EEPROM save
 		{
 			// save each 5 seconds
-			if (nowTick - lastWakeupTime >= 1000)
+			if (nowTick - lastWakeupTime >= 3000)
 			{
 				if (isModified)
 				{
@@ -337,7 +407,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL8;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL12;
   RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -349,7 +419,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
@@ -366,7 +436,7 @@ static void MX_IWDG_Init(void)
 {
 
   /* USER CODE BEGIN IWDG_Init 0 */
-
+#ifndef DEBUG
   /* USER CODE END IWDG_Init 0 */
 
   /* USER CODE BEGIN IWDG_Init 1 */
@@ -381,7 +451,7 @@ static void MX_IWDG_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN IWDG_Init 2 */
-
+#endif
   /* USER CODE END IWDG_Init 2 */
 
 }
@@ -580,6 +650,7 @@ static void MX_GPIO_Init(void)
 //}
 void reset_CH395()
 {
+	uint8_t i ;
 	flag_CH395_ready = false;
 	ch395.RX_received = 0;
 	ch395.SOCK_responding = -1;
@@ -587,33 +658,44 @@ void reset_CH395()
 	ch395.socket_connected = 0;
 
 	// setting HTTP sockets, 0, 1,2,3,4
-	for (uint8_t i = 0; i < 5; i++)
+	for ( i = 0; i < CH395_TCP_LISTEN_SOCK; i++)
 	{
 		ch395.cfg.protocols[i] = CH395_PROTOCOL_HTTP;
-		ch395.cfg.ports[i] = port_http;
+		ch395.cfg.ports[i] = cfg.portHTTP;
 	}
-	// setting primitive TCP sockets, 5,6,7
-	for (uint8_t i = 5; i < 8; i++)
+	// setting primitive TCP sockets, 5,6
+	for ( i = CH395_TCP_LISTEN_SOCK; i < 7; i++)
 	{
 		ch395.cfg.protocols[i] = CH395_PROTOCOL_TCP;
-		ch395.cfg.ports[i] = port_tcp;
+		ch395.cfg.ports[i] = cfg.portTCP;
 	}
-
+	// setting primitive UDP socket 7
+	i = 7;
+	ch395.cfg.protocols[i] = CH395_PROTOCOL_UDP;
+	ch395.cfg.ports[i] = cfg.portUDP;
 	CH395CMDReset();
 	Delay_ms(100); // wait for CH395 being ready from power on
+	// get CH395 chip MAC address
+	CH395CMDGetMACAddr(MAC);
 	// initialize CH395 GPIO settings to INPUT/PULL DOWN
 //	CH395WriteGPIOAddr(GPIO_DIR_REG, 0);
 //	CH395WriteGPIOAddr(GPIO_PU_REG, 0);
 //	CH395WriteGPIOAddr(GPIO_PD_REG, 0xff);
 	CH395SetBuffer();
 	// initialize TCP server
-	flag_CH395_ready = CH395TCPServerStart(*(uint32_t*) IP, PORT_HTTP, PORT_TCP);
+	flag_CH395_ready = CH395TCPServerStart(*(uint32_t*) IP, cfg.portHTTP, cfg.portTCP);
 	//CH395SetBuffer();
 	flag_PHY_reconn = false;
 	flag_IP_conflict = false;
 	flag_CH395_DHCP_ready = false;
 }
 
+
+/*************************************************************
+ * ************************************************************
+ * Very Important: The main funcion for Ethernet activities
+ * ************************************************************
+ * */
 void interrupt_CH395()
 {
 	// process interrupt requests from CH395
@@ -634,19 +716,31 @@ void interrupt_CH395()
 		uint16_t port = ((uint16_t)unreach[3] << 8) | unreach[2];
 		for(uint8_t i = 1; i < NUM_SOCKETS; ++i)
 		{
-			HTTPRequestParseState *pS = parseStates + i;
+			HTTPRequestParseState *pS = parseStates + i - 1;
 			if(pS->port == port) resetHTTPParseState(pS);
 		}
-//		reset_CH395();
 	}
 
 	// CASE: DHCP
 	if (glob_int_status & GINT_STAT_DHCP)
 	{
 		if(CH395GetDHCPStatus() == 0)
+		{
 			flag_CH395_DHCP_ready = true;
+			// get IP info from CH395
+			uint8_t IPv4_Gateway_info[20];
+			if(flag_CH395_DHCP_ready)
+			{
+				CH395GetIPInf(IPv4_Gateway_info); // BIG endian
+				memcpy(IP, IPv4_Gateway_info, 4); // in CH395, the byte order of IPs and MACs are reversed (IP and MAC are Big-endian, others are little-endian)
+				memcpy(IP_gateway, IPv4_Gateway_info + 4, 4); //
+				memcpy(IP_mask, IPv4_Gateway_info + 8, 4); //
+			}
+		}
 		else
+		{
 			flag_CH395_DHCP_ready = false;
+		}
 	}
 	// CASE: Phy change
 	if (glob_int_status & GINT_STAT_PHY_CHANGE)
@@ -660,6 +754,7 @@ void interrupt_CH395()
 			break;
 		default:
 			flag_CH395_ready = true;
+			flag_PHY_reconn = false;
 			break;
 		}
 	}
@@ -670,7 +765,7 @@ void interrupt_CH395()
 	if (!glob_int_status)
 		goto END_INT_CH395;
 	// handle SOCKET events
-	for (i = 1; i < NUM_SOCKETS; ++i)
+	for (i = 1; (i < NUM_SOCKETS) && (glob_int_status > 0); ++i)
 	{
 		glob_int_status >>= 1;
 		if (glob_int_status & 1) // the LSB of glob_int_status indicates SOCK#i interrupt status
@@ -703,33 +798,135 @@ void interrupt_CH395()
 				 */
 				switch (ch395.cfg.protocols[i])
 				{
+				/* HTTP for webpage */
+				/* WS for realtime data exchange which is upgraded from HTTP */
 				case CH395_PROTOCOL_HTTP:
-					resetHTTPParseState(pS);
+					if(pS->connection == CLOSED)
+						resetHTTPParseState(pS);
+					else // for long connections, keep some necessary information from previous requests
+						resetHTTPParseState_for_long_connection(pS);
 					pS->sock_index = i;
-					if (parse_http(pS, ch395.buffer))
+					/* CASE 1: Websocket */
+					if(pS->connection == UPGRADED_WS)
 					{
-						ch395.RX_received |= (1 << i); // mark received flag
-						if (ch395.SOCK_responding < 0) // put this socket into responding slot if the slot is empty
-							ch395.SOCK_responding = i;
+						if(ws_parse_frame(ch395.buffer, len, &pS->ws) > 0)
+						{
+							pS->ready = true;
+							switch(pS->ws.opcode)
+							{
+							case WS_OPCODE_TEXT:
+								// parse TEXT, but Too Long Don't Read
+								if(pS->ws.payload_len < MAX_LEN_RESPONSE_HEADER - 1)
+								{
+									// copy payload to the shared buffer, so futher processes will be easier
+									memcpy(pS->response_header, pS->ws.payload, pS->ws.payload_len);
+									pS->response_header[pS->ws.payload_len] = 0; // terminate the payload
+									// TODO: parse the TEXT content and exectute command
+									// TODO: respond to the client with necessary info
+									pS->len_response_header = ws_make_pong_frame(pS->response_header);
+									pS->len_response_content_remain = 0;
+									pS->response_stage = RESPONSE_PREPARED;
+								}
+								break;
+							case WS_OPCODE_PING:
+								// send PONG frame
+								pS->len_response_header = ws_make_pong_frame(pS->response_header);
+								pS->len_response_content_remain = 0;
+								pS->response_stage = RESPONSE_PREPARED;
+								break;
+							case WS_OPCODE_CLOSE:
+								HTTPclose(i);
+								CH395TCPDisconnect(i); // disconnnect the connection
+								resetHTTPParseState(i);
+								break;
+							}
+							// put this socket into responding slot if the slot is empty
+							if(pS->response_stage == RESPONSE_PREPARED)
+							{
+								ch395.RX_received |= (1 << i);
+								if (ch395.SOCK_responding < 0)
+									ch395.SOCK_responding = i;
+							}
+						}
+					}
+					/* CASE DEFAULT: plain HTTP */
+					else
+					{
+						if (parse_http(pS, ch395.buffer))
+						{
+							ch395.RX_received |= (1 << i); // mark received flag
+							if (ch395.SOCK_responding < 0) // put this socket into responding slot if the slot is empty
+								ch395.SOCK_responding = i;
+						}
 					}
 					break;
 				case CH395_PROTOCOL_TCP:
 					// parse as virtual UART
-					resetHTTPParseState(pS);
+					if(pS->connection == CLOSED)
+						resetHTTPParseState(pS);
+					else // for long connections, keep some necessary information from previous requests
+						resetHTTPParseState_for_long_connection(pS);
 					pS->sock_index = i;
 					// parse received content
 					if (execute_command_string(&CommandParser, ch395.buffer,len) >= 0)
 					{
+						// if the command has response to the client, the send
 						if (CommandParser.hasResponse > 0)
 						{
-							//CH395SendData(i, CommandParser.bufRet, CommandParser->hasResponse);
 							pS->ready = true;
 							strncpy(pS->response_header, CommandParser.bufRet,
 									CommandParser.hasResponse);
 							pS->len_response_header = CommandParser.hasResponse;
 							pS->len_response_content_remain = 0;
 							pS->response_stage = RESPONSE_PREPARED;
+							ch395.RX_received |= (1 << i);
+							if (ch395.SOCK_responding < 0) // put this socket into responding slot if the slot is empty
+								ch395.SOCK_responding = i;
 							CommandParser.hasResponse = 0;
+						}
+					}
+					break;
+				/* UDP for virtual COM port detecting protocol */
+				case CH395_PROTOCOL_UDP:
+					resetHTTPParseState(pS);
+					pS->sock_index = i;
+					// parse as detection message over UDP
+					// UDP data has first 8 bytes as misc information
+					if(len > 8)
+					{
+						uint16_t len_UDP_data = 0;
+						uint16_t port_dest_UDP;
+						uint8_t IP_dst_UDP[4];
+						len_UDP_data = (uint16_t)(ch395.buffer[1] << 8) | (uint16_t)ch395.buffer[0]; // little-endian
+						port_dest_UDP = (uint16_t)(ch395.buffer[3] << 8) | (uint16_t)ch395.buffer[2];
+						memcpy(IP_dst_UDP, ch395.buffer+4, 4);
+						if((len_UDP_data - 8 >= LEN_USR_DETECTION_MSG) &&
+								strncmp(ch395.buffer + 8, USR_DETECTION_MSG, LEN_USR_DETECTION_MSG) == 0)
+						{
+							pS->ready = true;
+							USR_response_t USR = {
+									.IPv4_gateway = IP_gateway,
+									.IPv4_mask = IP_mask,
+									.IPv4_self = IP,
+									.IPv4_target = IP_gateway,
+									.MAC = MAC,
+									.baud = 115200,
+									.mode = 3, // TCP server
+									.port_self = cfg.portTCP,
+									.port_target = cfg.portTCP,
+									.stopbit_mode = 3,
+							};
+							len_UDP_data = (uint16_t)prepare_USR_response_msg(&USR, pS->response_header);
+							pS->len_response_header = len_UDP_data;
+							pS->len_response_content_remain = 0;
+							pS->response_stage = RESPONSE_PREPARED;
+							ch395.socket_connected |= (1<<i); // UDP has no connection state, so mark it as always connected
+							ch395.TX_available |= (1 << i);
+							ch395.RX_received |= (1 << i);
+							if (ch395.SOCK_responding < 0) // put this socket into responding slot if the slot is empty
+								ch395.SOCK_responding = i;
+							CH395SetSocketDesIP(i, IP_dst_UDP);
+							CH395SetSocketDesPort(i, port_dest_UDP);
 						}
 					}
 					break;
@@ -753,6 +950,8 @@ void interrupt_CH395()
 				ch395.TX_available |= (1 << i);
 				if (ch395.SOCK_responding == i)
 					ch395.SOCK_responding = -1; // release the responding socket flag
+				HTTPRequestParseState *pS = parseStates + i - 1;
+				resetHTTPParseState(pS);
 			}
 		}
 	}
@@ -760,30 +959,83 @@ END_INT_CH395:
 	return;
 }
 
-void switch_Antenna(uint8_t *antnums, uint8_t n)
+
+static bool check_conflict(uint8_t *antnums, uint8_t n)
 {
+	bool conflict = false;
+	uint32_t detector = 0;
+	for(uint8_t i= 0; i < n; ++i)
+	{
+		uint8_t sel = antnums[i];
+		// replace 0xff by current selected antnum,
+		if(sel == 0xff)
+			sel = Selector[i].sel;
+
+		uint32_t mask = 1U << sel; // cannot exceed 31
+		// already set to 1, means conflict
+		if((detector & mask) != 0U)
+		{
+			conflict =true;
+			break;
+		}
+		detector |= mask;
+	}
+	return conflict;
+}
+
+
+// @params:
+// @antnums: array of selecte ant numbers.
+// For display IP: When set to NULL, write output pins only and leave all state variables unchanged.
+int8_t switch_Antenna(uint8_t *antnums, uint8_t n)
+{
+	int8_t r = 0;
+	// when antnums is NULL, just keep the state of each selector and update output pins
 	uint8_t i;
 
+	// check conflict
+	if(check_conflict(antnums, n))
+	{
+		r = -1; // conflict
+		goto EXIT_SWITCH_ANTENNA;
+	}
+
+	uint8_t vNew;
 	for (i = 0; i < MIN(n, N_SELECTORS); ++i)
 	{
-		uint8_t vNew = antnums[i];
-		if (Selector[i].sel != vNew)
+		// parse input
+		if(antnums)
 		{
-			Selector[i].sel = vNew;
-			uint8_t val = ~Selector[i].sel;
-			for (uint8_t iBCD = 0; iBCD < N_BCD_PINS; ++iBCD)
-			{
 
-				PIN_typedef pin = Selector[i].PIN_BCDs[iBCD];
-				HAL_GPIO_WritePin(pin.group, pin.pin, (val >> iBCD) & 0x01);
-			}
+			vNew = antnums[i];
+		}
+		else // resume previous results before displaying IP
+		{
+			vNew = Selector[i].sel;
+		}
+
+		// write pins
+		Selector[i].sel = vNew;
+		uint8_t val = ~Selector[i].sel;
+		for (uint8_t iBCD = 0; iBCD < N_BCD_PINS; ++iBCD)
+		{
+
+			PIN_typedef pin = Selector[i].PIN_BCDs[iBCD];
+			HAL_GPIO_WritePin(pin.group, pin.pin, (val >> iBCD) & 0x01);
+		}
+
+		// store configurations
+		if(antnums)
+		{
 			cfg.nRadioToAntNums[i] = Selector[i].sel;
 			isModified = true;
 		}
 
 	}
-
+EXIT_SWITCH_ANTENNA:
+	return r;
 }
+
 
 void get_Antenna_real_BCDs(uint8_t *antnums, uint8_t n) //3-0:SEL1[2:0] 7-4:SEL2[2:0] GPIOs are Low Effective
 {
@@ -815,7 +1067,7 @@ void get_Antenna_real_BCDs(uint8_t *antnums, uint8_t n) //3-0:SEL1[2:0] 7-4:SEL2
 // USE BCD1_0, BCD1_1, BCD1_2, BCD2_0 for transferring "0~9" and "-" digits
 void display_IP(bool start)
 {
-	if (start)
+	if (start) // start == true, start the timer
 	{
 		idxDisplayIP = 0;
 
@@ -830,20 +1082,18 @@ void display_IP(bool start)
 				Selector[0].PIN_BCDs[2].pin, (d >> 2) & 0x01);
 		HAL_GPIO_WritePin(Selector[1].PIN_BCDs[0].group,
 				Selector[1].PIN_BCDs[0].pin, (d >> 3) & 0x01);
-		// get IP info from CH395
-		uint8_t IPv4_Gateway_info[12];
-		if(flag_CH395_DHCP_ready)
-		{
-			CH395GetIPInf(IPv4_Gateway_info);
-			memcpy(IP, IPv4_Gateway_info, 4);
-		}
+
 		// transform IP to string, and get the length of the string
 		lenDisplayIP = IPv4_to_s(sIP_dec ,IP);
+		// start the timer
 		HAL_TIM_Base_Start_IT(&htim6);
 	}
-	else
+	else // start == false, stop the timer
 	{
+		HAL_TIM_Base_Stop_IT(&htim6);
 		idxDisplayIP = -1;
+		// resume outputs
+		switch_Antenna(NULL, N_SELECTORS);
 	}
 }
 
@@ -853,12 +1103,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim == &htim6)
 	{
 		uint8_t d;
+
+		// termination conditon
 		if(idxDisplayIP < 0)
 		{
 			HAL_TIM_Base_Stop_IT(htim);
 			return;
 		}
 
+		// display
 		if (idxDisplayIP < lenDisplayIP)
 		{
 			char s = sIP_dec[idxDisplayIP];
@@ -886,7 +1139,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					Selector[1].PIN_BCDs[0].pin, (d >> 3) & 0x01);
 			++idxDisplayIP;
 		}
-		else if(idxDisplayIP < lenDisplayIP + 3) // at the end of transmission, pause for a while
+		// at the end of transmission, pause for a while
+		else if(idxDisplayIP < lenDisplayIP + 3)
 		{
 			d = ~(0x0e); // no display
 			HAL_GPIO_WritePin(Selector[0].PIN_BCDs[0].group,

@@ -130,7 +130,8 @@ extern SavedData_typedef SavedData;
 // CH395 interrupt handler
 void reset_CH395();
 void interrupt_CH395();
-void switch_Antenna(uint8_t *antnums, uint8_t n);
+//bool check_conflict(uint8_t *antnums, uint8_t n);
+int8_t switch_Antenna(uint8_t *antnums, uint8_t n);
 void get_Antenna_real_BCDs(uint8_t* antnums, uint8_t n);
 void display_IP (bool start);
 extern AntennaSelector_typedef Selector[];

@@ -15,6 +15,7 @@
 #include "FS.h"
 #include "Delay.h"
 #include <string.h>
+#include "my_websocket.h"
 
 
 //#define __ON_BOARD_
@@ -39,7 +40,7 @@ const char HTTP_CONTENT_TYPE_PNG[] = "image/png";
 const char HTTP_CONTENT_TYPE_JPEG[] = "image/jpeg";
 const char HTTP_CONTENT_TYPE_GIF[] = "image/gif";
 
-HTTPRequestParseState parseStates[NUM_SOCKETS] =
+HTTPRequestParseState parseStates[NUM_SOCKETS - 1] =
 {
 	{.state = 0,
 	.argc = 0,
@@ -55,6 +56,15 @@ void resetHTTPParseState(HTTPRequestParseState *pS)
 	pS->connection = CLOSED;
 	pS->method = HTTP_GET;
 	pS->ready = false;
+	pS->response_stage = RESPONSE_NOT_PREPARED;
+	pS->len_response_content_remain = 0;
+	pS->response_header = response_header_shared_buffer; // use shared buffer
+}
+
+void resetHTTPParseState_for_long_connection(HTTPRequestParseState *pS)
+{
+	pS->state = 0;
+	pS->argc = 0;
 	pS->response_stage = RESPONSE_NOT_PREPARED;
 	pS->len_response_content_remain = 0;
 	pS->response_header = response_header_shared_buffer; // use shared buffer
@@ -173,8 +183,18 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 	buf++;
 	// CODE
 	buf += u16toa(code, buf);
-	strcat(buf, " OK\r\n");
-	buf += 5;	// 200 OK\r\n
+	switch(code)
+	{
+	case 200:
+		strcat(buf, " OK\r\n");
+		buf += 5;	// 200 OK\r\n;
+		break;
+	case 400:
+		strcat(buf, " Error\r\n");
+		buf += 8; // 400 Error\r\n
+		break;
+	}
+
 	// Line 2: Connection
 	strcat(buf, "Connection: ");
 	buf += 12;
@@ -214,6 +234,55 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 	pS->response_stage = RESPONSE_PREPARED;
 }
 
+
+int HTTPSendWebSocketHandshakeResponse(HTTPRequestParseState* pS, char* client_key, size_t lenKey)
+{
+	// construct header
+//	unsigned char* buf = ch395.buffer;
+	char* buf = pS->response_header;
+	*buf = 0; // clear buffer
+	strcpy(buf, HTTP_STR_VERSION);
+	// Line 1
+	// HTTP/1.1
+	buf += strlen(HTTP_STR_VERSION);
+	*buf = ' '; // HTTP/1.1_
+	buf++;
+	// CODE 101 Switching Protocols
+	buf += u16toa(101, buf);
+	strcpy(buf, " Switching Protocols\r\n"); // NOTE: leading space is necessary
+	buf += 22;	// _Switching Protocols\r\n
+	// Line 2: Upgrade: websocket
+	strcpy(buf, "Upgrade: websocket\r\n");
+	buf += 20;
+	// Line 3: Connection: Upgrade
+	strcpy(buf, "Connection: Upgrade\r\n");
+	buf += 21;
+	// Line 4: Sec-WebSocket-Accept: ?????????
+	strcpy(buf, "Sec-WebSocket-Accept: ");
+	buf += 22;
+	// generate WS key
+	int lenOut = ws_handshake_response(client_key, lenKey, buf, 48);
+	buf += lenOut;
+	if(lenOut > 0) // key generation OK
+	{
+		strcpy(buf, "\r\n");
+		buf += 2;
+		*buf = 0; // terminate
+		// Start Sending
+		pS->len_response_header = buf - pS->response_header;
+		pS->len_response_content_remain = 0;
+		pS->response_content = NULL;
+		pS->response_stage = RESPONSE_PREPARED;
+		return 0; // success
+	}
+	else // key generation failed
+	{
+		// Start Sending
+		HTTPSendStr(pS, 400, "Key Failed");
+		return -1; // failed
+	}
+}
+
 void HTTPredirect(HTTPRequestParseState *pS, const char* URI)
 {
 	char* buf = pS->response_header;
@@ -251,6 +320,7 @@ void HTTPredirect(HTTPRequestParseState *pS, const char* URI)
 	pS->response_stage = RESPONSE_PREPARED;
 }
 
+
 void HTTPonNotFound(HTTPRequestParseState *pS)
 {
 	char s_tmp[MAX_LEN_URI + 4];
@@ -285,6 +355,8 @@ void HTTPonNotFound(HTTPRequestParseState *pS)
 	HTTPSendStr(pS, 404, s_notfound);
 }
 
+
+
 void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 {
 
@@ -293,31 +365,42 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 	if(i > 0)
 	{
 		HTTPRequestParseState *pS = &parseStates[i-1];
-		// CASE: Socket recv has request, no response under preparation, can prepare a new response
+		// STAGE 0: Socket recv has a request, but no response under preparation, can prepare a new response
 		if(pS->ready  && pS->response_stage == RESPONSE_NOT_PREPARED)
 		{
-
-			for(j=0; j<NUM_HTTP_RESPONDERS; ++j)
+			// CASE 0: respond to normal HTTP request
+			if(pS->connection != UPGRADED_WS)
 			{
-				if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
+				for(j=0; j < NUM_HTTP_RESPONDERS; ++j)
 				{
-					(HTTPResponders[j].func)(pS); // call HTTPResponder service function
-					break;
+					if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
+					{
+						(HTTPResponders[j].func)(pS); // call HTTPResponder service function
+						break;
+					}
+				}
+				if(j >= NUM_HTTP_RESPONDERS) // Resource not found
+				{
+					HTTPonNotFound(pS);
 				}
 			}
-			if(j >= NUM_HTTP_RESPONDERS) // Resource not found
+			// CASE 1: respond to Websocket upgrade request
+			else if(pS->connection == UPGRADED_WS)
 			{
-				HTTPonNotFound(pS);
+				// client key is stored in cookies buffer
+				int r = HTTPSendWebSocketHandshakeResponse(pS, pS->cookies, strlen(pS->cookies));
 			}
 
 		}
 
-		// CASE : CH395 chip is free for transmission,
+		// STAGE 1 : CH395 chip is free for transmission,
 		// judge if response has been prepared for transmission
+		// if the CHIP is free, set off the transmission
+		// otherwise next time
 		if((pch395->TX_available & (1 << i)) != 0 && pS->ready)
 		{
 			// CASE 1: parser has prepared the response content,
-			// start the process of data transmission
+			// start the process of data transmission immediately
 			if(pS->response_stage == RESPONSE_PREPARED)
 			{
 				uint16_t max_len_content = MAX_SIZE_PACK - pS->len_response_header;
@@ -333,8 +416,16 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 				pS->response_content += len_content_this_time;
 				if(pS->len_response_content_remain == 0) // all content completely sent this time
 				{
-					HTTPclose(i);
-					resetHTTPParseState(pS);
+					if(pS->connection == CLOSED)
+					{
+						HTTPclose(i);
+						resetHTTPParseState(pS);
+					}
+					else
+					{
+						HTTPclose_for_long_connection(i);
+						resetHTTPParseState_for_long_connection(pS);
+					}
 					// enqueue next sock to respond
 					ch395.SOCK_responding = getNextSock();
 				}
@@ -355,19 +446,27 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 				// judge if transmission has finished
 				if(pS->len_response_content_remain == 0)
 				{
-					HTTPclose(i);
-					resetHTTPParseState(pS);
+					if(pS->connection == CLOSED)
+					{
+						HTTPclose(i);
+						resetHTTPParseState(pS);
+					}
+					else
+					{
+						HTTPclose_for_long_connection(i);
+						resetHTTPParseState_for_long_connection(pS);
+					}
 					// enqueue next sock to respond
 					ch395.SOCK_responding = getNextSock();
 				}
 			}
 		}
 
-		// CASE:
+		// Iterate the next socket
 		if(pS->sock_index == i && !pS->ready)
 		{
 			ch395.SOCK_responding = getNextSock();
-			CH395TCPDisconnect(i);
+//			CH395TCPDisconnect(i);
 		}
 	}
 }
@@ -389,9 +488,16 @@ int8_t getNextSock()
 
 void HTTPclose(uint8_t i) // Sock Index to disconnect
 {
-	CH395TCPDisconnect(i);
+//	CH395TCPDisconnect(i);
 	ch395.RX_received &= ~(1 << i);
 	ch395.socket_connected &= ~(1 << i);
+	ch395.SOCK_responding = -1;
+	pS->connection = CLOSED;
+}
+
+void HTTPclose_for_long_connection(uint8_t i)
+{
+	ch395.RX_received &= ~(1 << i);
 	ch395.SOCK_responding = -1;
 }
 
@@ -415,13 +521,18 @@ char* strsepstr(char** stringp, const char* delim)
 	return loc_head;
 }
 
+
+
 BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 
 {
 	char* line, *tok, *tok_arg, *line_tok_saveptr, *word_tok_saveptr, *arg_tok_saveptr;
 	switch(pS->state)
 	{
-	case 0: // start: request line
+	// start: parse request line
+	// example:
+	// GET /socket HTTP/1.1
+	case 0:
 		line_tok_saveptr = buffer;
 		line = strsepstr(&line_tok_saveptr, HTTP_LINE_DELIM);
 		if(line)
@@ -482,10 +593,21 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 			else
 				goto HTTP_PARSE_ERROR;
 			pS->state ++;
+			/* no break */
+			// do not break, let the following execute
 		}
 		else
 			goto HTTP_PARSE_ERROR;
-	case 1: // parse header
+			/* no break */
+			// do not break, let the following execute
+	// parse header
+	// example:
+	//		Host: example.com
+	//		Upgrade: websocket
+	//		Connection: Upgrade
+	//		Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+	//		Sec-WebSocket-Version: 13
+	case 1:
 		line = strsepstr(&line_tok_saveptr, HTTP_LINE_DELIM);
 		while(line)
 		{
@@ -502,20 +624,43 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
 					if(tok == NULL) goto HTTP_PARSE_ERROR;
 					DEBUG_LOG("Value: %s\r\n", tok);
+					// CASE 1: keep alive connection
 					if(strstr(tok, "Keep") != NULL)
 						pS->connection = KEEP_ALIVE;
+					// CASE 2: upgrade to WebSocket
+					else if(strstr(tok, "Upgrade") != NULL)
+					{
+						pS->connection = UPGRADED_WS;
+					}
+
+				}
+				// Header: Sec-WebSocket-Key
+				else if(strcmp(tok, "Sec-WebSocket-Key") == 0)
+				{
+					tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
+					if(tok == NULL) goto HTTP_PARSE_ERROR;
+					// temporarily store client key in coolies
+					char* pEnd = strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
+					*pEnd = 0;
 				}
 				// Header: Cookie
 				else if(strcmp(tok, HTTP_ITEM_STR_COOKIES) == 0)
 				{
-					tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
-					if(tok == NULL) goto HTTP_PARSE_ERROR;
-					strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
+					if(pS->connection != UPGRADED_WS)
+					{
+						tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
+						if(tok == NULL) goto HTTP_PARSE_ERROR;
+						char* pEnd = strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
+						*pEnd = 0;
+					}
 				}
+
 			}
 			line = strsepstr(&line_tok_saveptr, HTTP_LINE_DELIM);
 		}
 		pS->state++;
+		/* no break */
+		// do not break, let the following execute
 	case 3: // parse payload
 		if(pS->method == HTTP_POST)
 		{
@@ -532,15 +677,18 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 			}
 		}
 		pS->state++;
+		/* no break */
+		// do not break, let the following execute
 	case 4: // finished
 		pS->ready = true;
+		/* no break */
+		// do not break, let the following execute
 	}
 	return true;
 	HTTP_PARSE_ERROR:
 		pS->state = 0;
 		pS->ready = false;
 		return false;
-
 }
 
 
@@ -573,6 +721,9 @@ const char* getHTTPArg(HTTPRequestParseState *pS, const char* name)
 	}
 	return NULL;
 }
+
+
+
 uint8_t atou8(const char* s)
 {
 	uint8_t i;
@@ -590,6 +741,24 @@ uint8_t atou8(const char* s)
 	}
 	return sum;
 }
+uint16_t atou16(const char* s)
+{
+	uint8_t i;
+	uint8_t sum = 0;
+	for(i=0; i<5 && *s; ++i) // at most 5 digits
+	{
+		if(*s >= '0' && *s <= '9')
+		{
+			sum *= 10;
+			sum += *s - '0';
+			s++;
+		}
+		else
+			return 65535; // error
+	}
+	return sum;
+}
+
 uint8_t u16toa(uint16_t d, char* buf) // return: digits
 {
 	uint8_t i = 0, j;

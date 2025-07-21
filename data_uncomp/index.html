@@ -61,7 +61,7 @@
     <h1>6x2 Antenna Switch</h1>
     <form action="switch" method="POST" enctype="application/x-www-form-urlencoded" id="form_switch"></form>
     <form action="setlabel" method="POST" enctype="application/x-www-form-urlencoded" id="form_label"></form>
-    <table border=4>
+    <table id="tbSel" border=4>
         <tr>
             <th>Radio A</th>
             <th>Antenna</th>
@@ -105,24 +105,137 @@
         </tr>
     </table>
     <br>
-    <input type="submit" form="form_switch" value="Switch">
+    <input type="submit" id="btnSwitch" onclick="send_alloc();" value="Switch">
     <input type="submit" id="save_labels" form="form_label" value="Save" hidden="true">
+    
+    <h1>Network config</h1>
+    <form action="setport" method="POST" enctype="application/x-www-form-urlencoded" id="form_port"></form>
+    <table border=4>
+        <tr>
+            <th>Item</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>HTTP port number (1-65535, 80 by default)</td>
+            <td><input type="number" max=65535 min=1 name="portHTTP" id="portHTTP" form="form_port"></td>
+        </tr>
+        <tr>
+            <td>TCP port number (1-65535, 502 by default)</td>
+            <td><input type="number" max=65535 min=1 name="portTCP" id="portTCP" form="form_port"></td>
+        </tr>
+    </table>
+    <input type="submit" form="form_port" value="Apply">
 </body>
 <footer>
     <p>Designed by: Lu, Zening (BI4WOP)</p>
-    <p>Dec. 1, 2019</p>
+    <p>1st Ver.: Dec. 1, 2019</p>
+    <p>2st Ver.: Mar. 8, 2024</p>
 </footer>
 <script>
-
+    var N_RADIOS = 2;
+    var N_ANTS = 6; // excluding 0, so the real number of radio boxes is 6+1=7
+    var timeout_xhttp = 2000;
+    var SelectorsChanged = Array(N_RADIOS).fill(false);
+    var CommittedValues = Array(N_RADIOS);
+    var SelectorsValues = Array(N_RADIOS)
     function onload_tasks()
     {
-        setTimeout(get_label, 400);
-        setTimeout(get_alloc, 1000);
+        /* fire three requests upon loaded */
+        // fire a request for antenna allocation
+        setTimeout(get_alloc, 100);
+        setInterval(get_alloc, 1000); // set a repeated routine for updating antenna allocations
+        // fire a request for antenna labels
+        setTimeout(get_label, 200);
+        // fire a request for port allocation
+        setTimeout(get_port, 300);
+        
+        /* add click event lisener to radio buttons, */
+        for(radionum = 1; radionum <= N_RADIOS; ++radionum)
+        {
+            elemname = "sel" +  radionum// get number
+            elems = document.getElementsByName(elemname)
+            for(antnum = 0; antnum < elems.length; ++antnum)
+            {
+                e = elems[antnum];
+                e.addEventListener('click', (evt)=>{
+                    // the clicked element
+                    e_sel = evt.target
+                    // the name of the clicked selector 
+                    name_sel = e_sel.name
+                    radionum_ = Number(name_sel.split('l')[1])
+                    // the clicked radio number 
+                    v_new  = e_sel.value;
+                    antnum_new = Number(v_new);
+                    SelectorsValues[radionum_ - 1] = antnum_new;
+                    console.log(radionum_, antnum_new);
+                    // mark as value changed, so when submit new antenna allocations, the unchanged half will not be submitted
+                    if(antnum_new != CommittedValues[radionum_ - 1])
+                    {
+                        SelectorsChanged[radionum_ - 1] = true;
+                    }
+                    else
+                    {
+                        SelectorsChanged[radionum_ - 1] = false;
+                    }
+                    update_tabSel_view();
+                });
+            }
+        }
+        
     }
+    
+    // update table colors according to selected and commited values
+    function update_tabSel_view()
+    {
+        tb = document.getElementById("tbSel")
+        for(radionum = 1; radionum <= N_RADIOS; ++radionum)
+        {
+            name = 'sel' + radionum;
+
+            antnum_sel = SelectorsValues[radionum-1];
+            antnum_cmt = CommittedValues[radionum-1];
+            /* reset all td colors */
+            for(antnum = 0; antnum <= N_ANTS; ++antnum)
+            {
+                iR = antnum + 1;
+                tr = tb.rows[iR];
+                td = tr.cells[(radionum == 1)?(0):(2)];
+                // 1: occuped by other radios
+                isOccupied = false;
+                for(radionum_other = 1; radionum_other <= N_RADIOS; ++radionum_other)
+                {
+                    if(radionum_other == radionum)  continue;
+                    if(CommittedValues[radionum_other] == antnum)
+                    {
+                        isOccupied = true;
+                        break;
+                    }
+                }
+                // 2: selected but different from the committed value (changed)
+                isChanged = (antnum_sel == antnum) && (antnum != antnum_cmt);
+
+                if(isOccupied)
+                {
+                    td.style.backgroundColor = "#ff7f00"; // redish orange
+                }
+                else if(isChanged)
+                {
+                    td.style.backgroundColor = "yellow";
+                }
+                else
+                {
+                    td.style.backgroundColor = "";
+                }
+            }
+        }
+    }
+
+
     // AJAX get label
     function get_label()
     {
         var xhttp = new XMLHttpRequest();
+        xhttp.timeout = timeout_xhttp;
         xhttp.onload = function () {
             if(xhttp.status == 200)
             {
@@ -143,33 +256,125 @@
         xhttp.open("GET", "getlabel", true); // GET Async
         xhttp.send();
     }
-    // AJAX get alloc
+    
+    // AJAX get antenna alloc
     function get_alloc()
     {
         var xhttp = new XMLHttpRequest();
+        xhttp.timeout = timeout_xhttp;
         xhttp.onload = function () {
             if(xhttp.status == 200)
             {
-                console.log("recved")
                 recv = xhttp.responseText; //sel1=2&sel2=3
+                console.log(recv)
                 args = recv.split("&");
                 for (arg of args)
                 {
                     tmp_splt = arg.split("=");
                     sel = tmp_splt[0]
                     num = Number(tmp_splt[1])
-                    name = "sel" + sel.split("l")[1]// get number
-                    e = document.getElementsByName(name)
-                    if(num < e.length)
-                        e[num].checked = true;
+                    radionum = Number(sel.split("l")[1])
+                    elemname = "sel" +  radionum// get number
+                    elems = document.getElementsByName(elemname)
+                    if(num < elems.length)
+                    {
+                        // only update unchanged sides of the selector, in order not to override user selections
+                        if(!SelectorsChanged[radionum - 1])
+                        {
+                            CommittedValues[radionum-1] = num;
+                            SelectorsValues[radionum-1] = num;
+                            elems[num].checked = true;
+                        }
+                    }
                 }
             }
         };
+        xhttp.ontimeout = function (){
+            console.log('getalloc timeout')
+        }
         xhttp.open("GET", "getalloc", true); // GET Async
         xhttp.send();
     }
+    
+    // AJAX get port
+    function get_port()
+    {
+        var xhttp = new XMLHttpRequest();
+        xhttp.timeout = timeout_xhttp;
+        xhttp.onload = function () {
+            if(xhttp.status == 200)
+            {
+                recv = xhttp.responseText; //sel1=2&sel2=3
+                console.log(recv)
+                args = recv.split("&");
+                for (arg of args)
+                {
+                    tmp_splt = arg.split("=");
+                    num = Number(tmp_splt[1]);
+                    name = tmp_splt[0];// get number
+                    e = document.getElementById(name);
+                    e.value = num;
+                }
+            }
+        };
+        xhttp.open("GET", "getport", true); // GET Async
+        xhttp.send();
+    }
+
+
+
+    // before form submission of antenna allocation
+    // @target URL: /switch
+    // @payload format: sel1=[0-6|255]&sel2=[0-6|255], 255 means leave the antenna settings unchanged
+    var isSendingAlloc = false;
+    function send_alloc()
+    {
+        // avoid repetitive sending
+        if(isSendingAlloc) return;
+        msg = "";
+        // build send string
+        for(radionum = 1; radionum <= N_RADIOS; ++radionum)
+        {
+            i = radionum - 1;
+            name = 'sel' + radionum;
+            // only submit changed values
+            v = 255; // v= 255 means leave it unchanged
+            if(SelectorsChanged[i])
+            {
+                v = SelectorsValues[i];
+            }
+            // sel1=0&sel2=3
+            if(v >= 0)
+            {
+                if(msg) msg += "&";
+                msg += name + "=" + v;
+            }
+        }
+        // send message
+        if(msg)
+        {
+            btn = document.getElementById("btnSwitch");
+            btn.disabled = true;
+            var xhttp = new XMLHttpRequest();
+            xhttp.timeout = timeout_xhttp;
+            xhttp.onload = ()=>{
+                isSendingAlloc = false;
+                btn.disabled = false;
+                SelectorsChanged.fill(false);
+                get_alloc();
+            };
+            xhttp.ontimeout = ()=>{isSendingAlloc = false;btn.disabled = false;};
+            xhttp.onerror = ()=>{isSendingAlloc = false;btn.disabled = false;};
+            xhttp.open("POST", "switch", true); // POST Async
+            xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            isSendingAlloc = true;
+            xhttp.send(msg);
+        }
+
+    }
+
     // : double click to edit
-    for(i=1; i<=6; ++i)
+    for(i=1; i<=N_ANTS; ++i)
     {
         id = 'ant' + (i);
         e = document.getElementById(id);

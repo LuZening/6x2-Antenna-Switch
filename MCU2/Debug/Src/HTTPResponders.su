@@ -1,7 +1,9 @@
 HTTPResponders.c:17:6:onHome	24	static
-HTTPResponders.c:27:6:onSwitch	40	static
-HTTPResponders.c:52:6:onGetAlloc	32	static
-HTTPResponders.c:76:6:onStatus	16	static
-HTTPResponders.c:81:6:onReset	16	static
-HTTPResponders.c:90:6:onSetLabel	40	static
-HTTPResponders.c:113:6:onGetLabel	32	static
+HTTPResponders.c:27:6:onSwitch	56	static
+HTTPResponders.c:62:6:onGetAlloc	32	static
+HTTPResponders.c:86:6:onStatus	16	static
+HTTPResponders.c:91:6:onReset	16	static
+HTTPResponders.c:100:6:onSetLabel	40	static
+HTTPResponders.c:125:6:onGetLabel	32	static
+HTTPResponders.c:152:6:onSetPort	40	static
+HTTPResponders.c:214:6:onGetPort	32	static

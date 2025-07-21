@@ -19,11 +19,12 @@
 
 #define MAX_LEN_URI 64
 #define MAX_NUM_ARGS 4
-#define MAX_LEN_COOKIES 64
+#define MAX_LEN_COOKIES 32
 #define MAX_LEN_RESPONSE_HEADER 512
 #define MAX_SIZE_PACK 1350 // maximum size of single TCP package in one transmission
 #define NUM_SOCKETS CH395_SOCKS_AVAIL
-#define NUM_HTTP_RESPONDERS 7
+
+#include "my_websocket.h"
 
 typedef enum
 {
@@ -35,7 +36,8 @@ typedef enum
 typedef enum
 {
 	CLOSED,
-	KEEP_ALIVE
+	KEEP_ALIVE,
+	UPGRADED_WS,
 } HTTPConnection_typedef;
 
 typedef enum
@@ -44,6 +46,8 @@ typedef enum
 	RESPONSE_PREPARED,
 	RESPONSE_CONTENT_REMAIN,
 } HTTPResonseStage_typedef;
+
+
 typedef struct
 {
 	// 0: Start: Parsing method
@@ -70,12 +74,14 @@ typedef struct
 	const uint8_t* response_content;
 	BOOL ready;	// RESET after use
 	uint8_t sock_index; //initialize sock_index
+	WS_Frame ws; // websocket context
 } HTTPRequestParseState;
 extern HTTPRequestParseState parseStates[NUM_SOCKETS];
 extern char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
 // The Socket number responding to, which serializes the process on multiple sockets
 
 
+#define NUM_HTTP_RESPONDERS 9U
 typedef void(*HTTPResponder_FuncType)(HTTPRequestParseState *) ;
 typedef struct
 {
@@ -90,14 +96,19 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer);
 const char* getHTTPArg(HTTPRequestParseState *pS, const char* name);
 void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file);
 void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content);
+int HTTPSendWebSocketHandshakeResponse(HTTPRequestParseState* pS, char* client_key, size_t lenKey);
 void HTTPHandle(CH395_TypeDef* pch395);
 void HTTPredirect(HTTPRequestParseState *pS, const char* URI);
 void HTTPonNotFound(HTTPRequestParseState *pS);
 void resetHTTPParseState(HTTPRequestParseState *pS);
+void resetHTTPParseState_for_long_connection(HTTPRequestParseState *pS);
+
 void HTTPclose(uint8_t i); // Sock Index to disconnect
+void HTTPclose_for_long_connection(uint8_t i);
 //void HTTPRegisterResponder(const char* uri, HTTPResponder_FuncType func);
 int8_t getNextSock();
 uint8_t atou8(const char* s);
+uint16_t atou16(const char* s);
 uint8_t u16toa(uint16_t, char*);
 char* strcpy_f(char* dest, const char* src); // fast strcpy
 char* strncpy_f(char* dest, const char* src, uint16_t len);

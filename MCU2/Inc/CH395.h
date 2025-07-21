@@ -28,13 +28,15 @@ extern "C" {
  * CH395 status
  * ***/
 #define CH395_SOCKS_AVAIL 8
+#define CH395_TCP_LISTEN_SOCK 5
 #define CH395_SIZE_BUFFER (1024+512)
 
 typedef enum
 {
 	CH395_PROTOCOL_NOT_USED = 0,
+	CH395_PROTOCOL_UDP,
 	CH395_PROTOCOL_TCP,
-	CH395_PROTOCOL_HTTP
+	CH395_PROTOCOL_HTTP, // WS is upgraded from HTTP
 } CH395_protocol_t;
 
 typedef struct
