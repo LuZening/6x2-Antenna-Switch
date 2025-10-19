@@ -82,7 +82,7 @@ void EEPROM_WriteBytes(EEPROM_typedef *pEEPROM, uint8_t *Buffer,uint16_t Length)
 		HAL_FLASHEx_Erase(&fe, &PageError);
 		addrNewContentBegin = addr;
 	}
-	/* SET EXISTING DATA TO ALL 0 TO MARK USAGE */
+	/* SET EXISTING DATA TO ALL 0 TO MARK INVALID */
 	else
 	{
 		for(uint32_t* addrToErase = addrOldContentBegin; addrToErase < addrOldContentEnd; addrToErase++)
@@ -126,10 +126,11 @@ void EEPROM_ReadBytes(EEPROM_typedef* pEEPROM, uint8_t *Buffer,uint16_t Length)
 #if ENABLE_WEAR_LEVELING
 	memset(Buffer, 0, Length);
 	// read 4-bytes each
-	// find header, header
+	// locate the header, the 1st non-zero data is the beginning of the valid data
+	// for OLD DATA WERE SET TO 0 TO MARK INVALID
 	while(addrContentBegin < addrPageEnd && *addrContentBegin == 0x00000000U)
 		addrContentBegin++;
-	// skip the header
+	// skip the header, the content is right after the header
 	if(addrContentBegin < addrPageEnd - 1)
 		addrContentBegin += 1;
 #else

@@ -78,8 +78,6 @@ int ws_handshake_response(char *client_key, size_t lenin, char *output, size_t l
     sha1_init(&ctx);
 
     // Compute hash and encode
-//    sha1_update(&ctx, (uint8_t*)combined, strlen(combined));
-//    sha1_final(&ctx, sha1_digest);
     sha1_encode(&ctx, (uint8_t*)combined, strlen(combined), sha1_digest);
     int r = base64_encode(sha1_digest, 20, output, lenout);
     return r;
@@ -103,16 +101,22 @@ int ws_parse_frame(uint8_t *data, size_t len, WS_Frame *frame) {
     // Byte 1: MASK[7] + Payload length[6:0]
     frame->mask = (data[1] >> 7) & 0x01;
     frame->payload_len = data[1] & 0x7F;
-
     uint8_t *ptr = data + 2;
-    // Handle extended payload length
-    if (frame->payload_len == 126) { // 16-bit length
-        frame->payload_len = (ptr[0] << 8) | ptr[1];
-        ptr += 2;
+    // payload_len==126, parse extended length from next 2 bytes
+    if(frame->payload_len == 126)
+    {
+    	frame->payload_len = (((uint16_t)(ptr[0])) << 8) | (ptr[1]);
+    	ptr += 2;
     }
-    else if (frame->payload_len == 127) { // 64-bit length (unsupported)
-        return -1;
+    // NOT IMPLEMENTED : payload_len==127, parse extended length from next 4 bytes
+    else if(frame->payload_len == 127)
+    {
+    	// too long for this device
+//    	frame->payload_len = 0;
+//    	ptr += 8;
+    	return -1;
     }
+
     // Read masking key if present
     if (frame->mask) {
         memcpy(frame->masking_key, ptr, 4);
@@ -130,8 +134,9 @@ int ws_parse_frame(uint8_t *data, size_t len, WS_Frame *frame) {
  * @param masking_key: 4-byte XOR key
  * @note RFC 6455 requires masking for client→server frames
  */
-void ws_unmask_payload(uint8_t *payload, uint32_t len, uint8_t *masking_key) {
-    for (uint32_t i = 0; i < len; ++i)
+void ws_unmask_payload(uint8_t *payload, size_t len, uint8_t *masking_key)
+{
+    for (int i = 0; i < len; ++i)
         payload[i] ^= masking_key[i % 4]; // Cyclic XOR with key
 }
 
@@ -143,7 +148,29 @@ int ws_make_pong_frame(uint8_t* buf)
 	return 2;
 }
 
-int ws_make_text_frame(uint8_t* buf, size_t lenbuf, const uint8_t* in, uint16_t lenin)
+int ws_make_close_frame(uint8_t* buf, ws_close_reason_t reason)
+{
+	buf[0] = 0x80U | WS_OPCODE_CLOSE;
+	buf[1] = 2;
+	// reasons:
+	// 0x03eb = 1000, normal close
+	// 0x03ee = 1006, closed by peer
+	buf[2] = 0x03;
+	switch(reason)
+	{
+	case WS_CLOSE_REASON_NORMAL:
+		buf[3] = 0xeb;
+		break;
+	case WS_CLOSE_REASON_BY_PEER:
+		buf[3] = 0xee;
+		break;
+	default:
+		buf[3] = 0xeb;
+	}
+	return 4;
+}
+
+int ws_make_text_frame(uint8_t* buf, size_t lenbuf, const uint8_t* in, size_t lenin)
 {
 	/* the content cannot be longer than 65535 bytes */
 	// not enough space in buffer
@@ -169,6 +196,7 @@ int ws_make_text_frame(uint8_t* buf, size_t lenbuf, const uint8_t* in, uint16_t 
 
 	// payload data
 	memcpy(p, in, lenin);
-
+	// terminate
+	*(p+lenin) = 0;
 	return p - buf + lenin;
 }

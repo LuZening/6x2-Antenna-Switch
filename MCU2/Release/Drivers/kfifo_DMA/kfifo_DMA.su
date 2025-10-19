@@ -1,0 +1,7 @@
+kfifo_DMA.c:17:6:is_pow_of_2	0	static
+kfifo_DMA.c:41:6:kfifo_DMA_static_init	8	static
+kfifo_DMA.c:77:8:__kfifo_put	32	static
+kfifo_DMA.c:126:8:__kfifo_get	24	static
+kfifo_DMA.c:155:6:kfifo_invalidate	0	static
+kfifo_DMA.c:160:8:kfifo_get_free_space	0	static
+kfifo_DMA.c:165:8:kfifo_get_filled_size	0	static

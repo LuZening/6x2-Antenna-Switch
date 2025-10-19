@@ -27,7 +27,6 @@ bool isModified = false;
 
 void push_config_to_volatile_variables(Config* p)
 {
-    int i;
     #ifdef USE_MUTEX_ON_CFG
     xSemaphoreTake(mtxConfig, portMAX_DELAY);
     #endif

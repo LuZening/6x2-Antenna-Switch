@@ -3,62 +3,111 @@
 #include "commands.h"
 #include <string.h>
 
-#define RE 1
-#define DE 0
+#define RE 0
+#define DE 1
 
 Serial485 _serial485;
 Serial485 *p485 = &_serial485;
 
+#define MIN(x,y) ((x < y)?(x):(y))
 
 
-static void start_receive_DMA(Serial485 *p485)
+void start_receive_DMA(Serial485 *p485)
 {
-    p485->rx_head = 0;
-    p485->rx_old_pos = 0;
-    // start IDLE interrupt
-//    __HAL_UART_ENABLE_IT(p485->cfg.pSerial, UART_IT_IDLE);
-    // start DMA
-    HAL_UARTEx_ReceiveToIdle_DMA(p485->cfg.pSerial, p485->rx_buffer, sizeof(p485->rx_buffer));
+	set_direction_serial485(p485, DIR_RX);
+    if(p485->rx_buffer_id == 0)
+    {
+		// start DMA
+		HAL_UARTEx_ReceiveToIdle_DMA(p485->cfg.pSerial, p485->rx_dma_bufferA, LIB485_DMA_BUFFER_SIZE);
+    }
+    else
+    {
+		// start DMA
+		HAL_UARTEx_ReceiveToIdle_DMA(p485->cfg.pSerial, p485->rx_dma_bufferB, LIB485_DMA_BUFFER_SIZE);
+    }
 }
 
 void begin_serial485(Serial485 *p485, const Serial485_cfg_t* pCfg)
 {
 	memcpy(&p485->cfg, pCfg, sizeof(Serial485_cfg_t));
-    p485->state_RW = RE;
-    *(p485->command) = 0;
-    p485->len_unprocessed_command = 0;
-    HAL_GPIO_WritePin(pCfg->pin_RW.group, pCfg->pin_RW.pin, RE); // toggle receive mode
+    p485->busy = 0;
 
     // TRICK: store Serial485 pointer in AdvFeatureInit(uint32_t) member
-	// for later iterruption use
 	p485->cfg.pSerial->AdvancedInit.AdvFeatureInit = (uint32_t)(p485);
 
-    start_receive_DMA(p485);
-    // when DMA interrupts, parse command and restart receiving
+    // init RX fifo
+    kfifo_DMA_static_init(&p485->rx_ring_fifo, pCfg->rx_fifo_buf, pCfg->fifo_size, 0);
 
+    // init command heads and sizes
+    p485->command_in = 0;
+    p485->command_out = 0;
 
+	// for later IRQ use
+    p485->dir = DIR_RX; // keep on RX
+    set_direction_serial485(p485, DIR_RX);
+    p485->rx_buffer_id = 0;
+    // start IDLE interrupt
+//    __HAL_UART_ENABLE_IT(p485->cfg.pSerial, UART_IT_IDLE);
+//    start_receive_DMA(p485);
 }
 
-void set_direction_serial485(Serial485 *p485, uint8_t direction)
+void set_direction_serial485(Serial485 *p485, Serial485_direction_t dir)
 {
 	//RE: receive; DE: write
-	p485->state_RW = direction;
-	HAL_GPIO_WritePin(p485->cfg.pin_RW.group, p485->cfg.pin_RW.pin, direction);
+	p485->dir = dir;
+	switch(dir)
+	{
+	case DIR_RX:
+		HAL_GPIO_WritePin(p485->cfg.pin_RW.group, p485->cfg.pin_RW.pin, RE);
+		break;
+	case DIR_TX:
+		HAL_GPIO_WritePin(p485->cfg.pin_RW.group, p485->cfg.pin_RW.pin, DE);
+		break;
+	default:
+		HAL_GPIO_WritePin(p485->cfg.pin_RW.group, p485->cfg.pin_RW.pin, RE);
+		break;
+	}
 }
 
-void send_serial485(Serial485 *p485, const char *buffer_send, int16_t len)
+void send_serial485(Serial485 *p485, const char *buffer_send, uint16_t len)
+{
+	if(len == 0)
+		len = strnlen(buffer_send, sizeof(p485->tx_dma_buffer));
+	if(len == 0) return;
+
+	set_direction_serial485(p485, DIR_TX);
+	memcpy(p485->tx_dma_buffer, buffer_send, len);
+	uint32_t tickNow = HAL_GetTick();
+	while((p485->busy == 1) && (HAL_GetTick() - tickNow < 100)); // at most wait for 100ms
+	p485->busy = 1; // clear this flag in TXE interrupt
+    HAL_UART_Transmit_DMA(p485->cfg.pSerial, p485->tx_dma_buffer, (uint16_t)len);
+    // when DMA interrupts, clear busy flags
+}
+
+int read_command_from_serial485(Serial485 *p485, char* buf, uint16_t bufsize)
 {
 
+	if(p485->command_in == p485->command_out)
+		goto NO_COMMAND;
 
-	if(len < 0)
-		len = strnlen(buffer_send, sizeof(p485->tx_buffer));
-	if(len == 0) return;
-	strncpy(p485->tx_buffer, buffer_send, len);
-	while(!p485->busy);
-	p485->busy = true;
-	set_direction_serial485(p485, DE);
-    HAL_UART_Transmit_DMA(p485->cfg.pSerial, p485->tx_buffer, len);
-    // when DMA interrupts, clear busy flags
+//	uint8_t in = p485->command_in & LIB485_COMMAND_BUFFER_MASK;
+	uint8_t out =  p485->command_out & LIB485_COMMAND_BUFFER_MASK;
+	uint16_t cmd_size = p485->command_sizes[out];
+	++p485->command_out;
+
+	kfifo_get(&p485->rx_ring_fifo, buf, MIN(bufsize, cmd_size));
+	// the buffer is too small
+	if(bufsize < cmd_size)
+	{
+		p485->rx_ring_fifo.out += cmd_size - bufsize; // force the ring buffer to drop oversize messages
+		goto NO_COMMAND;
+	}
+
+	// return size of the command
+	return cmd_size;
+NO_COMMAND:
+	//return < 0 when error
+	return -1;
 }
 
 /**
@@ -70,47 +119,78 @@ void send_serial485(Serial485 *p485, const char *buffer_send, int16_t len)
   *               reception buffer until which, data are available)
   * @retval None
   */
+
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-	Serial485* p485 = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
-	uint16_t *phead = &(p485->rx_head); // reserved for circular DMA mode
-	uint16_t *pold_pos = &(p485->rx_old_pos);
-	uint16_t len_command;
-  /* check if idle signal received, under non-circular DMA (normal mode)
-   * enters here either HC/TC or IDLE
-   * case 1: Size == old_pos, means idle received, process data from [header, Size), move head to Size
-   * case 2: Size == RX_BUFFER_LEN, means buffer is full (TC), must process, and IDLE int will not be triggered instead
-   */
-  if(
-		  (Size == *pold_pos) // case 1
-		  || (Size == sizeof(p485->rx_buffer)) // case 2
-		  )
-  {
-	  if(p485->len_unprocessed_command == 0) // do not overwrite unprocessed command
-	  {
+	Serial485* p485_ = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
+	if(p485_ == p485)
+	{
+		uint8_t* recved_buf = NULL;
+		// restart DMA
+		if(p485->rx_buffer_id == 0)
+		{
+			recved_buf = p485->rx_dma_bufferA;
+			p485->rx_buffer_id = 1;
+		}
+		else
+		{
+			recved_buf = p485->rx_dma_bufferB;
+			p485->rx_buffer_id = 0;
+		}
+		start_receive_DMA(p485);
 
-		  len_command =  Size - *phead;
-		  strncpy(p485->command, p485->rx_buffer + *phead, len_command);
-		  p485->command[len_command] = 0;
+		p485->command_sizes[(p485->command_in & LIB485_COMMAND_BUFFER_MASK)] = Size;
+		++p485->command_in;
 
-		  // process command
-		  p485->len_unprocessed_command = len_command;
-	  }
+		// copy to kfifo
+		kfifo_put(&p485->rx_ring_fifo, recved_buf, Size);
 
-	  // restart DMA
-	  start_receive_DMA(p485);
-  }
-  else // HC event, do nothing
-	  *pold_pos = Size;
+		// mark command ends
 
+	}
 }
 
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	Serial485* p485_ = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
+	if(p485_ == p485)
+	{
+		p485->busy = 0;
+		set_direction_serial485(p485, DIR_RX); //switch back to listen mode
+	}
+}
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 	// restart DMA receiving when error occures
 	// restart DMA
-	Serial485* p485 = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
-	start_receive_DMA(p485);
+	Serial485* p485_ = (Serial485*)(huart->AdvancedInit.AdvFeatureInit);
+	if(p485 == p485_)
+	{
+		p485->busy = 0;
+		start_receive_DMA(p485);
+	}
+}
+
+
+void test_485_blockmode(Serial485 *p485)
+{
+	uint16_t lenRead = 0;
+	set_direction_serial485(p485, DIR_TX);
+	strcpy(p485->rx_dma_bufferA, "1234567890");
+	HAL_UART_Transmit(p485->cfg.pSerial, p485->rx_dma_bufferA, 10, HAL_MAX_DELAY);
+	set_direction_serial485(p485, DIR_RX);
+	while(1)
+	{
+		set_direction_serial485(p485, DIR_RX);
+		HAL_UARTEx_ReceiveToIdle(p485->cfg.pSerial, p485->rx_dma_bufferA, sizeof(p485->rx_dma_bufferA), &lenRead, HAL_MAX_DELAY);
+		if(lenRead > 0)
+		{
+			set_direction_serial485(p485, DIR_TX);
+			HAL_UART_Transmit(p485->cfg.pSerial, p485->rx_dma_bufferA, lenRead, HAL_MAX_DELAY);
+		}
+	}
+
 }
 

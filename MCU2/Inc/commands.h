@@ -23,7 +23,7 @@ typedef enum
 typedef struct
 {
     CommandProtocol_t protocol;
-    volatile uint8_t hasResponse;
+    volatile uint16_t hasResponse;
     char bufRet[LEN_COMMANDS_RET_BUF];
     /* data */
 } CommandParser_t;

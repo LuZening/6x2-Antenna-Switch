@@ -23,8 +23,19 @@ int base64_encode(uint8_t *input, size_t len, char *output, size_t capacity);
  * ********  Websocket protocol 		*************************************
  * **************************************************************************/
 
+typedef enum
+{
+	WS_WAIT_FOR_HANDSHAKE,
+	WS_HANDSHAKED,
+	WS_TO_CLOSE, // CLOSE frame has been received
+	WS_CLOSED, // response CLOSE frame has been scheduled to transmit
+} ws_state_t;
 
-
+typedef enum
+{
+	WS_CLOSE_REASON_NORMAL,
+	WS_CLOSE_REASON_BY_PEER,
+} ws_close_reason_t;
 /**
  * @brief Generate WebSocket handshake response key
  * @param client_key: Client's Sec-WebSocket-Key header value
@@ -46,7 +57,7 @@ typedef struct {
     uint8_t mask;           // Masking flag (client→server must mask)
     const uint8_t* payload;
     uint32_t payload_len;   // Payload length in bytes
-    uint8_t masking_key[4]; // XOR masking key (if present)
+    uint8_t masking_key[4]; // XOR masking key (if present, big-endian)
 } WS_Frame;
 
 /**
@@ -65,9 +76,11 @@ int ws_parse_frame(uint8_t *data, size_t len, /* out */ WS_Frame *frame);
  * @param masking_key: 4-byte XOR key
  * @note RFC 6455 requires masking for client→server frames, server->client path should not be masked
  */
-void ws_unmask_payload(/* out */ uint8_t *payload, uint32_t len, /* in */ uint8_t *masking_key);
+void ws_unmask_payload(/* out */ uint8_t *payload, size_t len, /* in */ uint8_t *masking_key);
 
 
 int ws_make_pong_frame(uint8_t* buf);
 
-int ws_make_text_frame(uint8_t* buf, size_t lenbuf, const uint8_t* in, uint16_t lenin);
+int ws_make_close_frame(uint8_t* buf, ws_close_reason_t reason);
+
+int ws_make_text_frame(uint8_t* buf, size_t lenbuf, const uint8_t* in, size_t lenin);

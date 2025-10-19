@@ -1,7 +1,6 @@
 command_funcs_OTRSP.c:19:5:fn_ping	0	static
 command_funcs_OTRSP.c:28:5:fn_get_ant_assignment	24	static
 command_funcs_OTRSP.c:53:5:fn_set_ant_assignment	32	static
-command_funcs_OTRSP.c:87:5:fn_set_ant_name.part.0	32	static
-command_funcs_OTRSP.c:87:5:fn_set_ant_name	8	static
-command_funcs_OTRSP.c:113:5:fn_get_ant_name	8	static
+command_funcs_OTRSP.c:87:5:fn_set_ant_name	32	static
+command_funcs_OTRSP.c:113:5:fn_get_ant_name	24	static
 command_funcs_OTRSP.c:158:5:parse_command_OTRSP	32	static

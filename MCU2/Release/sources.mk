@@ -23,8 +23,10 @@ OBJCOPY_BIN :=
 SUBDIRS := \
 Drivers/Config \
 Drivers/Flash_EEPROM \
+Drivers/LiteSHA1 \
 Drivers/STM32F0xx_HAL_Driver/Src \
 Drivers/SerialOverTCP \
+Drivers/kfifo_DMA \
 Src \
 Startup \
 

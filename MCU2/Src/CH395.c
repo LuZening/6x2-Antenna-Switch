@@ -65,15 +65,15 @@ BOOL CH395TCPServerStart(uint32_t ip, uint16_t port_http_server, uint16_t port_t
 		err = CH395TCPListen(0); // start lisening
 
 		// open socket 5 for listening TCP
-		CH395SetSocketProtType(CH395_TCP_LISTEN_SOCK, PROTO_TYPE_TCP); // set SOC
-		CH395SetSocketSourPort(CH395_TCP_LISTEN_SOCK, port_tcp_server); // listen on TCP port
-		CH395OpenSocket(CH395_TCP_LISTEN_SOCK);
-		err = CH395TCPListen(CH395_TCP_LISTEN_SOCK); // start lisening
+//		CH395SetSocketProtType(CH395_TCP_LISTEN_SOCK, PROTO_TYPE_TCP); // set SOC
+//		CH395SetSocketSourPort(CH395_TCP_LISTEN_SOCK, port_tcp_server); // listen on TCP port
+//		CH395OpenSocket(CH395_TCP_LISTEN_SOCK);
+//		err = CH395TCPListen(CH395_TCP_LISTEN_SOCK); // start lisening
 
 		// open other multiple sockets
 		for(i=1; i < 7; ++i)
 		{
-			if(i == CH395_TCP_LISTEN_SOCK) continue; // skip port 5, for it's a listener
+//			if(i == CH395_TCP_LISTEN_SOCK) continue; // skip port 5, for it's a listener
 			CH395_protocol_t proto = ch395.cfg.protocols[i];
 			uint16_t port = ch395.cfg.ports[i];
 			if(proto != CH395_PROTOCOL_NOT_USED && port > 0)
@@ -85,7 +85,7 @@ BOOL CH395TCPServerStart(uint32_t ip, uint16_t port_http_server, uint16_t port_t
 
 		/* UDP Server BEGIN */
 		// open socket 7 for listening UDP
-		i = 7;
+		i = CH395_UDP_LISTEN_SOCK;
 		CH395SetSocketProtType(i, PROTO_TYPE_UDP); // set SOC
 		// enter UDP server mode by setting IP as 255.255.255.255
 		uint8_t IP_UDP[4] = {255,255,255,255};

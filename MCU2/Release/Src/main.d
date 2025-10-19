@@ -37,13 +37,14 @@ Src/main.o: ../Src/main.c \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/CH395CMD.H \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/FS.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/HTTPServer.h \
- E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485.h \
- E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h \
- E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485_user_define.h \
+ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/my_websocket.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/Config/Config.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Config_user_define.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/CH395.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485.h \
+ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h \
+ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485_user_define.h \
+ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/kfifo_DMA/kfifo_DMA.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Delay.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/Flash_EEPROM/Flash_EEPROM.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Flash_EEPROM_user_define.h \
@@ -127,11 +128,7 @@ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/FS.h:
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/HTTPServer.h:
 
-E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485.h:
-
-E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h:
-
-E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485_user_define.h:
+E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/my_websocket.h:
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/Config/Config.h:
 
@@ -140,6 +137,12 @@ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Config_user_define.h:
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/CH395.h:
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485.h:
+
+E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h:
+
+E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485_user_define.h:
+
+E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/kfifo_DMA/kfifo_DMA.h:
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Delay.h:
 

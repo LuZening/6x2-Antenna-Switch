@@ -1,0 +1,14 @@
+{
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda",
+    "python-envs.pythonProjects": [],
+    "idf.pythonInstallPath": "d:\\.espressif\\tools\\idf-python\\3.8.7\\python.exe",
+    "files.associations": {
+        "httpserver.h": "c",
+        "my_websocket.h": "c",
+        "string.h": "c",
+        "delay.h": "c",
+        "ch395cmd.h": "c",
+        "ch395.h": "c"
+    }
+}

@@ -1,0 +1,8 @@
+my_websocket.c:16:8:base64_expect_output_length	8	static
+my_websocket.c:29:5:base64_encode	112	static
+my_websocket.c:67:5:ws_handshake_response	112	static
+my_websocket.c:97:5:ws_parse_frame	16	static
+my_websocket.c:137:6:ws_unmask_payload	16	static
+my_websocket.c:144:5:ws_make_pong_frame	0	static
+my_websocket.c:151:5:ws_make_close_frame	0	static
+my_websocket.c:173:5:ws_make_text_frame	24	static

@@ -30,10 +30,10 @@ typedef struct {
 	uint32_t n_files;
 }FS_typedef;
 
-BOOL FS_begin(FS_typedef* pFS, uint32_t* addr_base);
+bool FS_begin(FS_typedef* pFS, uint32_t* addr_base);
 FSfile_typedef FS_open(FS_typedef* pFS, const char* path);
 int FS_size(FS_typedef* pFS, const char* path);
-BOOL FS_exists(FS_typedef* pFS, const char* path);
+bool FS_exists(FS_typedef* pFS, const char* path);
 extern FS_typedef FS;
 
 #endif /* FS_H_ */

@@ -96,13 +96,13 @@ int fn_set_ant_name(uint8_t argc, char** argv, char* ret)
 	{
 		// capture target ant name
 		char* sLabelSaved = cfg.sAntNames[antnum-1];
-		strncpy(sLabelSaved, argv[2], MAX_LEN_ANT_LABEL);
+		strlcpy(sLabelSaved, argv[2], MAX_LEN_ANT_LABEL);
 		sLabelSaved[MAX_LEN_ANT_LABEL - 1] = 0; // terminate the string
 		// print antnum to bufCMDRet
 		strcpy(ret, "NAME");
 		ret[4] = '0' + antnum;
-		strncat(ret, sLabelSaved, LEN_COMMANDS_RET_BUF);
-		strncat(ret, "\r", LEN_COMMANDS_RET_BUF);
+		strcpy(ret + 5, sLabelSaved);
+		strcat(ret, "\r");
 		return 0;
 	}
 
@@ -122,13 +122,13 @@ int fn_get_ant_name(uint8_t argc, char** argv, char* ret)
 	{
 		// capture target ant name
 		char* sLabelSaved = cfg.sAntNames[antnum-1];
-		strncpy(sLabelSaved, argv[2], MAX_LEN_ANT_LABEL);
+//		strlcpy(sLabelSaved, argv[2], MAX_LEN_ANT_LABEL);
 		sLabelSaved[MAX_LEN_ANT_LABEL - 1] = 0; // terminate the string
 		// print antnum to bufCMDRet
 		strcpy(ret, "NAME");
 		ret[4] = '0' + antnum;
-		strncat(ret, sLabelSaved, LEN_COMMANDS_RET_BUF);
-		strncat(ret, "\r", LEN_COMMANDS_RET_BUF);
+		strcpy(ret + 5, sLabelSaved);
+		strcat(ret, "\r");
 		return 0;
 	}
 
@@ -180,7 +180,7 @@ int parse_command_OTRSP(const char* s, uint16_t len, char* ret)
         ++s;
         --len;
     }
-    if(len <= 1)
+    if(len == 0)
         goto bad_command;
 
 
@@ -237,7 +237,11 @@ end_parse:
     if(i < N_commands_OTRSP)
     {
         cmd_executer_func_t fn = command_executers_OTRSP[i];
-        if(fn) fn(argc, argv, ret); // execute command
+        if(fn)
+        {
+        	int r = fn(argc, argv, ret); // execute command
+        	if(r != 0) goto bad_command;
+        }
     }
     // bad command
     else

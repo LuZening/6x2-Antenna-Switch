@@ -450,9 +450,7 @@ void interrupt_CH395()
 //					}
 //				}
 			}
-//			if(sock_int_status & SINT_STAT_SEND_OK)
-//			{
-//			}
+
 			if(sock_int_status & SINT_STAT_RECV) // data received on SOCK i
 			{
 				HTTPRequestParseState* pS = parseStates + i - 1;

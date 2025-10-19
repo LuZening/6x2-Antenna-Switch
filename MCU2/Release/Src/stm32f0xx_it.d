@@ -37,9 +37,7 @@ Src/stm32f0xx_it.o: ../Src/stm32f0xx_it.c \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/CH395CMD.H \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/FS.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/HTTPServer.h \
- E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485.h \
- E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h \
- E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485_user_define.h \
+ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/my_websocket.h \
  E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/stm32f0xx_it.h
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h:
@@ -118,10 +116,6 @@ E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/FS.h:
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/HTTPServer.h:
 
-E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485.h:
-
-E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/main.h:
-
-E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/Lib485_user_define.h:
+E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/my_websocket.h:
 
 E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Inc/stm32f0xx_it.h:

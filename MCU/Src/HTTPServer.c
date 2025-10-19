@@ -58,6 +58,13 @@ void resetHTTPParseState(HTTPRequestParseState *pS)
 	pS->response_stage = RESPONSE_NOT_PREPARED;
 	pS->len_response_content_remain = 0;
 	pS->response_header = response_header_shared_buffer; // use shared buffer
+	pS->last_active_tick = TICK_NOW();
+}
+
+void activateHTTPParseState(HTTPRequestParseState *pS)
+{
+	pS->ready = TRUE;
+	pS->last_active_tick = TICK_NOW();
 }
 
 const char* HTTPGetContentType(const char* filename)
@@ -251,7 +258,7 @@ void HTTPonNotFound(HTTPRequestParseState *pS)
 void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 {
 	uint8_t i = pch395->SOCK_responding;
-	if(i)
+	if(i) // NOTE: number:i begins from 1
 	{
 		HTTPRequestParseState *pS= parseStates +i  - 1;
 		if((pch395->TX_available & (1 << i)) && pS->ready) // socket recv buffer non-empty, bit_i is 1
@@ -350,7 +357,6 @@ char* strsepstr(char** stringp, const char* delim)
 }
 
 BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
-
 {
 	char* line, *tok, *tok_arg, *line_tok_saveptr, *word_tok_saveptr, *arg_tok_saveptr;
 	switch(pS->state)

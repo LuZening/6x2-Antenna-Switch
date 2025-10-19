@@ -16,5 +16,5 @@ S_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Startup/%.o: ../Startup/%.s Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m0 -c -I../ -I"E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/SerialOverTCP" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m0 -DDEBUG -c -I../ -I"E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/SerialOverTCP" -I"E:/Projects/RADIO/Projects/6x2_Antenna_switch/MCU2/Drivers/kfifo_DMA" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
 

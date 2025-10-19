@@ -54,6 +54,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void DMA1_Channel4_5_IRQHandler(void);
 void TIM6_IRQHandler(void);
+void SPI1_IRQHandler(void);
 void USART2_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
@@ -64,5 +65,3 @@ void USART2_IRQHandler(void);
 #endif
 
 #endif /* __STM32F0xx_IT_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -11,13 +11,23 @@
 #include "Flash_EEPROM/Flash_EEPROM.h"
 #include "Config/Config.h"
 
+
 /* URI: /
  * METHOD: GET
  * Usage: Homepage*/
 void onHome(HTTPRequestParseState *pS)
 {
-	strcat(pS->URI, "index.html");
-	HTTPonNotFound(pS);
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+		return;
+	}
+	/* plain HTTP */
+	else
+	{
+		strcat(pS->URI, "index.html");
+		HTTPonNotFound(pS);
+	}
 }
 
 /* URI: /switch
@@ -27,8 +37,8 @@ void onHome(HTTPRequestParseState *pS)
 void onSwitch(HTTPRequestParseState* pS)
 {
 	// arguments my not be fully filled
-	const char *A = getHTTPArg(pS, "sel1");
-	const char *B = getHTTPArg(pS, "sel2");
+//	const char *A = getHTTPArg(pS, "sel1");
+//	const char *B = getHTTPArg(pS, "sel2");
 	uint8_t antnums[N_SELECTORS];
 	char argname[8] = "sel";
 	for(uint8_t i = 0; i < N_SELECTORS; ++i)
@@ -43,29 +53,43 @@ void onSwitch(HTTPRequestParseState* pS)
 
 	int8_t r = switch_Antenna(antnums, N_SELECTORS);
 
-	if(r == 0) // OK
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
 	{
-		//HTTPSendStr(pS, 200, "OK\r\n");
-		HTTPredirect(pS, "/");
+		if(r == 0) // OK
+		{
+			WSSendStr(pS, "/switch", "response=OK\r\n");
+		}
+		else
+		{
+			WSSendStr(pS, "/switch", "response=Invalid\r\n");
+		}
 	}
+	/* plain HTTP */
 	else
 	{
-		HTTPSendStr(pS, 300, "Invalid\r\n");
+		if(r == 0) // OK
+		{
+			//HTTPSendStr(pS, 200, "OK\r\n");
+			HTTPredirect(pS, "/");
+		}
+		else
+		{
+			HTTPSendStr(pS, 300, "Invalid\r\n");
+		}
 	}
 }
 
-/* URI: /getAlloc
+/* URI: /getalloc
  * METHOD: GET
- * Args: sel1=%d&sel2=%d
+ * Responds: sel1=%d&sel2=%d
  * Usage: get current antenna allocation
  * */
-void onGetAlloc(HTTPRequestParseState* pS)
+int make_ant_alloc_str(char* buf)
 {
-	static char s_tmp[16];
+	char* p = buf;
 	uint8_t antnums[N_SELECTORS];
 	get_Antenna_real_BCDs(antnums, N_SELECTORS);
-	char *p;
-	p = s_tmp;
 	strcpy(p, "sel1=");
 	p+=5;
 	*p = (antnums[0]) + '0'; // "sel1=%d"
@@ -77,7 +101,24 @@ void onGetAlloc(HTTPRequestParseState* pS)
 	strcpy(p, "\r\n");
 	p+=2;
 	*p = 0;
-	HTTPSendStr(pS, 200, s_tmp);
+	return p - buf;
+}
+
+void onGetAlloc(HTTPRequestParseState* pS)
+{
+	static char s_tmp[24];
+	int n = make_ant_alloc_str(s_tmp);
+
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+		WSSendStr(pS, "/getalloc", s_tmp);
+	}
+	/* plain HTTP */
+	else
+	{
+		HTTPSendStr(pS, 200, s_tmp);
+	}
 }
 
 /* URI: /status
@@ -85,15 +126,34 @@ void onGetAlloc(HTTPRequestParseState* pS)
  * */
 void onStatus(HTTPRequestParseState* pS)
 {
-	HTTPSendStr(pS, 200, "Status\r\n");
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+		WSSendStr(pS, "/status", "Status");
+	}
+	/* plain HTTP */
+	else
+	{
+		HTTPSendStr(pS, 200, "Status");
+	}
 }
 
 void onReset(HTTPRequestParseState* pS)
 {
-	HTTPSendStr(pS, 200, "Reset\r\n");
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+		WSSendStr(pS, "/reset", "Reset");
+	}
+	/* plain HTTP */
+	else
+	{
+		HTTPSendStr(pS, 200, "Reset");
+	}
 //	DEBUG_LOG("Restart\n");
 }
-/* URI: /getAlloc
+
+/* URI: /setlabel
  * METHOD: POST
  * Args: ant1=name&ant2=name&ant3=name&ant4=name&ant5=name&ant6=name
  * Usage: set antenna label*/
@@ -101,9 +161,19 @@ void onSetLabel(HTTPRequestParseState* pS)
 {
 	uint8_t i;
 	char s_tmp[5] = "ant";
+
 	if(pS->argc == 0)
 	{
-		HTTPSendStr(pS, 300, "Bad args");
+		/* Websocket */
+		if(pS->connection == UPGRADED_WS)
+		{
+			WSSendStr(pS,"/setlabel", "Bad args");
+		}
+		/* plain HTTP */
+		else
+		{
+			HTTPSendStr(pS, 300, "Bad args");
+		}
 		return;
 	}
 	for(i=1; i<=NUM_ANTENNA; ++i)
@@ -112,14 +182,27 @@ void onSetLabel(HTTPRequestParseState* pS)
 		const char* s_label;
 		if((s_label = getHTTPArg(pS, s_tmp)) != NULL)
 		{
-			strncpy(cfg.sAntNames[i-1], s_label, MAX_LEN_ANT_LABEL);
+			// Multibyte encoding is stored in Big-Endian, first byte at the start of the buffer
+			// i.e. 金 -> 0xE9 0x87 0x91 (UTF8)
+			strlcpy(cfg.sAntNames[i-1], s_label, MAX_LEN_ANT_LABEL);
 			isModified = true;
 		}
 	}
 
 //	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
 	//HTTPSendStr(pS, 200, "OK");
-	HTTPredirect(pS, "/");
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+
+		/* nothing to do */
+		WSSendStr(pS, "/setlabel", "response=OK\r\n");
+	}
+	/* plain HTTP */
+	else
+	{
+		HTTPredirect(pS, "/");
+	}
 }
 
 void onGetLabel(HTTPRequestParseState* pS)
@@ -142,7 +225,17 @@ void onGetLabel(HTTPRequestParseState* pS)
 			s++;
 		}
 	}
-	HTTPSendStr(pS, 200, s_tmp);
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+		/* nothing to do */
+		WSSendStr(pS, "/getlabel", s_tmp);
+	}
+	/* plain HTTP */
+	else
+	{
+		HTTPSendStr(pS, 200, s_tmp);
+	}
 }
 
 /* URI: /setport
@@ -154,7 +247,13 @@ void onSetPort(HTTPRequestParseState* pS)
 	const uint8_t MAXLEN = 5;
 	if(pS->argc < 2)
 	{
-		HTTPSendStr(pS, 300, "Bad args");
+		/* Websocket */
+		if(pS->connection == UPGRADED_WS)
+			/* nothing to do */
+			WSSendStr(pS, "/setport", "Bad args" );
+		/* plain HTTP */
+		else
+			HTTPSendStr(pS, 300, "Bad args");
 		return;
 	}
 
@@ -177,7 +276,12 @@ void onSetPort(HTTPRequestParseState* pS)
 	}
 	else
 	{
-		HTTPSendStr(pS, 300, "Bad HTTP port number");
+		/* Websocket */
+		if(pS->connection == UPGRADED_WS)
+			WSSendStr(pS, "/setport", "Bad HTTP port number");
+		/* plain HTTP */
+		else
+			HTTPSendStr(pS, 300, "Bad HTTP port number");
 		return;
 	}
 
@@ -199,11 +303,21 @@ void onSetPort(HTTPRequestParseState* pS)
 	}
 	else
 	{
-		HTTPSendStr(pS, 300, "Bad HTTP port number");
+		/* Websocket */
+		if(pS->connection == UPGRADED_WS)
+			WSSendStr(pS, "/setport","Bad HTTP port number");
+		/* plain HTTP */
+		else
+			HTTPSendStr(pS, 300, "Bad HTTP port number");
 		return;
 	}
-
-	HTTPredirect(pS, "/");
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+		/*nothing*/
+		return;
+	/* plain HTTP */
+	else
+		HTTPredirect(pS, "/");
 
 //	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
 	//HTTPSendStr(pS, 200, "OK");
@@ -230,14 +344,17 @@ void onGetPort(HTTPRequestParseState* pS)
 	s += u16toa(port, s);
 
 	*s = '\0';
-
-	HTTPSendStr(pS, 200, s_tmp);
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+		WSSendStr(pS, "/getport", s_tmp);
+	/* plain HTTP */
+	else
+		HTTPSendStr(pS, 200, s_tmp);
 }
 
 
 
-
-HTTPResponder_typedef HTTPResponders[] ={
+HTTPWSResponder_typedef HTTPWSResponders[] ={
 		{.uri="/", .func=onHome},
 		{.uri = "/switch", .func=onSwitch},
 		{.uri = "/getalloc", .func=onGetAlloc},

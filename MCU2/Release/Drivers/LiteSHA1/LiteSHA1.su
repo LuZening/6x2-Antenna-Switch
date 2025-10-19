@@ -1,0 +1,4 @@
+LiteSHA1.c:67:13:sha1_transform	64	static
+LiteSHA1.c:38:10:__REV64	0	static
+LiteSHA1.c:51:6:sha1_init	8	static
+LiteSHA1.c:153:6:sha1_encode	32	static

@@ -38,7 +38,7 @@ extern "C" {
 #include "CH395CMD.H"
 #include "FS.h"
 #include "HTTPServer.h"
-#include "Lib485.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -118,13 +118,6 @@ void Error_Handler(void);
 #define N_SELECTORS NUM_TRANCEIVERS
 #define BCD2INT(D0,D1,D2) (D2<<2 | D1<<1 | D0);
 #define SCHED_INTERVAL 2000 // 2us
-// Saved data on EEPROM
-typedef struct
-{
-	uint8_t EEPROM_valid_ID;
-	char ant_labels[NUM_ANTENNA][MAX_LEN_ANT_LABEL];
-} SavedData_typedef;
-extern SavedData_typedef SavedData;
 
 // CH395 available sockets
 // CH395 interrupt handler
@@ -132,6 +125,7 @@ void reset_CH395();
 void interrupt_CH395();
 //bool check_conflict(uint8_t *antnums, uint8_t n);
 int8_t switch_Antenna(uint8_t *antnums, uint8_t n);
+int make_ant_alloc_str(char* p);
 void get_Antenna_real_BCDs(uint8_t* antnums, uint8_t n);
 void display_IP (bool start);
 extern AntennaSelector_typedef Selector[];
@@ -142,5 +136,3 @@ extern AntennaSelector_typedef Selector[];
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -36,18 +36,21 @@ int fn_ping(uint8_t argc, char** argv, char* ret);
 /* fn_get_ant_assignment: get antenna assignment for Radio ?
  * args: RadioNum[1|2]
  * response: AUX{RadioNum}{0~6}\r
+ * example: ?AUX1
  */
 int fn_get_ant_assignment(uint8_t argc, char** argv, char* ret);
 
 /* fn_set_ant_assignment: switch antenna
  * args: RadioNum[1|2]
  * response: AUX{RadioNum}{0~6}\r
+ * example: AUX1 4
  */
 int fn_set_ant_assignment(uint8_t argc, char** argv, char* ret);
 
 /* fn_set_ant_name:
  * args: AntNum{1~6}
  * response: NAME{AntNum}{str16}\r
+ * example: NAME1 ANT1
  */
 int fn_set_ant_name(uint8_t argc, char** argv, char* ret);
 

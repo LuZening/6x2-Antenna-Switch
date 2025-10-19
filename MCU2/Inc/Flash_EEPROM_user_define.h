@@ -17,6 +17,6 @@
  * ------------WEAR LEVELING STRATEGY -------------
  * PAGE: find first non-zero block, write
 */
-#define EEPROM_BASE_ADDR 0x0800B000
+#define EEPROM_BASE_ADDR 0x0800F000 // the last 4KB of 64KB flash
 
 #endif /* FLASH_EEPROM_USER_DEFINE_H_ */

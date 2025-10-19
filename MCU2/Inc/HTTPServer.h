@@ -25,6 +25,8 @@
 #define NUM_SOCKETS CH395_SOCKS_AVAIL
 
 #include "my_websocket.h"
+#define MAX_HTTP_TICK_IDLE 32000 // ms, timeout for idle HTTP connection
+#define TICK_NOW HAL_GetTick
 
 typedef enum
 {
@@ -72,29 +74,34 @@ typedef struct
 	char* response_header; // shared buffer
 	uint16_t len_response_content_remain;
 	const uint8_t* response_content;
-	BOOL ready;	// RESET after use
+	BOOL ready_for_making_response;	// ready for making response, reset after response has been transmitted
 	uint8_t sock_index; //initialize sock_index
+	ws_state_t ws_handshaked;
 	WS_Frame ws; // websocket context
+	uint32_t last_active_tick; // tick count of last activity, for timeout check
 } HTTPRequestParseState;
-extern HTTPRequestParseState parseStates[NUM_SOCKETS];
+extern HTTPRequestParseState parseStates[NUM_SOCKETS - 1];
 extern char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
 // The Socket number responding to, which serializes the process on multiple sockets
 
 
 #define NUM_HTTP_RESPONDERS 9U
-typedef void(*HTTPResponder_FuncType)(HTTPRequestParseState *) ;
+typedef void(*HTTPWSResponder_FuncType)(HTTPRequestParseState *) ;
 typedef struct
 {
 	const char* uri;
-	HTTPResponder_FuncType func;
-} HTTPResponder_typedef;
-extern HTTPResponder_typedef HTTPResponders[];
+	HTTPWSResponder_FuncType func;
+} HTTPWSResponder_typedef;
+extern HTTPWSResponder_typedef HTTPWSResponders[];
 
 const char* HTTPGetContentType(const char* filename);
 char* strsepstr(char** stringp, const char* delim);
 BOOL parse_http(HTTPRequestParseState *pS, char* buffer);
 const char* getHTTPArg(HTTPRequestParseState *pS, const char* name);
 void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file);
+int WSMakeStrOriginal(char* buf, size_t lenbuf, const char* URI, const char* content);
+// WSSendStr: non-reentrant
+void WSSendStr(HTTPRequestParseState* pS, const char* URI, const char* content);
 void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content);
 int HTTPSendWebSocketHandshakeResponse(HTTPRequestParseState* pS, char* client_key, size_t lenKey);
 void HTTPHandle(CH395_TypeDef* pch395);
@@ -103,6 +110,7 @@ void HTTPonNotFound(HTTPRequestParseState *pS);
 void resetHTTPParseState(HTTPRequestParseState *pS);
 void resetHTTPParseState_for_long_connection(HTTPRequestParseState *pS);
 
+void activateHTTPParseState(HTTPRequestParseState *pS);
 void HTTPclose(uint8_t i); // Sock Index to disconnect
 void HTTPclose_for_long_connection(uint8_t i);
 //void HTTPRegisterResponder(const char* uri, HTTPResponder_FuncType func);

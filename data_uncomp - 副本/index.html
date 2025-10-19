@@ -1,0 +1,905 @@
+<html>
+<head>
+    <title>Antenna Switch</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            
+        }
+        th {
+            background-color: black;
+            color: white;
+            font-size: 1.2rem;
+        }
+        td {
+            text-align: center;
+            size: 1em;
+        }
+        tr.even {
+            background-color: lightgray;
+        }
+        input[type="radio"] {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        input[type="text"]{
+            border: none;
+            font-size: 1.5rem;
+            text-align: center;
+            background: none;
+        }
+        input[type="submit"]{
+            background: white;
+            color: black;
+            border-width: 4px;
+            border-color:black;
+            width:5rem;
+            height: 3rem;
+            font-size: 1rem;
+            margin-right:1rem;
+            margin-left:5rem;
+        }
+        input[type="submit"]:active{
+            transform:scale(0.95);
+        }
+        footer{
+            margin-top: 2rem;
+            text-align: left;
+            color: gray;
+            font-style: italic;
+            font-size:10px;
+        }
+
+
+        .status-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: gray;
+            margin: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .connected {
+            background-color: #4CAF50;
+        }
+        .disconnected {
+            background-color: #F44336;
+        }
+        .ajax-fallback {
+            background-color: #FF9800;
+        }
+
+    </style>
+    <script>
+        window.onload = function(){onload_tasks();};
+    </script>
+</head>
+<body>
+    <h1>6x2 Antenna Switch</h1>
+    <h2>WebSocket Status</h2>
+    <div id="statusLight" class="status-indicator"></div>
+    <p id="statusText">Disconnected</p>
+    <form action="switch" method="POST" enctype="application/x-www-form-urlencoded" id="form_switch"></form>
+    <form action="setlabel" method="POST" enctype="application/x-www-form-urlencoded" id="form_label"></form>
+    <table id="tbSel" border=4>
+        <tr>
+            <th>Radio A</th>
+            <th>Antenna</th>
+            <th>Radio B</th>
+        </tr>
+        <tr>
+            <td><input type="radio" name="sel1" value="0" form="form_switch"></td>
+            <td></td>
+            <td><input type="radio" name="sel2" value="0" form="form_switch"></td>
+        </tr>
+        <tr class="even">
+            <td><input type="radio" name="sel1" value="1" form="form_switch"></td>
+            <td><input type ="text" maxlength="14" id="ant1" name="ant1" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type="radio" name="sel2" value="1" form="form_switch"></td>
+        </tr>
+
+        <tr>
+            <td><input type="radio" name="sel1" value="2" form="form_switch"></td>
+            <td><input type ="text" maxlength="14" id="ant2" name="ant2" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type="radio" name="sel2" value="2" form="form_switch"></td>
+        </tr>
+        <tr class="even">
+            <td><input type="radio" name="sel1" value="3" form="form_switch"></td>
+            <td><input type ="text" maxlength="14" id="ant3" name="ant3" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type="radio" name="sel2" value="3" form="form_switch"></td>
+        </tr>
+        <tr>
+            <td><input type="radio" name="sel1" value="4" form="form_switch"></td>
+            <td><input type ="text" maxlength="14" id="ant4" name="ant4" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type="radio" name="sel2" value="4" form="form_switch"></td>
+        </tr>
+        <tr class="even">
+            <td><input type="radio" name="sel1" value="5" form="form_switch"></td>
+            <td><input type ="text" maxlength="14" id="ant5" name="ant5" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type="radio" name="sel2" value="5" form="form_switch"></td>
+        </tr>
+        <tr>
+            <td><input type="radio" name="sel1" value="6" form="form_switch"></td>
+            <td><input type ="text" maxlength="14" id="ant6" name="ant6" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type="radio" name="sel2" value="6" form="form_switch"></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" id="btnSwitch" onclick="send_alloc();" value="Switch">
+    <!-- double click to edit and show save button -->
+    <input type="submit" id="save_labels" onclick="send_labels();" value="Save" hidden="true">
+    
+    <h1>Network config</h1>
+    <form action="setport" method="POST" enctype="application/x-www-form-urlencoded" id="form_port"></form>
+    <table border=4>
+        <tr>
+            <th>Item</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>HTTP port number (1-65535, 80 by default)</td>
+            <td><input type="number" max=65535 min=1 name="portHTTP" id="portHTTP" form="form_port"></td>
+        </tr>
+        <tr>
+            <td>TCP port number (1-65535, 502 by default)</td>
+            <td><input type="number" max=65535 min=1 name="portTCP" id="portTCP" form="form_port"></td>
+        </tr>
+    </table>
+    <input type="submit" id="set_ports" onclick="send_port();" value="Apply">
+</body>
+<footer>
+    <p>Designed by: Lu, Zening (BI4WOP)</p>
+    <p>1st Ver.: Dec. 1, 2019</p>
+    <p>2st Ver.: Mar. 8, 2024</p>
+</footer>
+<script>
+    var N_RADIOS = 2;
+    var N_ANTS = 6; // excluding 0, so the real number of radio boxes is 6+1=7
+    var timeout_xhttp = 2000;
+    var SelectorsChanged = Array(N_RADIOS).fill(false);
+    var CommittedValues = Array(N_RADIOS);
+    var SelectorsValues = Array(N_RADIOS);
+    /* Websocket class BEGIN*/
+    var wsClient; // a global singleton for WebSocket class
+    class RobustWebSocket 
+    {
+        constructor(url, lampElement, statusTextElement, options = {}) {
+            // Configuration parameters
+            this.url = url;
+            this.lamp = lampElement;
+            this.statusText = statusTextElement;
+            this.reconnectInterval = options.reconnectInterval || 3000;
+            this.maxReconnectAttempts = options.maxReconnectAttempts || 5;
+            this.ajaxFallbackUrl = options.ajaxFallbackUrl || '/fallback';
+            this.heartbeatInterval = options.heartbeatInterval || 30000;    // 30s ping interval
+            this.heartbeatTimeout = options.heartbeatTimeout || 45000;      // 45s timeout threshold
+            
+            // Connection state
+            this.ws = null;
+            this.reconnectAttempts = 0;
+            this.isAjaxFallback = false;
+            this.shouldReconnect = true;
+            this.heartbeatTimer = null;
+            this.heartbeatTimeoutTimer = null;
+            
+            // Bind event handlers
+            this.connect = this.connect.bind(this);
+            this.handleOpen = this.handleOpen.bind(this);
+            this.handleMessage = this.handleMessage.bind(this);
+            this.handleClose = this.handleClose.bind(this);
+            this.handleError = this.handleError.bind(this);
+            this.sendHeartbeat = this.sendHeartbeat.bind(this);
+            this.startHeartbeatTimeout = this.startHeartbeatTimeout.bind(this);
+        }
+        
+        // Initialize WebSocket connection
+        connect() {
+            if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
+            
+            try {
+                this.updateStatus('connecting', 'Connecting...', 'gray');
+                this.ws = new WebSocket(this.url);
+                
+                // Bind event handlers
+                this.ws.onopen = this.handleOpen;
+                this.ws.onmessage = this.handleMessage;
+                this.ws.onclose = this.handleClose;
+                this.ws.onerror = this.handleError;
+
+
+            } catch (error) {
+                console.error('WebSocket creation failed:', error);
+                this.handleConnectionFailure();
+            }
+        }
+        
+        // Handle connection success
+        handleOpen() {
+            this.reconnectAttempts = 0;
+            this.isAjaxFallback = false;
+            this.updateStatus('connected', 'WebSocket Connected', '#4CAF50');
+            /* fire three requests upon connection */
+            // fire a request for antenna allocation
+            setTimeout(get_alloc, 100);
+            // fire a request for antenna labels
+            setTimeout(get_label, 200);
+            // fire a request for port allocation
+            setTimeout(get_port, 300);
+            this.startHeartbeat();
+        }
+        
+        // Handle received messages
+        handleMessage(event) 
+        {
+            const data = event.data;
+            
+            // Reset timeout on heartbeat response
+            // Handle other messages here
+            console.log('Message received:', data);
+            var lines = data.split("\r\n");
+            // each response endswith \r\n
+            for (var i = 0; i < lines.length; i++) 
+            {
+                var line = lines[i].trim();
+                if (!line) continue; // skip empty lines
+                {
+                    // the line is a response from the server
+                    if(line.includes("URI"))
+                    {
+                        var args = line.split("&");
+                        var args_wo_URI = []
+                        if(args.length == 0)  continue;
+                        // parse URI and args splitted by "&"
+                        var URI = "";
+                        for(var j = 0; j < args.length; ++j)
+                        {
+                            var arg = args[j];
+                            if(!arg) continue;
+                            if(arg.length == 0) continue;
+                            if(arg.indexOf('=') < 0) continue;
+                            // parse key=value
+                            var skey = "";
+                            var sval = "";
+                            var tmp_splt = arg.split("=");
+                            if(tmp_splt.length < 2) continue;
+                            skey = tmp_splt[0]
+                            sval = tmp_splt[1]
+                            if(skey == "URI")
+                            {
+                                URI = sval;
+                            }
+                            else
+                            {
+                                args_wo_URI.push(arg)
+                            }
+                        }
+                        if(URI.length == 0) continue;
+
+                        // UNFINISHED: execute according to URI from the response
+                        URI = URI.toLowerCase();
+                        var text_wo_URI = args_wo_URI.join('&') 
+                        if(URI == "/getalloc") // current antenna switch positions
+                        {
+                            update_ant_allocs_from_response(text_wo_URI);
+                        }
+                        else if(URI == "/getlabel") // current antenna names
+                        {
+                            update_labels_from_response(text_wo_URI);
+                        }
+                        else if(URI == "/getport") // current port for UDP observation
+                        {
+                            update_port_from_response(text_wo_URI);
+                        }
+                        else if(URI == "/switch") // a success acknowledgement
+                        {
+                            // reactivate switch button 
+                            var btn = document.getElementById("btnSwitch");
+                            btn.disabled = false;
+                        }
+                        else if(URI == "/setlabel") // a success acknowledgement
+                        {
+                            // hide save button
+                            var btn = document.getElementById("save_labels");
+                            btn.hidden = true;
+                        }
+                        else if(URI == "/setport") // a success acknowledgement
+                        {
+                            // nothing to do
+                        }
+                    } 
+                    // otherwise, the line is a pong
+                    else if (data.includes("pong") ) 
+                    {
+                        this.resetHeartbeatTimeout();
+                    }
+                }
+            }
+        }
+        
+        // Handle connection close
+        handleClose(event) {
+            console.log('Connection closed:', event.code, event.reason);
+            this.updateStatus('disconnected', 'Connection Closed', '#F44336');
+            this.stopHeartbeat();
+            
+            if (this.shouldReconnect && !this.isAjaxFallback) {
+                this.scheduleReconnect();
+            }
+        }
+        
+        // Handle connection errors
+        handleError(error) {
+            console.error('WebSocket error:', error);
+            this.updateStatus('error', 'Connection Error', '#F44336');
+            this.handleConnectionFailure();
+        }
+        
+        // Start heartbeat detection
+        startHeartbeat() {
+            this.stopHeartbeat();
+            
+            // Send regular heartbeat messages
+            this.heartbeatTimer = setInterval(() => {
+                if (this.ws.readyState === WebSocket.OPEN) {
+                    this.sendHeartbeat();
+                }
+            }, this.heartbeatInterval);
+            
+            // Initial heartbeat
+            this.sendHeartbeat();
+        }
+        
+        // Send heartbeat message
+        sendHeartbeat() {
+            if (this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send('ping');
+                this.startHeartbeatTimeout();
+            }
+        }
+        
+        // Start heartbeat timeout detection
+        startHeartbeatTimeout() {
+            this.stopHeartbeatTimeout();
+            
+            this.heartbeatTimeoutTimer = setTimeout(() => {
+                console.error('Heartbeat timeout detected');
+                this.updateStatus('timeout', 'Heartbeat Timeout', '#FF5722');
+                this.ws.close();  // Will trigger reconnect
+            }, this.heartbeatTimeout);
+        }
+        
+        // Reset heartbeat timeout
+        resetHeartbeatTimeout() {
+            this.stopHeartbeatTimeout();
+            this.startHeartbeatTimeout();
+        }
+        
+        // Stop heartbeat timeout timer
+        stopHeartbeatTimeout() {
+            if (this.heartbeatTimeoutTimer) {
+                clearTimeout(this.heartbeatTimeoutTimer);
+                this.heartbeatTimeoutTimer = null;
+            }
+        }
+        
+        // Stop all heartbeat activities
+        stopHeartbeat() {
+            if (this.heartbeatTimer) {
+                clearInterval(this.heartbeatTimer);
+                this.heartbeatTimer = null;
+            }
+            this.stopHeartbeatTimeout();
+        }
+        
+        // Handle connection failures
+        handleConnectionFailure() {
+            this.reconnectAttempts++;
+            
+            if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+                console.log(`Max reconnect attempts (${this.maxReconnectAttempts}) reached, switching to AJAX`);
+                this.switchToAjaxFallback();
+            } else {
+                this.scheduleReconnect();
+            }
+        }
+        
+        // Schedule reconnection attempt
+        scheduleReconnect() {
+            const delay = Math.min(this.reconnectInterval * Math.pow(2, this.reconnectAttempts), 30000);
+            console.log(`Reconnecting in ${delay/1000} seconds...`);
+            setTimeout(this.connect, delay);
+        }
+        
+        // Switch to AJAX fallback mode
+        switchToAjaxFallback() {
+            this.isAjaxFallback = true;
+            this.updateStatus('ajax-fallback', 'AJAX Fallback Mode', '#FF9800');
+            this.startAjaxPolling();
+        }
+        
+        // Start AJAX polling
+        startAjaxPolling() {
+            console.log('Starting AJAX polling...');
+            // Implement AJAX polling logic here
+            // fire a request for antenna allocation
+            setTimeout(get_alloc, 100);
+            // fire a request for antenna labels
+            setTimeout(get_label, 200);
+            // fire a request for port allocation
+            setTimeout(get_port, 300);
+            setInterval(get_alloc, 2000); // set a repeated routine for updating antenna allocations
+        }
+        
+        // Update connection status and indicator
+        updateStatus(state, text, color) {
+            // Update indicator lamp
+            this.lamp.style.backgroundColor = color;
+            
+            // Update status text
+            this.statusText.textContent = `Status: ${text}`;
+            
+            // Update CSS classes
+            this.lamp.className = 'status-indicator';
+            if (state === 'connected') this.lamp.classList.add('connected');
+            else if (state === 'disconnected') this.lamp.classList.add('disconnected');
+            else if (state === 'ajax-fallback') this.lamp.classList.add('ajax-fallback');
+            else if (state === 'timeout') this.lamp.classList.add('timeout');
+        }
+        
+        // Send data through WebSocket or AJAX
+        send(data) {
+            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(data);
+            } else if (this.isAjaxFallback) {
+                // Use fetch API in AJAX mode
+            } else {
+                console.warn('Cannot send - connection not ready');
+            }
+        }
+        
+        // Close connection manually
+        disconnect() {
+            this.shouldReconnect = false;
+            this.stopHeartbeat();
+            if (this.ws) {
+                this.ws.close();
+            }
+            this.updateStatus('disconnected', 'Manually Disconnected', '#F44336');
+        }
+
+        is_ws_connected() {
+            return (this.ws && this.ws.readyState === WebSocket.OPEN);
+        }
+    }
+    /* Websocket class END */
+
+    function onload_tasks()
+    {
+        /* attempt WebSocket */
+        const lamp = document.getElementById('statusLight');
+        const statusText = document.getElementById('statusText');
+            
+        // Create WebSocket instance
+        wsClient = new RobustWebSocket(
+            // '/ws', // Replace with your WebSocket URL
+            // for DEBUG, use absolute URL
+            'ws://' + "localhost" + '/ws',
+            lamp,
+            statusText,
+            {
+                reconnectInterval: 5000,
+                maxReconnectAttempts: 20,
+                ajaxFallbackUrl: '/fallback',
+                heartbeatInterval: 10000,
+                heartbeatTimeout: 15000
+            }
+        );
+            
+        // Start connection
+        wsClient.connect();
+        
+        /* add click event lisener to radio buttons, */
+        for(radionum = 1; radionum <= N_RADIOS; ++radionum)
+        {
+            elemname = "sel" +  radionum// get number
+            elems = document.getElementsByName(elemname)
+            for(antnum = 0; antnum < elems.length; ++antnum)
+            {
+                e = elems[antnum];
+                e.addEventListener('click', (evt)=>{
+                    // the clicked element
+                    e_sel = evt.target
+                    // the name of the clicked selector 
+                    name_sel = e_sel.name
+                    radionum_ = Number(name_sel.split('l')[1])
+                    // the clicked radio number 
+                    v_new  = e_sel.value;
+                    antnum_new = Number(v_new);
+                    SelectorsValues[radionum_ - 1] = antnum_new;
+                    console.log(radionum_, antnum_new);
+                    // mark as value changed, so when submit new antenna allocations, the unchanged half will not be submitted
+                    if(antnum_new != CommittedValues[radionum_ - 1])
+                    {
+                        SelectorsChanged[radionum_ - 1] = true;
+                    }
+                    else
+                    {
+                        SelectorsChanged[radionum_ - 1] = false;
+                    }
+                    update_tabSel_view();
+                });
+            }
+        }
+        
+    }
+    
+    // update table colors according to selected and commited values
+    function update_tabSel_view()
+    {
+        tb = document.getElementById("tbSel")
+        for(radionum = 1; radionum <= N_RADIOS; ++radionum)
+        {
+            name = 'sel' + radionum;
+
+            antnum_sel = SelectorsValues[radionum-1];
+            antnum_cmt = CommittedValues[radionum-1];
+            /* reset all td colors */
+            for(antnum = 0; antnum <= N_ANTS; ++antnum)
+            {
+                iR = antnum + 1;
+                tr = tb.rows[iR];
+                td = tr.cells[(radionum == 1)?(0):(2)];
+                // 1: occuped by other radios
+                isOccupied = false;
+                for(radionum_other = 1; radionum_other <= N_RADIOS; ++radionum_other)
+                {
+                    if(radionum_other == radionum)  continue;
+                    if(CommittedValues[radionum_other] == antnum)
+                    {
+                        isOccupied = true;
+                        break;
+                    }
+                }
+                // 2: selected but different from the committed value (changed)
+                isChanged = (antnum_sel == antnum) && (antnum != antnum_cmt);
+
+                if(isOccupied)
+                {
+                    td.style.backgroundColor = "#ff7f00"; // redish orange
+                }
+                else if(isChanged)
+                {
+                    td.style.backgroundColor = "yellow";
+                }
+                else
+                {
+                    td.style.backgroundColor = "";
+                }
+            }
+        }
+    }
+
+
+    function update_labels_from_response(recv)
+    {
+        args = recv.split("&");
+        for (arg of args)
+        {
+            tmp_splt = arg.split("=");
+            ant = tmp_splt[0]
+            label = tmp_splt[1]
+            id = "ant" + ant.split("t")[1]// get number
+            e = document.getElementById(id)
+            e.value = label;
+        }
+    }
+    // WebSocket or AJAX get label
+    function get_label()
+    {
+        // WS
+        if(wsClient.is_ws_connected())
+        {
+            wsClient.send("URI=/getlabel\r\n");
+        }
+        // AJAX
+        else
+        {
+            var xhttp = new XMLHttpRequest();
+            xhttp.timeout = timeout_xhttp;
+            xhttp.onload = function () {
+                if(xhttp.status == 200)
+                {
+                    console.log("recved")
+                    recv = xhttp.responseText; //ant1=&ant2=&...
+                    update_labels_from_response(recv);
+                }
+            };
+            xhttp.open("GET", "getlabel", true); // GET Async
+            xhttp.send();
+        }
+    }
+    
+    function update_ant_allocs_from_response(recv)
+    {
+        args = recv.split("&");
+        for (arg of args)
+        {
+            tmp_splt = arg.split("=");
+            sel = tmp_splt[0]
+            num = Number(tmp_splt[1])
+            radionum = Number(sel.split("l")[1])
+            elemname = "sel" +  radionum// get number
+            elems = document.getElementsByName(elemname)
+            if(num < elems.length)
+            {
+                // only update unchanged sides of the selector, in order not to override user selections
+                if(!SelectorsChanged[radionum - 1])
+                {
+                    CommittedValues[radionum-1] = num;
+                    SelectorsValues[radionum-1] = num;
+                    elems[num].checked = true;
+                }
+            }
+        }
+    }
+    // AJAX get antenna alloc
+    function get_alloc()
+    {
+        // WS
+        if(wsClient.is_ws_connected())
+        {
+            wsClient.send("URI=/getalloc\r\n");
+        }
+        // AJAX
+        else
+        {
+            var xhttp = new XMLHttpRequest();
+            xhttp.timeout = timeout_xhttp;
+            xhttp.onload = function () {
+                if(xhttp.status == 200)
+                {
+                    recv = xhttp.responseText; //sel1=2&sel2=3
+                    console.log(recv)
+                    update_ant_allocs_from_response(recv)
+                }
+            };
+            xhttp.ontimeout = function (){
+                console.log('getalloc timeout')
+            }
+            xhttp.open("GET", "getalloc", true); // GET Async
+            xhttp.send();
+        }
+    }
+    
+    function update_port_from_response(recv)
+    {
+        args = recv.split("&");
+        for (arg of args)
+        {
+            tmp_splt = arg.split("=");
+            num = Number(tmp_splt[1]);
+            name = tmp_splt[0];// get number
+            e = document.getElementById(name);
+            e.value = num;
+        }
+    }
+    // AJAX get port
+    function get_port()
+    {
+        if(wsClient.is_ws_connected())
+        {
+            wsClient.send("URI=/getport\r\n");
+        }
+        else
+        {
+            var xhttp = new XMLHttpRequest();
+            xhttp.timeout = timeout_xhttp;
+            xhttp.onload = function () {
+                if(xhttp.status == 200)
+                {
+                    recv = xhttp.responseText; //sel1=2&sel2=3
+                    console.log(recv);
+                    update_port_from_response(recv);
+                }
+            };
+            xhttp.open("GET", "getport", true); // GET Async
+            xhttp.send();
+        }
+    }
+
+    // @target URL: /setport
+    // @payload format: portHTTP=80&portTCP=502
+    function send_port()
+    {
+        msg = "";
+        // build send string
+        var items = ["portHTTP", "portTCP"];
+        for(var i = 0; i < items.length; ++i)
+        {
+            name = items[i];
+            e = document.getElementById(name);
+            if(e)
+            {
+                var v = Number(e.value);
+                if(v > 0)
+                {
+                    if(msg) msg += "&";
+                    msg += name + "=" + v;
+                }
+            }
+        }
+        // send message
+        if(msg)
+        {
+            // WS
+            if(wsClient.is_ws_connected())
+            {
+                wsClient.send("URI=/setport&" + msg + "\r\n");
+            }
+            // AJAX
+            else
+            {
+                // is WebSocket connected, send via WebSocket
+                // otherwise fallback to AJAX
+                var xhttp = new XMLHttpRequest();
+                xhttp.timeout = timeout_xhttp;
+                xhttp.onload = ()=>{
+                    btn.disabled = false;
+                    get_port();
+                };
+                xhttp.ontimeout = ()=>{btn.disabled = false;};
+                xhttp.onerror = ()=>{btn.disabled = false;};
+                xhttp.open("POST", "setport", true); // POST Async
+                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                btn = document.getElementById("set_ports");
+                btn.disabled = true;
+                xhttp.send(msg);
+            }
+        }
+    }
+
+    // @target URL: /switch
+    // @payload format: sel1=[0-6|255]&sel2=[0-6|255], 255 means leave the antenna settings unchanged
+    // before form submission of antenna allocation
+    var isSendingAlloc = false;
+    function send_alloc()
+    {
+        // avoid repetitive sending
+        if(isSendingAlloc) return;
+        msg = "";
+        // build send string
+        for(radionum = 1; radionum <= N_RADIOS; ++radionum)
+        {
+            i = radionum - 1;
+            name = 'sel' + radionum;
+            // only submit changed values
+            v = 255; // v= 255 means leave it unchanged
+            if(SelectorsChanged[i])
+            {
+                v = SelectorsValues[i];
+            }
+            // sel1=0&sel2=3
+            if(v >= 0)
+            {
+                if(msg) msg += "&";
+                msg += name + "=" + v;
+            }
+        }
+        // send message
+        if(msg)
+        {
+            btn = document.getElementById("btnSwitch");
+            btn.disabled = true;
+            // reactivate button in 1sec
+            setTimeout(()=> {
+                document.getElementById('btnSwitch').disabled = false;
+                        },
+                        1000); 
+            // WS
+            if(wsClient.is_ws_connected())
+            {
+                wsClient.send("URI=/switch&" + msg + "\r\n");
+                // will need a success acknowledgement to unfreeze the button
+            }
+            // AJAX
+            else
+            {
+                // is WebSocket connected, send via WebSocket
+                // otherwise fallback to AJAX
+                var xhttp = new XMLHttpRequest();
+                xhttp.timeout = timeout_xhttp;
+                xhttp.onload = ()=>{
+                    isSendingAlloc = false;
+                    btn.disabled = false;
+                    SelectorsChanged.fill(false);
+                    get_alloc();
+                };
+                xhttp.ontimeout = ()=>{isSendingAlloc = false;btn.disabled = false;};
+                xhttp.onerror = ()=>{isSendingAlloc = false;btn.disabled = false;};
+                xhttp.open("POST", "switch", true); // POST Async
+                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                isSendingAlloc = true;
+                xhttp.send(msg);
+            }
+        }
+
+    }
+
+    // @target URL: /setlabel
+    // @payload format: ant1=label1&ant2=label2
+    // before form submission of antenna allocation
+    var isSendingLabels = false;
+    function send_labels()
+    {
+        // avoid repetitive sending
+        msg = "";
+        // build send string
+        for(var antnum = 1; antnum <= N_ANTS; ++antnum)
+        {
+            i = antnum - 1;
+            name = 'ant' + antnum;
+            // ant1=label1&ant2=label2
+            e = document.getElementById(name);
+            if(e)
+            {
+                var slabel = String(e.value);
+                if(msg) msg += "&";
+                msg += name + "=" + slabel;
+            }
+        }
+        // send message
+        if(msg)
+        {
+            // WS
+            if(wsClient.is_ws_connected())
+            {
+                wsClient.send("URI=/setlabel&" + msg + "\r\n");
+            }
+            // AJAX
+            else
+            {
+                // is WebSocket connected, send via WebSocket
+                // otherwise fallback to AJAX
+                var xhttp = new XMLHttpRequest();
+                xhttp.timeout = timeout_xhttp;
+                xhttp.onload = ()=>{
+                    isSendingAlloc = false;
+                    btn.disabled = false;
+                    SelectorsChanged.fill(false);
+                    btn = document.getElementById("save_labels");
+                    btn.hidden = true;
+                    get_alloc();
+                };
+                xhttp.ontimeout = ()=>{};
+                xhttp.onerror = ()=>{};
+                xhttp.open("POST", "setlabel", true); // POST Async
+                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhttp.send(msg);
+            }
+        }
+    }
+    // edit labels: double click to edit
+    for(i=1; i<=N_ANTS; ++i)
+    {
+        id = 'ant' + (i);
+        e = document.getElementById(id);
+        // double click to edit and show save button
+        e.addEventListener("dblclick", (evt)=>{
+            e = evt.toElement;
+            e.readOnly = !e.readOnly;
+            if(e.readOnly)
+            {
+                e.style.background = "white";
+            }
+            else
+                e.style.background = "lightblue";
+            btn_save = document.getElementById('save_labels');
+            btn_save.hidden = false;
+        });
+    }
+</script>
+</html>

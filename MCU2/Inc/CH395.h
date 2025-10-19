@@ -28,7 +28,7 @@ extern "C" {
  * CH395 status
  * ***/
 #define CH395_SOCKS_AVAIL 8
-#define CH395_TCP_LISTEN_SOCK 5
+#define CH395_UDP_LISTEN_SOCK 7
 #define CH395_SIZE_BUFFER (1024+512)
 
 typedef enum
@@ -64,7 +64,7 @@ extern CH395_TypeDef ch395;
 void CH395SetBuffer(); // 2KB send & recv buffer for SOCK0-5
 // start HTTP server on CH395 on socket 0 and TCP server on socket 4,allow multiple connections
 BOOL CH395TCPServerStart(uint32_t ip, uint16_t port_http_server, uint16_t port_tcp_server);
-// TODO: CH395 GPIO
+//
 /* ********************************************************************************************************************* */
 /* 命令代码 */
 /* 一个命令操作顺序包含:

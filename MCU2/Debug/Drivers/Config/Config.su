@@ -1,9 +1,9 @@
 Config.c:28:6:push_config_to_volatile_variables	16	static
-Config.c:43:6:load_config	16	static
-Config.c:105:6:save_config	16	static
-Config.c:179:6:config_check_valid	24	static
-Config.c:188:6:set_config_variable_by_name	32	static
-Config.c:238:6:get_if_config_modified	16	static
-Config.c:251:19:get_config_variable_mapper_item_by_name	32	static
-Config.c:270:6:get_config_variable_by_name	32	static
-Config.c:312:5:get_config_string	16	static
+Config.c:42:6:load_config	16	static
+Config.c:104:6:save_config	16	static
+Config.c:178:6:config_check_valid	24	static
+Config.c:187:6:set_config_variable_by_name	32	static
+Config.c:237:6:get_if_config_modified	16	static
+Config.c:250:19:get_config_variable_mapper_item_by_name	32	static
+Config.c:269:6:get_config_variable_by_name	32	static
+Config.c:311:5:get_config_string	16	static

@@ -8,7 +8,8 @@
 #include "FS.h"
 FS_typedef FS;
 
-BOOL FS_begin(FS_typedef* pFS, uint32_t* addr_base)
+
+bool FS_begin(FS_typedef* pFS, uint32_t* addr_base)
 {
 	if((uint32_t)addr_base < MAX_ADDR && ((pFS->n_files = *(uint32_t*)(addr_base)) != 0xffffffff))
 	{
@@ -64,7 +65,7 @@ int FS_size(FS_typedef* pFS, const char* path)
 	return -1;
 }
 
-BOOL FS_exists(FS_typedef* pFS, const char* path)
+bool FS_exists(FS_typedef* pFS, const char* path)
 {
 	uint32_t i;
 	uint32_t* addr = (uint32_t*)pFS->addr_base;

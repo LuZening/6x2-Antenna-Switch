@@ -46,7 +46,7 @@ HTTPRequestParseState parseStates[NUM_SOCKETS - 1] =
 	.argc = 0,
 	.connection = CLOSED,
 	.method = HTTP_GET,
-	.ready = false}
+	.ready_for_making_response = false}
 };
 
 void resetHTTPParseState(HTTPRequestParseState *pS)
@@ -55,19 +55,30 @@ void resetHTTPParseState(HTTPRequestParseState *pS)
 	pS->argc = 0;
 	pS->connection = CLOSED;
 	pS->method = HTTP_GET;
-	pS->ready = false;
+	pS->ready_for_making_response = false;
+	pS->response_stage = RESPONSE_NOT_PREPARED;
+	pS->len_response_content_remain = 0;
+	pS->response_header = response_header_shared_buffer; // use shared buffer
+	pS->ws_handshaked = WS_WAIT_FOR_HANDSHAKE;
+	activateHTTPParseState(pS);
+}
+
+void resetHTTPParseState_for_long_connection(HTTPRequestParseState *pS)
+{
+	// information to preserve: pS->connection
+	pS->state = 0;
+	pS->argc = 0;
+//	pS->method = HTTP_GET;
+	pS->ready_for_making_response = false;
 	pS->response_stage = RESPONSE_NOT_PREPARED;
 	pS->len_response_content_remain = 0;
 	pS->response_header = response_header_shared_buffer; // use shared buffer
 }
 
-void resetHTTPParseState_for_long_connection(HTTPRequestParseState *pS)
+
+void activateHTTPParseState(HTTPRequestParseState *pS)
 {
-	pS->state = 0;
-	pS->argc = 0;
-	pS->response_stage = RESPONSE_NOT_PREPARED;
-	pS->len_response_content_remain = 0;
-	pS->response_header = response_header_shared_buffer; // use shared buffer
+	pS->last_active_tick = TICK_NOW();
 }
 
 const char* HTTPGetContentType(const char* filename)
@@ -129,15 +140,15 @@ void HTTPSendFile(HTTPRequestParseState *pS, int code, FSfile_typedef file)
 	// Line 2: Connection
 	strcat(buf, "Connection: ");
 	buf += 12;
-	if(pS->connection == KEEP_ALIVE)
-	{
-		strcat(buf, "Keep-Alive\r\n");
-		buf += 12;
-	}
-	else
+	if(pS->connection == CLOSED)
 	{
 		strcat(buf, "Closed\r\n");
 		buf += 8;
+	}
+	else
+	{
+		strcat(buf, "Keep-Alive\r\n");
+		buf += 12;
 	}
 	// Line 3: Content-Encoding
 	if(is_gzip)
@@ -198,15 +209,15 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 	// Line 2: Connection
 	strcat(buf, "Connection: ");
 	buf += 12;
-	if(pS->connection == KEEP_ALIVE)
-	{
-		strcat(buf, "Keep-Alive\r\n");
-		buf += 12;
-	}
-	else
+	if(pS->connection == CLOSED)
 	{
 		strcat(buf, "Closed\r\n");
 		buf += 8;
+	}
+	else
+	{
+		strcat(buf, "Keep-Alive\r\n");
+		buf += 12;
 	}
 	// Line 3: Content-Type
 	const char* content_type = HTTPGetContentType(pS->URI);
@@ -234,6 +245,48 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content)
 	pS->response_stage = RESPONSE_PREPARED;
 }
 
+
+/*
+ * WSSendStrOriginal
+ * DON'T FORGET TO converted to frame BEFORE TRANSMITTING
+ * @params
+ * URI: indicate which URI is responding to
+ * @examples
+ * if URI == NULL
+ * response is content
+ * if URI
+ * response is: "URI=@URI&@content"
+ * */
+int WSMakeStrOriginal(char* buf, size_t lenbuf, const char* URI, const char* content)
+{
+	uint16_t n = 0;
+	if(URI)
+	{
+		strcpy(buf, "URI=");
+		n = strnlen(URI, 128);
+		// use strlcpy at any possible places to replace strncpy
+		strlcpy(buf+4, URI, lenbuf - 5);
+		buf[n+4] = '&';
+		n += 5;
+	}
+	strlcpy(buf + n, content, lenbuf - n - 1);
+	n += strnlen(content, MAX_LEN_RESPONSE_HEADER - 1);
+	buf[n] = 0;
+	return n;
+}
+
+
+void WSSendStr(HTTPRequestParseState* pS, const char* URI, const char* content)
+{
+	static uint8_t websocket_frame_shared_buffer[256];
+	int n = WSMakeStrOriginal(websocket_frame_shared_buffer, sizeof(websocket_frame_shared_buffer),  URI, content);
+	char* buf = pS->response_header;
+	n = ws_make_text_frame(buf, MAX_LEN_RESPONSE_HEADER- 1, websocket_frame_shared_buffer, n);
+	// Start Sending
+	pS->len_response_header = n;
+	pS->len_response_content_remain = 0;
+	pS->response_stage = RESPONSE_PREPARED;
+}
 
 int HTTPSendWebSocketHandshakeResponse(HTTPRequestParseState* pS, char* client_key, size_t lenKey)
 {
@@ -265,8 +318,8 @@ int HTTPSendWebSocketHandshakeResponse(HTTPRequestParseState* pS, char* client_k
 	buf += lenOut;
 	if(lenOut > 0) // key generation OK
 	{
-		strcpy(buf, "\r\n");
-		buf += 2;
+		strcpy(buf, "\r\n\r\n");
+		buf += 4;
 		*buf = 0; // terminate
 		// Start Sending
 		pS->len_response_header = buf - pS->response_header;
@@ -299,8 +352,16 @@ void HTTPredirect(HTTPRequestParseState *pS, const char* URI)
 	buf +=2 ;
 	strcat(buf, "Connection: ");
 	buf += 12;
-	strcat(buf, "Closed");
-	buf += 6;
+	if(pS->connection == CLOSED)
+	{
+		strcat(buf, "Closed");
+		buf += 6;
+	}
+	else
+	{
+		strcat(buf, "Keep-Alive");
+		buf += 10;
+	}
 	strcat(buf, HTTP_LINE_DELIM);
 	buf += 2;
 	strcat(buf, "Content-Length: ");
@@ -365,17 +426,26 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 	if(i > 0)
 	{
 		HTTPRequestParseState *pS = &parseStates[i-1];
+		activateHTTPParseState(pS); // renew the timeout counter when data received
 		// STAGE 0: Socket recv has a request, but no response under preparation, can prepare a new response
-		if(pS->ready  && pS->response_stage == RESPONSE_NOT_PREPARED)
+		if(pS->ready_for_making_response  && pS->response_stage == RESPONSE_NOT_PREPARED)
 		{
-			// CASE 0: respond to normal HTTP request
-			if(pS->connection != UPGRADED_WS)
+			// CASE 0: handshake to Websocket upgrade request,
+			if((pS->connection == UPGRADED_WS) && (pS->ws_handshaked == WS_WAIT_FOR_HANDSHAKE))
+			{
+				// client key is stored in cookies buffer
+				int r = HTTPSendWebSocketHandshakeResponse(pS, pS->cookies, strlen(pS->cookies));
+				pS->ws_handshaked = WS_HANDSHAKED;
+			}
+			// CASE 1: respond to normal HTTP request
+			// or WS requests after handshake
+			else
 			{
 				for(j=0; j < NUM_HTTP_RESPONDERS; ++j)
 				{
-					if(strncmp(pS->URI, HTTPResponders[j].uri, MAX_LEN_URI) == 0) // matches
+					if(strncmp(pS->URI, HTTPWSResponders[j].uri, MAX_LEN_URI) == 0) // matches
 					{
-						(HTTPResponders[j].func)(pS); // call HTTPResponder service function
+						(HTTPWSResponders[j].func)(pS); // call HTTPResponder service function
 						break;
 					}
 				}
@@ -384,12 +454,6 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 					HTTPonNotFound(pS);
 				}
 			}
-			// CASE 1: respond to Websocket upgrade request
-			else if(pS->connection == UPGRADED_WS)
-			{
-				// client key is stored in cookies buffer
-				int r = HTTPSendWebSocketHandshakeResponse(pS, pS->cookies, strlen(pS->cookies));
-			}
 
 		}
 
@@ -397,7 +461,7 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 		// judge if response has been prepared for transmission
 		// if the CHIP is free, set off the transmission
 		// otherwise next time
-		if((pch395->TX_available & (1 << i)) != 0 && pS->ready)
+		if(((pch395->TX_available & (1 << i)) != 0) && (pS->ready_for_making_response))
 		{
 			// CASE 1: parser has prepared the response content,
 			// start the process of data transmission immediately
@@ -408,10 +472,10 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 						? (pS->len_response_content_remain)
 								: (max_len_content));
 				CH395StartSendingData(i, pS->len_response_header + len_content_this_time);
-				CH395ContinueSendingData((uint8_t*)pS->response_header, pS->len_response_header);
+				CH395ContinueSendingData((const uint8_t*)pS->response_header, pS->len_response_header);
 				CH395ContinueSendingData((const uint8_t*)pS->response_content, len_content_this_time);
 				CH395Complete();
-				ch395.TX_available &= ~(1<<i);
+				ch395.TX_available &= ~(1<<i); // invalidate TX flag, will be validated again when TX DONE interrupt
 				pS->len_response_content_remain -= len_content_this_time;
 				pS->response_content += len_content_this_time;
 				if(pS->len_response_content_remain == 0) // all content completely sent this time
@@ -420,6 +484,10 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 					{
 						HTTPclose(i);
 						resetHTTPParseState(pS);
+					}
+					else if(pS->ws_handshaked == WS_TO_CLOSE)
+					{
+						pS->ws_handshaked = WS_CLOSED;
 					}
 					else
 					{
@@ -439,7 +507,7 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 			{
 				uint16_t len = pS->len_response_content_remain;
 				CH395SendData(i, pS->response_content, ((len<MAX_SIZE_PACK)?(len):(len=MAX_SIZE_PACK)));
-				ch395.TX_available &= ~(1<<i);
+				ch395.TX_available &= ~(1<<i); // invalidate TX flag, will be validated again when TX DONE interrupt
 				// move the cursor to record how much content has been transmitted
 				pS->len_response_content_remain -= len;
 				pS->response_content += len; // move the cursor
@@ -463,10 +531,19 @@ void HTTPHandle(CH395_TypeDef *pch395) // call on interrupt
 		}
 
 		// Iterate the next socket
-		if(pS->sock_index == i && !pS->ready)
+		if((pS->sock_index == i) && (!pS->ready_for_making_response))
 		{
 			ch395.SOCK_responding = getNextSock();
-//			CH395TCPDisconnect(i);
+			// close the connection if the HTTP request is not long-lasting
+
+			if((pS->connection == CLOSED))
+			{
+				CH395TCPDisconnect(i);
+				HTTPclose(i);
+				resetHTTPParseState(pS);
+			}
+
+
 		}
 	}
 }
@@ -478,7 +555,7 @@ int8_t getNextSock()
 	int8_t j;
 	for(j=1; j < NUM_SOCKETS; ++j)
 	{
-		if(parseStates[j-1].ready && (ch395.socket_connected & (1 << j)))
+		if(parseStates[j-1].ready_for_making_response && (ch395.socket_connected & (1 << j)))
 		{
 			return j;
 		}
@@ -486,13 +563,12 @@ int8_t getNextSock()
 	return -1;
 }
 
-void HTTPclose(uint8_t i) // Sock Index to disconnect
+void HTTPclose(uint8_t i) // Sock Index to disconnect starting from 1
 {
-//	CH395TCPDisconnect(i);
 	ch395.RX_received &= ~(1 << i);
 	ch395.socket_connected &= ~(1 << i);
 	ch395.SOCK_responding = -1;
-	pS->connection = CLOSED;
+	parseStates[i - 1].connection = CLOSED;
 }
 
 void HTTPclose_for_long_connection(uint8_t i)
@@ -579,7 +655,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					while(tok_arg)
 					{
 						DEBUG_LOG("Arg: %s\r\n", tok_arg);
-						pS->argv[pS->argc++] = tok_arg;
+						pS->argv[pS->argc++] = tok_arg; // tok_arg: "arg=xxx\0"
 						tok_arg = strtok_r(NULL, "&", &arg_tok_saveptr);
 					}
 				}
@@ -598,8 +674,9 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 		}
 		else
 			goto HTTP_PARSE_ERROR;
-			/* no break */
-			// do not break, let the following execute
+		/* no break */
+		// do not break, let the following execute
+	case 1:
 	// parse header
 	// example:
 	//		Host: example.com
@@ -607,7 +684,6 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 	//		Connection: Upgrade
 	//		Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
 	//		Sec-WebSocket-Version: 13
-	case 1:
 		line = strsepstr(&line_tok_saveptr, HTTP_LINE_DELIM);
 		while(line)
 		{
@@ -625,23 +701,25 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					if(tok == NULL) goto HTTP_PARSE_ERROR;
 					DEBUG_LOG("Value: %s\r\n", tok);
 					// CASE 1: keep alive connection
-					if(strstr(tok, "Keep") != NULL)
+					if((strstr(tok, "Keep") != NULL) || (strstr(tok, "keep") != NULL))
 						pS->connection = KEEP_ALIVE;
 					// CASE 2: upgrade to WebSocket
-					else if(strstr(tok, "Upgrade") != NULL)
+					else if((strstr(tok, "Upgrade") != NULL) || (strstr(tok, "upgrade") != NULL))
 					{
+						pS->ws_handshaked = WS_WAIT_FOR_HANDSHAKE; // urge to handshake
 						pS->connection = UPGRADED_WS;
 					}
 
 				}
 				// Header: Sec-WebSocket-Key
+				// websocket safety key store in cookies buffer
 				else if(strcmp(tok, "Sec-WebSocket-Key") == 0)
 				{
 					tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
 					if(tok == NULL) goto HTTP_PARSE_ERROR;
 					// temporarily store client key in coolies
-					char* pEnd = strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
-					*pEnd = 0;
+					strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
+
 				}
 				// Header: Cookie
 				else if(strcmp(tok, HTTP_ITEM_STR_COOKIES) == 0)
@@ -650,8 +728,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					{
 						tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
 						if(tok == NULL) goto HTTP_PARSE_ERROR;
-						char* pEnd = strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
-						*pEnd = 0;
+						strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
 					}
 				}
 
@@ -661,7 +738,8 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 		pS->state++;
 		/* no break */
 		// do not break, let the following execute
-	case 3: // parse payload
+	case 3:
+		// parse payload
 		if(pS->method == HTTP_POST)
 		{
 			line = strsepstr(&line_tok_saveptr, HTTP_LINE_DELIM);
@@ -680,14 +758,14 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 		/* no break */
 		// do not break, let the following execute
 	case 4: // finished
-		pS->ready = true;
+		pS->ready_for_making_response = true;
 		/* no break */
 		// do not break, let the following execute
 	}
 	return true;
 	HTTP_PARSE_ERROR:
 		pS->state = 0;
-		pS->ready = false;
+		pS->ready_for_making_response = false;
 		return false;
 }
 

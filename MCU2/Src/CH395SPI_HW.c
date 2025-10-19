@@ -85,7 +85,7 @@ void  xWriteCH395Data(uint8_t mdata)
 //{
 //	//ch395.tx_busy = true;
 //	HAL_SPI_Transmit_DMA(&hspi, psrc, size);
-//	//TODO: clear tx_busy in IT
+//	//
 //}
 /*******************************************************************************
 * Function Name  : xReadCH395Data

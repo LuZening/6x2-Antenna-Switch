@@ -108,12 +108,11 @@ err_t my_atoi(const char* buf, int8_t nMaxLen, int32_t* retval)
 		p++;
 		nMaxLen--;
 	}
-
 	*retval = (isNeg ? (-v) : v);
 
     return ERR_OK;
-failed:
-    return ERR_FAILED;
+//failed:
+//    return ERR_FAILED;
 }
 
 
@@ -131,7 +130,7 @@ int execute_command_string(CommandParser_t* pParser, const char* s, size_t len)
     case COMMAND_PROTOCOL_OTRSP:
     	pParser->bufRet[0] = 0;
     	r = parse_command_OTRSP(s, len, pParser->bufRet);
-    	if(pParser->bufRet[0]) // parsed is valid
+    	if((r >= 0) && (pParser->bufRet[0])) // parsed is valid
     		pParser->hasResponse = strnlen(pParser->bufRet, sizeof(pParser->bufRet));
     	break;
     default:

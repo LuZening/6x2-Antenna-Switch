@@ -25,6 +25,8 @@
 #define MAX_SIZE_PACK 1400 // maximum size of single TCP package in one transmission
 #define NUM_SOCKETS 3
 #define NUM_HTTP_RESPONDERS 7
+#define MAX_TICK_IDLE 32000 // ms, timeout for idle HTTP connection
+#define TICK_NOW HAL_GetTick
 
 typedef enum
 {
@@ -70,6 +72,7 @@ typedef struct
 	const uint8_t* response_content;
 	BOOL ready;	// RESET after use
 	uint8_t sock_index; //initialize sock_index
+	uint32_t last_active_tick; // tick count of last activity, for timeout check
 } HTTPRequestParseState;
 extern HTTPRequestParseState parseStates[NUM_SOCKETS];
 char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
@@ -93,6 +96,7 @@ void HTTPSendStr(HTTPRequestParseState* pS, int code, const char* content);
 void HTTPHandle(CH395_TypeDef* pch395);
 void HTTPonNotFound(HTTPRequestParseState *pS);
 void resetHTTPParseState(HTTPRequestParseState *pS);
+void activateHTTPParseState(HTTPRequestParseState *pS);
 //void HTTPRegisterResponder(const char* uri, HTTPResponder_FuncType func);
 uint8_t atou8(const char* s);
 uint8_t u16toa(uint16_t, char*);
