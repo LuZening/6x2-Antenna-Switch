@@ -94,19 +94,41 @@ int ws_handshake_response(char *client_key, size_t lenin, char *output, size_t l
  * @return Header length in bytes, -1 if error
  * @note Supports payload lengths ≤64KB (no 64-bit length)
  */
-int ws_parse_frame(uint8_t *data, size_t len, WS_Frame *frame) {
+int ws_parse_frame(uint8_t *data, size_t len, WS_Frame *frame)
+{
+	uint8_t* end = data + len;
+	uint8_t* ptr = data;
     // Byte 0: FIN[7] + Opcode[3:0]
-    frame->fin = (data[0] >> 7) & 0x01;
-    frame->opcode = data[0] & 0x0F;
+	if(ptr < end)
+	{
+		frame->fin = (*ptr >> 7) & 0x01;
+		frame->opcode = *ptr & 0x0F;
+	}
+	else
+		return -1;
+
     // Byte 1: MASK[7] + Payload length[6:0]
-    frame->mask = (data[1] >> 7) & 0x01;
-    frame->payload_len = data[1] & 0x7F;
-    uint8_t *ptr = data + 2;
+	ptr++;
+	if(ptr < end)
+	{
+		frame->mask = (*ptr >> 7) & 0x01;
+		frame->payload_len = *ptr & 0x7F;
+	}
+
+	// Byte 2: payload length continued
+    ptr++;
     // payload_len==126, parse extended length from next 2 bytes
     if(frame->payload_len == 126)
     {
-    	frame->payload_len = (((uint16_t)(ptr[0])) << 8) | (ptr[1]);
-    	ptr += 2;
+    	if(ptr + 1 < end)
+    	{
+			frame->payload_len = (((uint16_t)(ptr[0])) << 8) | (ptr[1]);
+			ptr += 2;
+    	}
+    	else
+    	{
+    		return -1;
+    	}
     }
     // NOT IMPLEMENTED : payload_len==127, parse extended length from next 4 bytes
     else if(frame->payload_len == 127)
@@ -118,12 +140,20 @@ int ws_parse_frame(uint8_t *data, size_t len, WS_Frame *frame) {
     }
 
     // Read masking key if present
-    if (frame->mask) {
-        memcpy(frame->masking_key, ptr, 4);
-        ptr += 4;
+	if (frame->mask)
+	{
+		if(ptr + 4 <= end)
+		{
+			memcpy(frame->masking_key, ptr, 4);
+			ptr += 4;
+		}
+		else
+			return -1;
     }
     // record a pointer to the payload's head
     frame->payload = ptr;
+    if(ptr + frame->payload_len > end)
+    	return -1;
     return ptr - data; // Header length
 }
 

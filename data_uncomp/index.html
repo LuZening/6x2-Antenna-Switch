@@ -75,6 +75,89 @@
             background-color: #FF9800;
         }
 
+        /* Socket Status Display Styles */
+        .socket-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin: 20px 0;
+        }
+
+        .socket-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .socket-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .socket-item {
+            padding: 10px;
+            border-radius: 6px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .socket-item-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .socket-item-status {
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+
+        /* Color classes for socket items */
+        .socket-http {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .socket-ws {
+            background-color: #9C27B0;
+            color: white;
+        }
+
+        .socket-tcp {
+            background-color: #FF5722;
+            color: white;
+        }
+
+        .socket-udp {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .socket-idle {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .socket-disconnected {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .socket-legend {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
     </style>
     <script>
         window.onload = function(){onload_tasks();};
@@ -100,33 +183,33 @@
         </tr>
         <tr class="even">
             <td><input type="radio" name="sel1" value="1" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant1" name="ant1" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type ="text" maxlength="12" id="ant1" name="ant1" readonly="true" form="form_label" title="double click to edit"></td>
             <td><input type="radio" name="sel2" value="1" form="form_switch"></td>
         </tr>
 
         <tr>
             <td><input type="radio" name="sel1" value="2" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant2" name="ant2" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type ="text" maxlength="12" id="ant2" name="ant2" readonly="true" form="form_label" title="double click to edit"></td>
             <td><input type="radio" name="sel2" value="2" form="form_switch"></td>
         </tr>
         <tr class="even">
             <td><input type="radio" name="sel1" value="3" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant3" name="ant3" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type ="text" maxlength="12" id="ant3" name="ant3" readonly="true" form="form_label" title="double click to edit"></td>
             <td><input type="radio" name="sel2" value="3" form="form_switch"></td>
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="4" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant4" name="ant4" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type ="text" maxlength="12" id="ant4" name="ant4" readonly="true" form="form_label" title="double click to edit"></td>
             <td><input type="radio" name="sel2" value="4" form="form_switch"></td>
         </tr>
         <tr class="even">
             <td><input type="radio" name="sel1" value="5" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant5" name="ant5" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type ="text" maxlength="12" id="ant5" name="ant5" readonly="true" form="form_label" title="double click to edit"></td>
             <td><input type="radio" name="sel2" value="5" form="form_switch"></td>
         </tr>
         <tr>
             <td><input type="radio" name="sel1" value="6" form="form_switch"></td>
-            <td><input type ="text" maxlength="14" id="ant6" name="ant6" readonly="true" form="form_label" title="double click to edit"></td>
+            <td><input type ="text" maxlength="12" id="ant6" name="ant6" readonly="true" form="form_label" title="double click to edit"></td>
             <td><input type="radio" name="sel2" value="6" form="form_switch"></td>
         </tr>
     </table>
@@ -134,24 +217,52 @@
     <input type="submit" id="btnSwitch" onclick="send_alloc();" value="Switch">
     <!-- double click to edit and show save button -->
     <input type="submit" id="save_labels" onclick="send_labels();" value="Save" hidden="true">
-    
-    <h1>Network config</h1>
-    <form action="setport" method="POST" enctype="application/x-www-form-urlencoded" id="form_port"></form>
-    <table border=4>
-        <tr>
-            <th>Item</th>
-            <th>Value</th>
-        </tr>
-        <tr>
-            <td>HTTP port number (1-65535, 80 by default)</td>
-            <td><input type="number" max=65535 min=1 name="portHTTP" id="portHTTP" form="form_port"></td>
-        </tr>
-        <tr>
-            <td>TCP port number (1-65535, 502 by default)</td>
-            <td><input type="number" max=65535 min=1 name="portTCP" id="portTCP" form="form_port"></td>
-        </tr>
-    </table>
-    <input type="submit" id="set_ports" onclick="send_port();" value="Apply">
+
+    <!-- Collapsible Network Status Section -->
+    <h3 onclick="toggleNetworkSection()" style="cursor:pointer; color:#2196F3;">▼ Network Status (点击展开/折叠)</h3>
+    <div id="networkSection" class="socket-container" style="display:none;">
+        <div class="socket-title">Socket Connections</div>
+        <div id="socketGrid" class="socket-grid">
+            <!-- Populated by JavaScript -->
+        </div>
+        <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+            <span style="display: inline-block; margin-right: 15px;">
+                <span class="socket-legend" style="background-color: #2196F3;"></span> HTTP
+            </span>
+            <span style="display: inline-block; margin-right: 15px;">
+                <span class="socket-legend" style="background-color: #9C27B0;"></span> WebSocket
+            </span>
+            <span style="display: inline-block; margin-right: 15px;">
+                <span class="socket-legend" style="background-color: #FF5722;"></span> TCP
+            </span>
+            <span style="display: inline-block; margin-right: 15px;">
+                <span class="socket-legend" style="background-color: #4CAF50;"></span> UDP
+            </span>
+            <span style="display: inline-block; margin-right: 15px;">
+                <span class="socket-legend" style="background-color: #9E9E9E;"></span> IDLE
+            </span>
+            <span style="display: inline-block; margin-right: 15px;">
+                <span class="socket-legend" style="background-color: #F44336;"></span> DISCONNECTED
+            </span>
+        </div>
+    </div>
+
+    <!-- Collapsible Network Config Section -->
+    <h3 onclick="toggleNetworkConfig()" style="cursor:pointer; color:#2196F3;">▼ Network Config (click to expand/collapse)</h3>
+    <div id="networkConfig" style="display:none;">
+        <form action="setport" method="POST" enctype="application/x-www-form-urlencoded" id="form_port"></form>
+        <table border=4>
+            <tr>
+                <th>Item</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>HTTP port number (1-65535, 80 by default)</td>
+                <td><input type="number" max=65535 min=1 name="portHTTP" id="portHTTP" form="form_port"></td>
+            </tr>
+        </table>
+        <input type="submit" id="set_ports" onclick="send_port();" value="Apply">
+    </div>
 </body>
 <footer>
     <p>Designed by: Lu, Zening (BI4WOP)</p>
@@ -233,6 +344,8 @@
             setTimeout(get_label, 200);
             // fire a request for port allocation
             setTimeout(get_port, 300);
+            // stop AJAX polling for socket status (server will push updates)
+            stopSocketPolling();
             this.startHeartbeat();
         }
         
@@ -338,6 +451,10 @@
                         else if(URI == "/setport") // a success acknowledgement
                         {
                             // nothing to do
+                        }
+                        else if(URI == "/socket") // socket status update
+                        {
+                            update_socket_from_response(text_wo_URI);
                         }
                     } 
                     // otherwise, the line is a pong
@@ -447,6 +564,8 @@
             this.isAjaxFallback = true;
             this.updateStatus('ajax-fallback', 'AJAX Fallback Mode', '#FF9800');
             this.startAjaxPolling();
+            // restart AJAX polling for socket status
+            startSocketPolling();
         }
         
         // Start AJAX polling
@@ -744,8 +863,8 @@
     function send_port()
     {
         msg = "";
-        // build send string
-        var items = ["portHTTP", "portTCP"];
+        // build send string - only HTTP port for now
+        var items = ["portHTTP"];
         for(var i = 0; i < items.length; ++i)
         {
             name = items[i];
@@ -955,5 +1074,171 @@
             btn_save.hidden = false;
         });
     }
+
+    /* CH395 Socket Status Functions BEGIN */
+
+    // Parse socket status response and update display
+    // New compact format: s0=H&s1=W&s2=-&s7=U\r\n
+    // H=HTTP, W=WebSocket, T=TCP, U=UDP, -=DISCONNECTED, I=IDLE
+    function update_socket_from_response(recv)
+    {
+        var socketGrid = document.getElementById('socketGrid');
+        socketGrid.innerHTML = ''; // Clear existing content
+
+        // Parse response format: s0=H&s1=W&s2=-&s7=U
+        var args = recv.split('&');
+        var socketData = [];
+
+        // Extract socket data
+        for (var i = 0; i < args.length; i++) {
+            var arg = args[i];
+            if (!arg || arg.indexOf('=') < 0) continue;
+
+            var tmp_split = arg.split('=');
+            var key = tmp_split[0];
+            var value = tmp_split[1];
+
+            // Check if it's a socket entry (e.g., s0, s1, s2...)
+            if (key.length === 2 && key.startsWith('s')) {
+                var socketNum = parseInt(key.substring(1));
+                socketData.push({num: socketNum, status: value});
+            }
+        }
+
+        // Sort by socket number
+        socketData.sort(function(a, b) { return a.num - b.num; });
+
+        // Create socket display elements
+        for (var i = 0; i < socketData.length; i++) {
+            var socket = socketData[i];
+            var socketDiv = document.createElement('div');
+            socketDiv.className = 'socket-item';
+
+            // Determine CSS class based on status (new compact format)
+            var statusClass = '';
+            var displayText = '';
+
+            if (socket.status === '-') {
+                statusClass = 'socket-disconnected';
+                displayText = 'DISCONNECTED';
+            } else if (socket.status === 'I') {
+                statusClass = 'socket-idle';
+                displayText = 'IDLE';
+            } else if (socket.status === 'H') {
+                statusClass = 'socket-http';
+                displayText = 'HTTP';
+            } else if (socket.status === 'W') {
+                statusClass = 'socket-ws';
+                displayText = 'WebSocket';
+            } else if (socket.status === 'T') {
+                statusClass = 'socket-tcp';
+                displayText = 'TCP';
+            } else if (socket.status === 'U') {
+                statusClass = 'socket-udp';
+                displayText = 'UDP';
+            } else {
+                statusClass = 'socket-idle';
+                displayText = 'UNKNOWN';
+            }
+
+            socketDiv.classList.add(statusClass);
+
+            // Create header with socket name
+            var headerDiv = document.createElement('div');
+            headerDiv.className = 'socket-item-header';
+            headerDiv.textContent = 'SOCK' + socket.num;
+            socketDiv.appendChild(headerDiv);
+
+            // Create status display
+            var statusDiv = document.createElement('div');
+            statusDiv.className = 'socket-item-status';
+            statusDiv.textContent = displayText;
+            socketDiv.appendChild(statusDiv);
+
+            socketGrid.appendChild(socketDiv);
+        }
+    }
+
+    // Get socket status via AJAX (only used when WebSocket is not connected)
+    function get_socket()
+    {
+        // If WebSocket is connected, server will push updates automatically
+        if (wsClient && wsClient.is_ws_connected()) {
+            return;
+        }
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.timeout = 5000; // 5 second timeout
+
+        xhttp.onload = function () {
+            if (xhttp.status == 200) {
+                recv = xhttp.responseText;
+                update_socket_from_response(recv);
+            }
+        };
+
+        xhttp.ontimeout = function () {
+            console.log('get_socket timeout');
+        };
+
+        xhttp.onerror = function () {
+            console.log('get_socket error');
+        };
+
+        xhttp.open("GET", "/socket", true);
+        xhttp.send();
+    }
+
+    // Auto-refresh socket status every 5 seconds (only in AJAX mode)
+    var socketPollInterval = null;
+    function startSocketPolling() {
+        if (socketPollInterval) {
+            clearInterval(socketPollInterval);
+        }
+        socketPollInterval = setInterval(get_socket, 5000);
+    }
+
+    function stopSocketPolling() {
+        if (socketPollInterval) {
+            clearInterval(socketPollInterval);
+            socketPollInterval = null;
+        }
+    }
+
+    // Start polling initially (in case WebSocket isn't ready yet)
+    setTimeout(function() {
+        if (!wsClient || !wsClient.is_ws_connected()) {
+            startSocketPolling();
+        }
+    }, 500);
+
+    /* Network Section Toggle Functions */
+    function toggleNetworkSection() {
+        var section = document.getElementById('networkSection');
+        var h3 = document.querySelector('h3[onclick="toggleNetworkSection()"]');
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+            h3.textContent = '▲ Network Status (click to expand/collapse)';
+        } else {
+            section.style.display = 'none';
+            h3.textContent = '▼ Network Status (click to expand/collapse)';
+        }
+    }
+
+    /* Network Config Section Toggle Functions */
+    function toggleNetworkConfig() {
+        var section = document.getElementById('networkConfig');
+        var h3 = document.querySelector('h3[onclick="toggleNetworkConfig()"]');
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+            h3.textContent = '▲ Network Config (click to expand/collapse)';
+        } else {
+            section.style.display = 'none';
+            h3.textContent = '▼ Network Config (click to expand/collapse)';
+        }
+    }
+
+    /* CH395 Socket Status Functions END */
+
 </script>
 </html>

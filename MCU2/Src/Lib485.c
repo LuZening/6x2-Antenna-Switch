@@ -75,11 +75,20 @@ void send_serial485(Serial485 *p485, const char *buffer_send, uint16_t len)
 		len = strnlen(buffer_send, sizeof(p485->tx_dma_buffer));
 	if(len == 0) return;
 
-	set_direction_serial485(p485, DIR_TX);
-	memcpy(p485->tx_dma_buffer, buffer_send, len);
+	// Check if bus is busy with timeout
 	uint32_t tickNow = HAL_GetTick();
 	while((p485->busy == 1) && (HAL_GetTick() - tickNow < 100)); // at most wait for 100ms
-	p485->busy = 1; // clear this flag in TXE interrupt
+
+	// If still busy after timeout, abort transmission to avoid corruption
+	if(p485->busy == 1)
+	{
+		// Bus is busy, cannot send
+		return;
+	}
+
+	set_direction_serial485(p485, DIR_TX);
+	memcpy(p485->tx_dma_buffer, buffer_send, len);
+	p485->busy = 1; // set busy flag, will be cleared in TXCplt interrupt
     HAL_UART_Transmit_DMA(p485->cfg.pSerial, p485->tx_dma_buffer, (uint16_t)len);
     // when DMA interrupts, clear busy flags
 }

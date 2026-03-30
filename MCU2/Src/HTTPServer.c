@@ -565,6 +565,10 @@ int8_t getNextSock()
 
 void HTTPclose(uint8_t i) // Sock Index to disconnect starting from 1
 {
+	/* USER CODE BEGIN HTTPclose */
+	// Actually disconnect the TCP connection to release socket resources
+	CH395TCPDisconnect(i);
+	/* USER CODE END HTTPclose */
 	ch395.RX_received &= ~(1 << i);
 	ch395.socket_connected &= ~(1 << i);
 	ch395.SOCK_responding = -1;
@@ -638,7 +642,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 			tok = strtok_r(NULL, HTTP_DELIM, &word_tok_saveptr);
 			if(tok)
 			{
-				strncpy(pS->URI ,tok, MAX_LEN_URI);
+				strlcpy(pS->URI ,tok, MAX_LEN_URI);
 				DEBUG_LOG("URI: %s\r\n", pS->URI);
 			}
 			else
@@ -700,15 +704,17 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
 					if(tok == NULL) goto HTTP_PARSE_ERROR;
 					DEBUG_LOG("Value: %s\r\n", tok);
-					// CASE 1: keep alive connection
-					if((strstr(tok, "Keep") != NULL) || (strstr(tok, "keep") != NULL))
-						pS->connection = KEEP_ALIVE;
-					// CASE 2: upgrade to WebSocket
-					else if((strstr(tok, "Upgrade") != NULL) || (strstr(tok, "upgrade") != NULL))
+					// CASE 1: upgrade to WebSocket
+					if((strstr(tok, "Upgrade") != NULL) || (strstr(tok, "upgrade") != NULL))
 					{
 						pS->ws_handshaked = WS_WAIT_FOR_HANDSHAKE; // urge to handshake
 						pS->connection = UPGRADED_WS;
 					}
+					// CASE 2: normal connection, close
+					else if((strstr(tok, "Keep") != NULL) || (strstr(tok, "keep") != NULL))
+						pS->connection = CLOSED; // to avoid extra socket occupation
+					else
+						pS->connection = CLOSED; // to avoid extra socket occupation
 
 				}
 				// Header: Sec-WebSocket-Key
@@ -718,7 +724,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
 					if(tok == NULL) goto HTTP_PARSE_ERROR;
 					// temporarily store client key in coolies
-					strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
+					strlcpy(pS->cookies, tok, MAX_LEN_COOKIES);
 
 				}
 				// Header: Cookie
@@ -728,7 +734,7 @@ BOOL parse_http(HTTPRequestParseState *pS, char* buffer)
 					{
 						tok = strtok_r(NULL, HTTP_COLUMN_DELIM, &word_tok_saveptr);
 						if(tok == NULL) goto HTTP_PARSE_ERROR;
-						strncpy(pS->cookies, tok, MAX_LEN_COOKIES);
+						strlcpy(pS->cookies, tok, MAX_LEN_COOKIES);
 					}
 				}
 

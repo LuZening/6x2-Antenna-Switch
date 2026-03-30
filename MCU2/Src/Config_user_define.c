@@ -37,13 +37,13 @@ void init_config(Config *p)
     xSemaphoreTake(mtxConfig, portMAX_DELAY);
     #endif
     // set valid string
-    strncpy(p->sValid, VALID_STRING, 8);
+    strlcpy(p->sValid, VALID_STRING, 8);
     // set config inital values
     memset(p->sAntNames, 0, sizeof(p->sAntNames));
     memset(p->nRadioToAntNums, 0, sizeof(p->nRadioToAntNums));
 
     p->portHTTP = 80;
-    p->portTCP = 502;
+    p->portTCP = 80; // no independent TCP protocol for Virtual Serial Over TCP
     p->portUDP = 1500;
     isModified = true;
     #ifdef USE_MUTEX_ON_CFG

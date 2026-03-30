@@ -70,12 +70,12 @@ void onSwitch(HTTPRequestParseState* pS)
 	{
 		if(r == 0) // OK
 		{
-			//HTTPSendStr(pS, 200, "OK\r\n");
-			HTTPredirect(pS, "/");
+			HTTPSendStr(pS, 200, "response=OK\r\n");
+//			HTTPredirect(pS, "/");
 		}
 		else
 		{
-			HTTPSendStr(pS, 300, "Invalid\r\n");
+			HTTPSendStr(pS, 300, "response=Invalid\r\n");
 		}
 	}
 }
@@ -201,7 +201,8 @@ void onSetLabel(HTTPRequestParseState* pS)
 	/* plain HTTP */
 	else
 	{
-		HTTPredirect(pS, "/");
+//		HTTPredirect(pS, "/");
+		HTTPSendStr(pS, 200, "response=OK\r\n");
 	}
 }
 
@@ -240,12 +241,12 @@ void onGetLabel(HTTPRequestParseState* pS)
 
 /* URI: /setport
  * METHOD: POST
- * Args: portHTTP=80&portTCP=502
+ * Args: portHTTP=80
  * Usage: switch antenna */
-void onSetPort(HTTPRequestParseState* pS)
+void onSetPort(HTTPRequestParseState *pS)
 {
 	const uint8_t MAXLEN = 5;
-	if(pS->argc < 2)
+	if(pS->argc < 1)
 	{
 		/* Websocket */
 		if(pS->connection == UPGRADED_WS)
@@ -285,6 +286,7 @@ void onSetPort(HTTPRequestParseState* pS)
 		return;
 	}
 
+#if 0
 	v = 0;
 	s = getHTTPArg(pS, "portTCP");
 	if (s)
@@ -311,13 +313,15 @@ void onSetPort(HTTPRequestParseState* pS)
 			HTTPSendStr(pS, 300, "Bad HTTP port number");
 		return;
 	}
+#endif
 	/* Websocket */
 	if(pS->connection == UPGRADED_WS)
 		/*nothing*/
 		return;
 	/* plain HTTP */
 	else
-		HTTPredirect(pS, "/");
+//		HTTPredirect(pS, "/");
+		HTTPSendStr(pS, 200, "response=OK\r\n");
 
 //	EEPROM_WriteBytes(&EEPROM, (uint8_t*)&SavedData, sizeof(SavedData_typedef));
 	//HTTPSendStr(pS, 200, "OK");
@@ -337,11 +341,13 @@ void onGetPort(HTTPRequestParseState* pS)
 	port = cfg.portHTTP;
 	s += u16toa(port, s);
 
+#if 0
 	// MAXLEN = 9 + 5
 	strcpy(s, "&portTCP=");
 	s += 9;
 	port = cfg.portTCP;
 	s += u16toa(port, s);
+#endif
 
 	*s = '\0';
 	/* Websocket */
@@ -352,6 +358,121 @@ void onGetPort(HTTPRequestParseState* pS)
 		HTTPSendStr(pS, 200, s_tmp);
 }
 
+/* Create socket status string for broadcast
+ * Returns: length of the string (without null terminator)
+ * New compact format: s0=H&s1=W&s2=-&s7=U\r\n
+ * H=HTTP, W=WebSocket, T=TCP, U=UDP, -=DISCONNECTED, I=IDLE
+ * */
+int make_socket_status_str(char* buf)
+{
+	char* s = buf;
+	uint8_t i;
+	uint8_t first = 1;
+
+	// Build response string for sockets 1-6 only (skip sock0=listener, sock7=UDP)
+	for(i = 1; i < CH395_SOCKS_AVAIL - 1; ++i)
+	{
+		// Add separator if not first socket
+		if(!first)
+		{
+			*s = '&';
+			s++;
+		}
+		first = 0;
+
+		// Socket name: s1, s2, etc.
+		*s = 's';
+		s++;
+		*s = i + '0';
+		s++;
+		*s = '=';
+		s++;
+
+		// Check if socket is connected
+		if(ch395.socket_connected & (1U << i))
+		{
+			// Socket is connected - show protocol
+			uint8_t protocol = ch395.cfg.protocols[i];
+
+			switch(protocol)
+			{
+			case CH395_PROTOCOL_HTTP:
+				// Check if this is actually WebSocket (upgraded from HTTP)
+				if(i > 0 && i < NUM_SOCKETS)
+				{
+					HTTPRequestParseState *pSockState = &parseStates[i-1];
+					if(pSockState->connection == UPGRADED_WS)
+					{
+						*s = 'W'; // WebSocket
+						s++;
+					}
+					else
+					{
+						*s = 'H'; // HTTP
+						s++;
+					}
+				}
+				else
+				{
+					*s = 'H'; // HTTP
+					s++;
+				}
+				break;
+			case CH395_PROTOCOL_TCP:
+				*s = 'T'; // TCP
+				s++;
+				break;
+			case CH395_PROTOCOL_UDP:
+				*s = 'U'; // UDP
+				s++;
+				break;
+			case CH395_PROTOCOL_NOT_USED:
+			default:
+				*s = 'I'; // IDLE
+				s++;
+				break;
+			}
+		}
+		else
+		{
+			// Socket is not connected
+			*s = '-'; // DISCONNECTED
+			s++;
+		}
+	}
+
+	// Terminate the string
+	*s = '\r';
+	s++;
+	*s = '\n';
+	s++;
+	*s = 0;
+
+	return s - buf;
+}
+
+/* URI: /socket
+ * METHOD: GET
+ * Responds: sock0=HTTP:80&sock1=WS:80&sock2=DISCONNECTED&...
+ * Usage: get CH395 socket status and protocols
+ * */
+void onGetSocket(HTTPRequestParseState* pS)
+{
+	static char s_tmp[128]; // Buffer for response
+	int n = make_socket_status_str(s_tmp);
+
+	/* Send response */
+	/* Websocket */
+	if(pS->connection == UPGRADED_WS)
+	{
+		WSSendStr(pS, "/socket", s_tmp);
+	}
+	/* plain HTTP */
+	else
+	{
+		HTTPSendStr(pS, 200, s_tmp);
+	}
+}
 
 
 HTTPWSResponder_typedef HTTPWSResponders[] ={
@@ -364,4 +485,5 @@ HTTPWSResponder_typedef HTTPWSResponders[] ={
 		{.uri = "/getlabel", .func=onGetLabel},
 		{.uri = "/setport", .func=onSetPort},
 		{.uri = "/getport", .func=onGetPort},
+		{.uri = "/socket", .func=onGetSocket},
 };

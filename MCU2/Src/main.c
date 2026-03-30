@@ -52,7 +52,7 @@ static uint8_t rx_fifo_buf_485[RX_FIFO_SIZE_485];
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- IWDG_HandleTypeDef hiwdg;
+IWDG_HandleTypeDef hiwdg;
 
 SPI_HandleTypeDef hspi1;
 
@@ -130,8 +130,8 @@ uint16_t needUpdateFlagForEachSocket = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_DMA_Init(void);
+static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_TIM6_Init(void);
@@ -155,6 +155,7 @@ const Serial485_cfg_t cfg485 ={
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 	uint8_t i;
 	Selector[0].PIN_BCDs[0] = BCD1_0;
@@ -194,8 +195,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_DMA_Init();
+  MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_IWDG_Init();
   MX_TIM6_Init();
@@ -266,6 +267,10 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	static uint32_t lastWakeupTime;
+	static uint32_t lastCH395Process = 0;  // Rate limiting for CH395 interrupts
+	// WebSocket frame buffers - moved here for proper scope
+	static uint8_t websocket_frame_shared_buffer[128];
+	static uint8_t websocket_frame_shared_buffer_2[128];
 	lastWakeupTime = HAL_GetTick();
 	while (1)
 	{
@@ -284,12 +289,18 @@ int main(void)
 			/*** polling task: execute command and transmit response to the client in HTTPHandle ***/
 			if (flag_CH395_ready && ch395.RX_received)
 			{
-				// prepare respond to stocking requests
-				HTTPHandle(&ch395);
+				// Rate limiting: process CH395 at most every 10ms to avoid starving RS485
+				uint32_t nowTick = HAL_GetTick();
+				if(nowTick - lastCH395Process >= 10)
+				{
+					// prepare respond to stocking requests
+					HTTPHandle(&ch395);
+					lastCH395Process = nowTick;
+				}
 			}
 			/*** polling task: close timed out (long time no received data) connections to avoid deadlock ***/
 			uint32_t nowTick = HAL_GetTick();
-			for (int i = 0; i < NUM_SOCKETS; ++i)
+			for (int i = 0; i < NUM_SOCKETS - 1; ++i) // exculding sock 0
 			{
 				HTTPRequestParseState *pS = &parseStates[i];
 				if ((nowTick - pS->last_active_tick >= MAX_HTTP_TICK_IDLE))
@@ -318,7 +329,6 @@ int main(void)
 			}
 
 			/*** polling task: broadcast updates to the clients proactively ***/
-			static uint8_t websocket_frame_shared_buffer[128], websocket_frame_shared_buffer_2[128];
 			if(needUpdate || (needUpdateFlagForEachSocket != 0))
 			{
 				// set all flags for all the sockets
@@ -376,11 +386,66 @@ int main(void)
 					}
 				}
 			}
-			/*** polling task: monitoring the interrupt Pin and trigger the interrupt ***/
-			while (HAL_GPIO_ReadPin(CH395_INT_GPIO_Port, CH395_INT_Pin)
-					== GPIO_PIN_RESET)
+
+			/*** polling task: broadcast socket status to all WebSocket/TCP clients periodically ***/
 			{
-				/* parse incoming packet, extract arguments and URI in the ISR*/
+				static uint32_t lastSocketBroadcastTime = 0;
+				uint32_t currentTime = HAL_GetTick();
+
+				// Broadcast socket status every 5000ms (5 seconds)
+				if((currentTime - lastSocketBroadcastTime) >= 5000)
+				{
+					lastSocketBroadcastTime = currentTime;
+
+					// Send to all connected WebSocket and TCP sockets
+					for(i = 1; i < NUM_SOCKETS; ++i)
+					{
+						// Only broadcast if socket is connected and ready for TX
+						if((ch395.socket_connected & (1U << i)) && (ch395.TX_available & (1U << i)))
+						{
+							HTTPRequestParseState *pS = parseStates + i - 1;
+
+							// Only broadcast to WebSocket and TCP connections
+							if((pS->connection == UPGRADED_WS) || (ch395.cfg.protocols[i] == CH395_PROTOCOL_TCP))
+							{
+								// Create socket status string
+								int len_content = make_socket_status_str((char*)websocket_frame_shared_buffer);
+
+								if(pS->connection == UPGRADED_WS)
+								{
+									// For WebSocket: wrap in WebSocket frame
+									size_t lenOrig = WSMakeStrOriginal(websocket_frame_shared_buffer_2, sizeof(websocket_frame_shared_buffer_2), "/socket", (char*)websocket_frame_shared_buffer);
+									uint16_t len_to_transmit = ws_make_text_frame(websocket_frame_shared_buffer, sizeof(websocket_frame_shared_buffer), websocket_frame_shared_buffer_2, lenOrig);
+
+									// Transmit WebSocket frame
+									CH395StartSendingData(i, len_to_transmit);
+									CH395ContinueSendingData(websocket_frame_shared_buffer, len_to_transmit);
+									CH395Complete();
+								}
+								else // TCP
+								{
+									// For TCP: send raw data with URI prefix
+									size_t lenOrig = WSMakeStrOriginal(websocket_frame_shared_buffer_2, sizeof(websocket_frame_shared_buffer_2), "/socket", (char*)websocket_frame_shared_buffer);
+
+									// Transmit TCP data
+									CH395StartSendingData(i, lenOrig);
+									CH395ContinueSendingData(websocket_frame_shared_buffer_2, lenOrig);
+									CH395Complete();
+								}
+
+								// Update TX flag
+								ch395.TX_available &= ~(1 << i);
+							}
+						}
+					}
+				}
+			}
+
+			/*** polling task: monitoring the interrupt Pin and trigger the interrupt ***/
+			// Rate limiting: don't process interrupts too frequently
+			if(HAL_GPIO_ReadPin(CH395_INT_GPIO_Port, CH395_INT_Pin) == GPIO_PIN_RESET)
+			{
+				/* parse incoming packet, extract arguments and URI */
 				interrupt_CH395();
 			}
 		}
@@ -486,6 +551,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
+  /** Configure the Systick
+  */
+  HAL_SYSTICK_Config(6000);
+  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK_DIV8);
 }
 
 /**
@@ -504,9 +574,9 @@ static void MX_IWDG_Init(void)
 
   /* USER CODE END IWDG_Init 1 */
   hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_128;
-  hiwdg.Init.Window = 1024;
-  hiwdg.Init.Reload = 1024;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+  hiwdg.Init.Window = 2048;
+  hiwdg.Init.Reload = 2048;
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();
@@ -646,6 +716,9 @@ static void MX_DMA_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOF_CLK_ENABLE();
@@ -712,6 +785,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -745,7 +821,8 @@ void reset_CH395()
 	ch395.cfg.protocols[i] = CH395_PROTOCOL_UDP;
 	ch395.cfg.ports[i] = cfg.portUDP;
 	CH395CMDReset();
-	Delay_ms(100); // wait for CH395 being ready from power on
+//	Delay_ms(100); // wait for CH395 being ready from power on
+	HAL_Delay(100);
 	// get CH395 chip MAC address
 	CH395CMDGetMACAddr(MAC);
 	// initialize CH395 GPIO settings to INPUT/PULL DOWN
@@ -882,7 +959,7 @@ void interrupt_CH395()
 					pS->sock_index = i;
 					/* classify request types: */
 #define REQUEST_TYPE_HTTP 0
-#define REQUEST_TYPE_WS_MSG 1
+#define REQUEST_TYPE_TCP 1
 					uint8_t sReqType = REQUEST_TYPE_HTTP;
 					if(strnstr(ch395.buffer, "HTTP", len))
 					{
@@ -890,20 +967,21 @@ void interrupt_CH395()
 					}
 					else if(len > 0)
 					{
-						sReqType = REQUEST_TYPE_WS_MSG;
+						sReqType = REQUEST_TYPE_TCP;
 					}
 
-					/* CASE 1: Websocket */
-					if(((pS->connection == UPGRADED_WS) && (pS->ws_handshaked == WS_HANDSHAKED)) || (sReqType == REQUEST_TYPE_WS_MSG))
+					/* CASE 1: Websocket or Plain TCP */
+					if(((pS->connection == UPGRADED_WS) && (pS->ws_handshaked == WS_HANDSHAKED)) || (sReqType == REQUEST_TYPE_TCP))
 					{
-						// sometimes the client skips the upgrade request, sending a WebSocket payload directly
-						if((pS->connection != UPGRADED_WS) || (pS->ws_handshaked != WS_HANDSHAKED))
-						{
-							pS->connection = UPGRADED_WS;
-							pS->ws_handshaked = WS_HANDSHAKED;
-						}
+						// can be parsed as WebSocket protocol
 						if(ws_parse_frame(ch395.buffer, (size_t)len, &pS->ws) > 0)
 						{
+							// sometimes the client skips the upgrade request, sending a WebSocket payload directly
+							if((pS->connection != UPGRADED_WS) || (pS->ws_handshaked != WS_HANDSHAKED))
+							{
+								pS->connection = UPGRADED_WS;
+								pS->ws_handshaked = WS_HANDSHAKED;
+							}
 							pS->ready_for_making_response = true;
 							switch(pS->ws.opcode)
 							{
@@ -975,6 +1053,29 @@ void interrupt_CH395()
 									ch395.SOCK_responding = i;
 							}
 						}
+						/* CASE: plain TCP */
+						else
+						{
+							// parse received content
+							if (execute_command_string(&CommandParser, ch395.buffer,len) >= 0)
+							{
+								// if the command has response to the client, the send
+								// hasResponse stores the length of the response content
+								if (CommandParser.hasResponse > 0)
+								{
+									pS->ready_for_making_response = true;
+									strncpy(pS->response_header, CommandParser.bufRet,
+											CommandParser.hasResponse);
+									pS->len_response_header = CommandParser.hasResponse;
+									pS->len_response_content_remain = 0;
+									pS->response_stage = RESPONSE_PREPARED;
+									ch395.RX_received |= (1 << i);
+									if (ch395.SOCK_responding < 0) // put this socket into responding slot if the slot is empty
+										ch395.SOCK_responding = i;
+									CommandParser.hasResponse = 0;
+								}
+							}
+						}
 					}
 					/* CASE DEFAULT: plain HTTP */
 					else
@@ -985,6 +1086,15 @@ void interrupt_CH395()
 							if (ch395.SOCK_responding < 0) // put this socket into responding slot if the slot is empty
 								ch395.SOCK_responding = i;
 						}
+						/* USER CODE BEGIN HTTP_PARSE_FAILED */
+						else
+						{
+							// HTTP parsing failed, close the connection to prevent resource leak
+							CH395TCPDisconnect(i);
+							HTTPclose(i);
+							resetHTTPParseState(pS);
+						}
+						/* USER CODE END HTTP_PARSE_FAILED */
 					}
 					break;
 				case CH395_PROTOCOL_TCP:
@@ -1040,8 +1150,8 @@ void interrupt_CH395()
 									.MAC = MAC,
 									.baud = 115200,
 									.mode = 3, // TCP server
-									.port_self = cfg.portTCP,
-									.port_target = cfg.portTCP,
+									.port_self = cfg.portHTTP,
+									.port_target = cfg.portHTTP,
 									.stopbit_mode = 3,
 							};
 							len_UDP_data = (uint16_t)prepare_USR_response_msg(&USR, pS->response_header);
@@ -1307,8 +1417,7 @@ void Error_Handler(void)
 
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

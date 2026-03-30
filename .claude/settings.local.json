@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.rfc-editor.org)",
+      "Bash(tools/generate_data_bin.bat)",
+      "Bash(./generate_data_bin.bat)",
+      "Bash(python FS_image_gen.py ../data/ data.bin)",
+      "Skill(claude-hud:setup)"
+    ]
+  }
+}

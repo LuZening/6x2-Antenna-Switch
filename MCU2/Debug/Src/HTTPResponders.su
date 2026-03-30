@@ -5,6 +5,8 @@ HTTPResponders.c:107:6:onGetAlloc	24	static
 HTTPResponders.c:127:6:onStatus	16	static
 HTTPResponders.c:141:6:onReset	16	static
 HTTPResponders.c:160:6:onSetLabel	40	static
-HTTPResponders.c:208:6:onGetLabel	32	static
-HTTPResponders.c:245:6:onSetPort	40	static
-HTTPResponders.c:328:6:onGetPort	32	static
+HTTPResponders.c:209:6:onGetLabel	32	static
+HTTPResponders.c:246:6:onSetPort	40	static
+HTTPResponders.c:332:6:onGetPort	24	static
+HTTPResponders.c:366:5:make_socket_status_str	32	static
+HTTPResponders.c:459:6:onGetSocket	24	static

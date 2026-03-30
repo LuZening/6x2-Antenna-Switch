@@ -107,13 +107,14 @@ void Error_Handler(void);
 #define BCD1_1_GPIO_Port GPIOB
 #define BCD1_0_Pin GPIO_PIN_4
 #define BCD1_0_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 #define __CH395_
 #define __ON_BOARD_
 #define NUM_ANTENNA 6
 #define NUM_TRANCEIVERS 2
-#define MAX_LEN_ANT_LABEL 16
+#define MAX_LEN_ANT_LABEL 12
 #define MAX_LEN_ANT_LABELS ((MAX_LEN_ANT_LABEL + 1) * NUM_ANTENNA)
 #define N_SELECTORS NUM_TRANCEIVERS
 #define BCD2INT(D0,D1,D2) (D2<<2 | D1<<1 | D0);

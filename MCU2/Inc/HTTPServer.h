@@ -17,7 +17,7 @@
 #define PHY(method) PHYNAME##method
 #define ENDSWITH(s,sub) (strcmp(s+strlen(s)-strlen(sub), sub)==0)
 
-#define MAX_LEN_URI 64
+#define MAX_LEN_URI 32
 #define MAX_NUM_ARGS 4
 #define MAX_LEN_COOKIES 32
 #define MAX_LEN_RESPONSE_HEADER 512
@@ -25,7 +25,7 @@
 #define NUM_SOCKETS CH395_SOCKS_AVAIL
 
 #include "my_websocket.h"
-#define MAX_HTTP_TICK_IDLE 32000 // ms, timeout for idle HTTP connection
+#define MAX_HTTP_TICK_IDLE 16000 // ms, timeout for idle HTTP connection
 #define TICK_NOW HAL_GetTick
 
 typedef enum
@@ -85,7 +85,7 @@ extern char response_header_shared_buffer[MAX_LEN_RESPONSE_HEADER];
 // The Socket number responding to, which serializes the process on multiple sockets
 
 
-#define NUM_HTTP_RESPONDERS 9U
+#define NUM_HTTP_RESPONDERS 10U
 typedef void(*HTTPWSResponder_FuncType)(HTTPRequestParseState *) ;
 typedef struct
 {
@@ -121,4 +121,7 @@ uint8_t u16toa(uint16_t, char*);
 char* strcpy_f(char* dest, const char* src); // fast strcpy
 char* strncpy_f(char* dest, const char* src, uint16_t len);
 uint8_t IPv4_to_s(char* __restrict s ,const  uint8_t* __restrict IP);
+
+// Socket status string generator for broadcast
+int make_socket_status_str(char* buf);
 #endif /* HTTPSERVER_H_ */
